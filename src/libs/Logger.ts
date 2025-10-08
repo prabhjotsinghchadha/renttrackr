@@ -1,5 +1,11 @@
 import type { AsyncSink } from '@logtape/logtape';
-import { configure, fromAsyncSink, getConsoleSink, getJsonLinesFormatter, getLogger } from '@logtape/logtape';
+import {
+  configure,
+  fromAsyncSink,
+  getConsoleSink,
+  getJsonLinesFormatter,
+  getLogger,
+} from '@logtape/logtape';
 import { Env } from './Env';
 
 const betterStackSink: AsyncSink = async (record) => {
@@ -22,9 +28,10 @@ await configure({
     { category: ['logtape', 'meta'], sinks: ['console'], lowestLevel: 'warning' },
     {
       category: ['app'],
-      sinks: Env.NEXT_PUBLIC_BETTER_STACK_SOURCE_TOKEN && Env.NEXT_PUBLIC_BETTER_STACK_INGESTING_HOST
-        ? ['console', 'betterStack']
-        : ['console'],
+      sinks:
+        Env.NEXT_PUBLIC_BETTER_STACK_SOURCE_TOKEN && Env.NEXT_PUBLIC_BETTER_STACK_INGESTING_HOST
+          ? ['console', 'betterStack']
+          : ['console'],
       lowestLevel: 'debug',
     },
   ],

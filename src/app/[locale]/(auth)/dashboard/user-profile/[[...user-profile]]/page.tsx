@@ -25,9 +25,7 @@ export default async function UserProfilePage(props: IUserProfilePageProps) {
 
   return (
     <div className="my-6 -ml-16">
-      <UserProfile
-        path={getI18nPath('/dashboard/user-profile', locale)}
-      />
+      <UserProfile path={getI18nPath('/dashboard/user-profile', locale)} />
     </div>
   );
-};
+}

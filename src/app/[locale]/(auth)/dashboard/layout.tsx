@@ -20,10 +20,7 @@ export default async function DashboardLayout(props: {
       leftNav={(
         <>
           <li>
-            <Link
-              href="/dashboard/"
-              className="border-none text-gray-700 hover:text-gray-900"
-            >
+            <Link href="/dashboard/" className="border-none text-gray-700 hover:text-gray-900">
               {t('dashboard_link')}
             </Link>
           </li>

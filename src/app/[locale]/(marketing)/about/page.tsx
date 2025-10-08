@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Image from 'next/image';
 
 type IAboutProps = {
   params: Promise<{ locale: string }>;
@@ -28,28 +27,63 @@ export default async function About(props: IAboutProps) {
   });
 
   return (
-    <>
-      <p>{t('about_paragraph')}</p>
+    <div className="w-full bg-white px-6 py-16 md:px-12 md:py-20 lg:px-16 xl:px-24">
+      <div className="mx-auto max-w-5xl">
+        <h1 className="mb-8 text-5xl font-bold text-gray-800 md:text-6xl">{t('page_title')}</h1>
 
-      <div className="mt-2 text-center text-sm">
-        {`${t('translation_powered_by')} `}
-        <a
-          className="text-blue-700 hover:border-b-2 hover:border-blue-700"
-          href="https://l.crowdin.com/next-js"
-        >
-          Crowdin
-        </a>
+        <div className="space-y-8 text-xl leading-relaxed text-gray-600">
+          <p>{t('about_paragraph_1')}</p>
+
+          <p>{t('about_paragraph_2')}</p>
+
+          <p>{t('about_paragraph_3')}</p>
+
+          <div className="my-12 rounded-xl bg-blue-50 p-10">
+            <h2 className="mb-6 text-3xl font-bold text-gray-800">{t('mission_title')}</h2>
+            <p className="text-xl leading-relaxed text-gray-600">{t('mission_statement')}</p>
+          </div>
+
+          <h2 className="mt-12 mb-8 text-4xl font-bold text-gray-800">{t('values_title')}</h2>
+
+          <div className="space-y-8">
+            <div className="rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:shadow-lg">
+              <h3 className="mb-4 text-2xl font-semibold text-gray-800">
+                {t('value_simplicity_title')}
+              </h3>
+              <p className="text-xl text-gray-600">{t('value_simplicity_description')}</p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:shadow-lg">
+              <h3 className="mb-4 text-2xl font-semibold text-gray-800">
+                {t('value_accessibility_title')}
+              </h3>
+              <p className="text-xl text-gray-600">{t('value_accessibility_description')}</p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:shadow-lg">
+              <h3 className="mb-4 text-2xl font-semibold text-gray-800">
+                {t('value_trust_title')}
+              </h3>
+              <p className="text-xl text-gray-600">{t('value_trust_description')}</p>
+            </div>
+          </div>
+
+          <div className="my-12 text-center">
+            <h2 className="mb-6 text-3xl font-bold text-gray-800">{t('contact_title')}</h2>
+            <p className="mb-6 text-xl text-gray-600">{t('contact_text')}</p>
+            <p className="text-xl text-gray-600">
+              {t('contact_email')}
+              {' '}
+              <a
+                href="mailto:info@renttrackr.com"
+                className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
+              >
+                info@renttrackr.com
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
-
-      <a href="https://l.crowdin.com/next-js">
-        <Image
-          className="mx-auto mt-2"
-          src="/assets/images/crowdin-dark.png"
-          alt="Crowdin Translation Management System"
-          width={128}
-          height={26}
-        />
-      </a>
-    </>
+    </div>
   );
-};
+}

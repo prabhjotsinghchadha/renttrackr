@@ -18,9 +18,5 @@ export const CurrentCount = async () => {
 
   logger.info('Counter fetched successfully');
 
-  return (
-    <div>
-      {t('count', { count })}
-    </div>
-  );
+  return <div>{t('count', { count })}</div>;
 };

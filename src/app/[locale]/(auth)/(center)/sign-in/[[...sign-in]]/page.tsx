@@ -24,7 +24,5 @@ export default async function SignInPage(props: ISignInPageProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
-  return (
-    <SignIn path={getI18nPath('/sign-in', locale)} />
-  );
-};
+  return <SignIn path={getI18nPath('/sign-in', locale)} />;
+}

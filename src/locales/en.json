@@ -8,13 +8,43 @@
     "sign_up_link": "Sign up"
   },
   "BaseTemplate": {
-    "description": "Starter code for your Nextjs Boilerplate with Tailwind CSS",
-    "made_with": "Made with <author></author>."
+    "description": "Simple rental property management for property owners",
+    "made_with": "Made with <author></author> by the RentTrackr team."
   },
   "Index": {
-    "meta_title": "Next.js Boilerplate Presentation",
-    "meta_description": "Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework.",
-    "sponsors_title": "Sponsors"
+    "meta_title": "RentTrackr - Simple Rental Property Management for Property Owners",
+    "meta_description": "Manage your rental properties with ease. Track rent, maintenance, tenants, and payments all in one simple place. Built for property owners who value simplicity.",
+    "hero_title": "Managing Your Rental Properties Made Simple",
+    "hero_subtitle": "Keep track of rent payments, maintenance, and tenant information all in one easy-to-use place. No complicated software—just straightforward property management.",
+    "cta_get_started": "Get Started",
+    "features_title": "Everything You Need in One Place",
+    "features_subtitle": "Simple tools to help you stay organized and stress-free",
+    "feature_rent_tracking_title": "Track Rent Payments",
+    "feature_rent_tracking_description": "See who's paid and who hasn't at a glance. Set up automatic reminders so you never miss a payment.",
+    "feature_maintenance_title": "Maintenance Logs",
+    "feature_maintenance_description": "Keep a complete history of repairs and maintenance for each property. Know exactly what was done and when.",
+    "feature_tenant_info_title": "Tenant Information",
+    "feature_tenant_info_description": "Store contact details, lease dates, and important documents safely. Find what you need in seconds.",
+    "feature_reminders_title": "Payment Reminders",
+    "feature_reminders_description": "Get notified when rent is due or when payments are late. Stay on top of your cash flow effortlessly.",
+    "feature_reports_title": "Simple Reports",
+    "feature_reports_description": "View clear summaries of your income and expenses. Perfect for tax time or just checking how you're doing.",
+    "feature_security_title": "Secure & Private",
+    "feature_security_description": "Your information is protected with bank-level security. Only you can access your data.",
+    "trust_title": "Built With You in Mind",
+    "trust_description": "RentTrackr was designed specifically for property owners who want simplicity without sacrificing functionality. No confusing menus, no technical jargon—just a straightforward way to manage your properties with confidence.",
+    "footer_brand": "RentTrackr",
+    "footer_tagline": "Simple property management for peace of mind.",
+    "footer_support_title": "Support",
+    "footer_help_center": "Help Center",
+    "footer_contact_us": "Contact Us",
+    "footer_faq": "FAQ",
+    "footer_company_title": "Company",
+    "footer_about_us": "About Us",
+    "footer_privacy": "Privacy Policy",
+    "footer_terms": "Terms of Service",
+    "footer_contact_title": "Contact",
+    "footer_copyright": "© 2025 RentTrackr. All rights reserved."
   },
   "Counter": {
     "meta_title": "Counter",
@@ -31,10 +61,24 @@
     "count": "Count: {count}"
   },
   "About": {
-    "meta_title": "About",
-    "meta_description": "About page description",
-    "about_paragraph": "Welcome to our About page! We are a team of passionate individuals dedicated to creating amazing software.",
-    "translation_powered_by": "Translation powered by"
+    "meta_title": "About RentTrackr - Our Story and Mission",
+    "meta_description": "Learn about RentTrackr's mission to help property owners manage their rentals with simplicity, clarity, and confidence.",
+    "page_title": "About RentTrackr",
+    "about_paragraph_1": "RentTrackr was created with one simple goal: to help property owners manage their rental properties without the stress and confusion that often comes with complicated software.",
+    "about_paragraph_2": "We understand that not everyone wants to spend hours learning complex systems. That's why we built RentTrackr to be straightforward, easy to understand, and genuinely helpful for property owners of all ages and technical backgrounds.",
+    "about_paragraph_3": "Whether you own one property or several, RentTrackr gives you the tools you need to stay organized, track important information, and manage your rentals with confidence.",
+    "mission_title": "Our Mission",
+    "mission_statement": "To provide property owners with a simple, accessible, and reliable platform that takes the complexity out of rental property management—so you can focus on what matters most.",
+    "values_title": "What We Stand For",
+    "value_simplicity_title": "Simplicity First",
+    "value_simplicity_description": "We believe good software should be easy to use. No hidden features, no confusing menus—just clear, helpful tools that work the way you expect them to.",
+    "value_accessibility_title": "Accessible to Everyone",
+    "value_accessibility_description": "We design with all users in mind, ensuring that text is easy to read, buttons are clearly labeled, and navigation is intuitive.",
+    "value_trust_title": "Trustworthy and Secure",
+    "value_trust_description": "Your data is important to us. We use industry-standard security practices to keep your information safe and private.",
+    "contact_title": "Get in Touch",
+    "contact_text": "Have questions or need help? We're here for you.",
+    "contact_email": "Email us at"
   },
   "Portfolio": {
     "meta_title": "Portfolio",

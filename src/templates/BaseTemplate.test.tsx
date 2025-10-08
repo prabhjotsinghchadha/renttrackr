@@ -45,10 +45,7 @@ describe('Base template', () => {
        * The link doesn't need to appear on every pages, one link on one page is enough.
        * Thank you for your support it'll mean a lot for us.
        */
-      expect(copyrightLink).toHaveAttribute(
-        'href',
-        'https://creativedesignsguru.com',
-      );
+      expect(copyrightLink).toHaveAttribute('href', 'https://creativedesignsguru.com');
     });
   });
 });
