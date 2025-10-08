@@ -8,13 +8,43 @@
     "sign_up_link": "S'inscrire"
   },
   "BaseTemplate": {
-    "description": "Code de démarrage pour Next.js avec Tailwind CSS",
-    "made_with": "Fait avec <author></author>."
+    "description": "Gestion locative simple pour les propriétaires",
+    "made_with": "Fait avec <author></author> par l'équipe RentTrackr."
   },
   "Index": {
-    "meta_title": "Présentation de Next.js Boilerplate",
-    "meta_description": "Next js Boilerplate est le code de démarrage parfait pour votre projet. Construisez votre application React avec le framework Next.js.",
-    "sponsors_title": "Partenaires"
+    "meta_title": "RentTrackr - Gestion Locative Simple pour Propriétaires",
+    "meta_description": "Gérez vos propriétés locatives en toute simplicité. Suivez les loyers, l'entretien, les locataires et les paiements en un seul endroit simple. Conçu pour les propriétaires qui valorisent la simplicité.",
+    "hero_title": "Gérer Vos Propriétés Locatives en Toute Simplicité",
+    "hero_subtitle": "Suivez les paiements de loyer, l'entretien et les informations des locataires dans un seul endroit facile à utiliser. Pas de logiciel compliqué—juste une gestion immobilière simple.",
+    "cta_get_started": "Commencer",
+    "features_title": "Tout Ce Dont Vous Avez Besoin en Un Seul Endroit",
+    "features_subtitle": "Des outils simples pour vous aider à rester organisé et sans stress",
+    "feature_rent_tracking_title": "Suivi des Loyers",
+    "feature_rent_tracking_description": "Voyez qui a payé et qui ne l'a pas fait en un coup d'œil. Configurez des rappels automatiques pour ne jamais manquer un paiement.",
+    "feature_maintenance_title": "Registres d'Entretien",
+    "feature_maintenance_description": "Conservez un historique complet des réparations et de l'entretien pour chaque propriété. Sachez exactement ce qui a été fait et quand.",
+    "feature_tenant_info_title": "Informations sur les Locataires",
+    "feature_tenant_info_description": "Stockez en toute sécurité les coordonnées, les dates de bail et les documents importants. Trouvez ce dont vous avez besoin en quelques secondes.",
+    "feature_reminders_title": "Rappels de Paiement",
+    "feature_reminders_description": "Soyez notifié lorsque le loyer est dû ou en retard. Restez au courant de votre trésorerie sans effort.",
+    "feature_reports_title": "Rapports Simples",
+    "feature_reports_description": "Consultez des résumés clairs de vos revenus et dépenses. Parfait pour la période des impôts ou simplement pour vérifier votre situation.",
+    "feature_security_title": "Sécurisé et Privé",
+    "feature_security_description": "Vos informations sont protégées par une sécurité de niveau bancaire. Vous seul pouvez accéder à vos données.",
+    "trust_title": "Conçu Pour Vous",
+    "trust_description": "RentTrackr a été conçu spécifiquement pour les propriétaires qui veulent la simplicité sans sacrifier la fonctionnalité. Pas de menus déroutants, pas de jargon technique—juste un moyen simple de gérer vos propriétés en toute confiance.",
+    "footer_brand": "RentTrackr",
+    "footer_tagline": "Gestion immobilière simple pour votre tranquillité d'esprit.",
+    "footer_support_title": "Support",
+    "footer_help_center": "Centre d'Aide",
+    "footer_contact_us": "Nous Contacter",
+    "footer_faq": "FAQ",
+    "footer_company_title": "Entreprise",
+    "footer_about_us": "À Propos",
+    "footer_privacy": "Politique de Confidentialité",
+    "footer_terms": "Conditions d'Utilisation",
+    "footer_contact_title": "Contact",
+    "footer_copyright": "© 2025 RentTrackr. Tous droits réservés."
   },
   "Counter": {
     "meta_title": "Compteur",
@@ -31,10 +61,24 @@
     "count": "Nombre : {count}"
   },
   "About": {
-    "meta_title": "A propos",
-    "meta_description": "A propos description",
-    "about_paragraph": "Bienvenue sur notre page À propos ! Nous sommes une équipe de passionnés et dévoués à la création de logiciels.",
-    "translation_powered_by": "Traduction propulsée par"
+    "meta_title": "À Propos de RentTrackr - Notre Histoire et Mission",
+    "meta_description": "Découvrez la mission de RentTrackr d'aider les propriétaires à gérer leurs locations avec simplicité, clarté et confiance.",
+    "page_title": "À Propos de RentTrackr",
+    "about_paragraph_1": "RentTrackr a été créé avec un objectif simple : aider les propriétaires à gérer leurs propriétés locatives sans le stress et la confusion qui accompagnent souvent les logiciels compliqués.",
+    "about_paragraph_2": "Nous comprenons que tout le monde ne veut pas passer des heures à apprendre des systèmes complexes. C'est pourquoi nous avons conçu RentTrackr pour qu'il soit simple, facile à comprendre et véritablement utile pour les propriétaires de tous âges et de tous niveaux techniques.",
+    "about_paragraph_3": "Que vous possédiez une ou plusieurs propriétés, RentTrackr vous donne les outils dont vous avez besoin pour rester organisé, suivre les informations importantes et gérer vos locations en toute confiance.",
+    "mission_title": "Notre Mission",
+    "mission_statement": "Fournir aux propriétaires une plateforme simple, accessible et fiable qui élimine la complexité de la gestion immobilière locative—afin que vous puissiez vous concentrer sur ce qui compte le plus.",
+    "values_title": "Nos Valeurs",
+    "value_simplicity_title": "La Simplicité d'Abord",
+    "value_simplicity_description": "Nous croyons qu'un bon logiciel doit être facile à utiliser. Pas de fonctionnalités cachées, pas de menus déroutants—juste des outils clairs et utiles qui fonctionnent comme vous l'attendez.",
+    "value_accessibility_title": "Accessible à Tous",
+    "value_accessibility_description": "Nous concevons en pensant à tous les utilisateurs, en veillant à ce que le texte soit facile à lire, les boutons clairement étiquetés et la navigation intuitive.",
+    "value_trust_title": "Fiable et Sécurisé",
+    "value_trust_description": "Vos données sont importantes pour nous. Nous utilisons des pratiques de sécurité standard de l'industrie pour garder vos informations sûres et privées.",
+    "contact_title": "Contactez-Nous",
+    "contact_text": "Vous avez des questions ou besoin d'aide ? Nous sommes là pour vous.",
+    "contact_email": "Envoyez-nous un e-mail à"
   },
   "Portfolio": {
     "meta_title": "Portfolio",
