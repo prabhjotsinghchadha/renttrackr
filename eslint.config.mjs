@@ -58,6 +58,9 @@ export default antfu(
       'react/no-context-provider': 'off', // Allow Context.Provider syntax
       'react/prefer-shorthand-boolean': 'off', // Disable React 19 shorthand rules
       'react-19/no-context-provider': 'off', // Disable React 19 context provider rule
+      'react-refresh/only-export-components': 'off', // Allow exporting constants with components
+      'react-dom/no-dangerously-set-innerhtml': 'off', // Allow dangerouslySetInnerHTML for dynamic CSS
+      'react-hooks-extra/no-direct-set-state-in-use-effect': 'off', // Allow setState in useEffect for media queries
     },
   },
 );
