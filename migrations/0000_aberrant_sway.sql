@@ -8,6 +8,13 @@ CREATE TABLE "appliances" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "counter" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"count" integer DEFAULT 0,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "expenses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"property_id" uuid NOT NULL,
@@ -41,7 +48,7 @@ CREATE TABLE "payments" (
 --> statement-breakpoint
 CREATE TABLE "properties" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" varchar(255) NOT NULL,
 	"address" varchar(500) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -67,7 +74,7 @@ CREATE TABLE "units" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"name" varchar(255),
 	"created_at" timestamp DEFAULT now() NOT NULL,

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { getCurrentUser } from '@/helpers/AuthHelper';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -25,13 +26,18 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
     namespace: 'Dashboard',
   });
 
+  // Get the current user from the database
+  const user = await getCurrentUser();
+
   // TODO: Fetch dashboard data from database
 
   return (
     <div className="py-8 md:py-12">
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">{t('page_title')}</h1>
-        <p className="mt-4 text-xl leading-relaxed text-gray-600">{t('welcome_message')}</p>
+        <p className="mt-4 text-xl leading-relaxed text-gray-600">
+          {user?.name ? `${t('welcome_back')}, ${user.name}!` : t('welcome_message')}
+        </p>
       </div>
 
       {/* Key Metrics */}

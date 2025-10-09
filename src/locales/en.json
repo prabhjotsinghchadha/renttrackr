@@ -108,6 +108,7 @@
     "meta_description": "Overview of your rental properties and key metrics",
     "page_title": "Dashboard",
     "welcome_message": "Welcome to your dashboard. Here's an overview of your properties.",
+    "welcome_back": "Welcome back",
     "total_properties": "Total Properties",
     "active_tenants": "Active Tenants",
     "monthly_revenue": "Monthly Revenue",

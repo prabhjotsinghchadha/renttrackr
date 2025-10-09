@@ -26,7 +26,7 @@ export const counterSchema = pgTable('counter', {
 
 // User model
 export const userSchema = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: varchar('id', { length: 255 }).primaryKey(), // Clerk user ID (e.g., user_xxx)
   email: varchar('email', { length: 255 }).notNull().unique(),
   name: varchar('name', { length: 255 }),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
@@ -41,7 +41,7 @@ export const userSchema = pgTable('users', {
 // Property model
 export const propertySchema = pgTable('properties', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
+  userId: varchar('user_id', { length: 255 })
     .notNull()
     .references(() => userSchema.id, { onDelete: 'cascade' }),
   address: varchar('address', { length: 500 }).notNull(),
