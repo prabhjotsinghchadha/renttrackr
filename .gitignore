@@ -61,3 +61,5 @@ build-archive.log
 /playwright-report/
 /playwright/.cache/
 .env
+.env.production
+.env
