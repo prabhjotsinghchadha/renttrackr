@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, real, serial, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -23,3 +23,129 @@ export const counterSchema = pgTable('counter', {
     .notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 });
+
+// User model
+export const userSchema = pgTable('users', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  name: varchar('name', { length: 255 }),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  // Add stripeCustomerId field when implementing payments
+  // stripeCustomerId: varchar('stripe_customer_id', { length: 255 }),
+});
+
+// Property model
+export const propertySchema = pgTable('properties', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => userSchema.id, { onDelete: 'cascade' }),
+  address: varchar('address', { length: 500 }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Unit model
+export const unitSchema = pgTable('units', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id')
+    .notNull()
+    .references(() => propertySchema.id, { onDelete: 'cascade' }),
+  unitNumber: varchar('unit_number', { length: 50 }).notNull(),
+  rentAmount: real('rent_amount').notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Tenant model
+export const tenantSchema = pgTable('tenants', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  unitId: uuid('unit_id')
+    .notNull()
+    .references(() => unitSchema.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }),
+  email: varchar('email', { length: 255 }),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Lease model
+export const leaseSchema = pgTable('leases', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenantSchema.id, { onDelete: 'cascade' }),
+  startDate: timestamp('start_date', { mode: 'date' }).notNull(),
+  endDate: timestamp('end_date', { mode: 'date' }).notNull(),
+  deposit: real('deposit').notNull(),
+  rent: real('rent').notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Payment model
+export const paymentSchema = pgTable('payments', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  leaseId: uuid('lease_id')
+    .notNull()
+    .references(() => leaseSchema.id, { onDelete: 'cascade' }),
+  amount: real('amount').notNull(),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  lateFee: real('late_fee'),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Expense model
+export const expenseSchema = pgTable('expenses', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id')
+    .notNull()
+    .references(() => propertySchema.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 100 }).notNull(), // e.g., "Association", "Repair"
+  amount: real('amount').notNull(),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Appliance model
+export const applianceSchema = pgTable('appliances', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  unitId: uuid('unit_id')
+    .notNull()
+    .references(() => unitSchema.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 100 }).notNull(), // e.g., "Refrigerator"
+  purchaseDate: timestamp('purchase_date', { mode: 'date' }),
+  warrantyExp: timestamp('warranty_exp', { mode: 'date' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// TODO: Add models for RenovationTask, ParkingPermit, etc.

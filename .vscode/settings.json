@@ -62,5 +62,6 @@
     "pcss",
     "postcss",
     "github-actions-workflow"
-  ]
+  ],
+  "i18n-ally.extract.autoDetect": true
 }

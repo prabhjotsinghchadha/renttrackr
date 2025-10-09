@@ -23,7 +23,7 @@ export const LocaleSwitcher = () => {
       className="border border-gray-300 font-medium focus:outline-hidden focus-visible:ring-3"
       aria-label="lang-switcher"
     >
-      {routing.locales.map(elt => (
+      {routing.locales.map((elt) => (
         <option key={elt} value={elt}>
           {elt.toUpperCase()}
         </option>

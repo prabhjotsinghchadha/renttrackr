@@ -101,7 +101,8 @@ All text must meet **WCAG AAA** standards:
 **Primary:** System font stack for instant loading
 
 ```css
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+font-family:
+  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 ```
 
 **Benefits:**
@@ -472,7 +473,7 @@ transition: color 300ms ease;
 **Usage:**
 
 ```tsx
-<FeatureCard icon="💰" title="Track Rent Payments" description="See who's paid and who hasn't..." />;
+<FeatureCard icon="💰" title="Track Rent Payments" description="See who's paid and who hasn't..." />
 ```
 
 ### 2. HeroSection Component
@@ -498,7 +499,7 @@ transition: color 300ms ease;
   subtitle="Keep track of rent payments..."
   ctaText="Get Started"
   ctaLink="/sign-up/"
-/>;
+/>
 ```
 
 ### 3. TrustSection Component
@@ -517,7 +518,7 @@ transition: color 300ms ease;
 **Usage:**
 
 ```tsx
-<TrustSection title="Built With You in Mind" description="RentTrackr was designed..." />;
+<TrustSection title="Built With You in Mind" description="RentTrackr was designed..." />
 ```
 
 ---

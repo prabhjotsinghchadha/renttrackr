@@ -16,10 +16,8 @@ export default antfu(
     lessOpinionated: true,
     isInEditor: false,
 
-    // Code style
-    stylistic: {
-      semi: true,
-    },
+    // Disable stylistic rules - let Prettier handle formatting
+    stylistic: false,
 
     // Format settings
     formatters: {
@@ -27,7 +25,7 @@ export default antfu(
     },
 
     // Ignored paths
-    ignores: ['migrations/**/*'],
+    ignores: ['migrations/**/*', '*.md'],
   },
   // --- Accessibility Rules ---
   jsxA11y.flatConfigs.recommended,
@@ -51,12 +49,15 @@ export default antfu(
   {
     rules: {
       'antfu/no-top-level-await': 'off', // Allow top-level await
-      'style/brace-style': ['error', '1tbs'], // Use the default brace style
       'ts/consistent-type-definitions': ['error', 'type'], // Use `type` instead of `interface`
       'react/prefer-destructuring-assignment': 'off', // Vscode doesn't support automatically destructuring, it's a pain to add a new variable
       'node/prefer-global/process': 'off', // Allow using `process.env`
       'test/padding-around-all': 'error', // Add padding in test files
       'test/prefer-lowercase-title': 'off', // Allow using uppercase titles in test titles
+      'react/prefer-shorthand-fragment': 'off', // Disable React 19 context provider shorthand
+      'react/no-context-provider': 'off', // Allow Context.Provider syntax
+      'react/prefer-shorthand-boolean': 'off', // Disable React 19 shorthand rules
+      'react-19/no-context-provider': 'off', // Disable React 19 context provider rule
     },
   },
 );

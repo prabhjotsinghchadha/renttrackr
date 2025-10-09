@@ -72,8 +72,7 @@ export default async function About(props: IAboutProps) {
             <h2 className="mb-6 text-3xl font-bold text-gray-800">{t('contact_title')}</h2>
             <p className="mb-6 text-xl text-gray-600">{t('contact_text')}</p>
             <p className="text-xl text-gray-600">
-              {t('contact_email')}
-              {' '}
+              {t('contact_email')}{' '}
               <a
                 href="mailto:info@renttrackr.com"
                 className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
