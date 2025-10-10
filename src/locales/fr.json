@@ -5,7 +5,8 @@
     "counter_link": "Compteur",
     "portfolio_link": "Portfolio",
     "sign_in_link": "Se connecter",
-    "sign_up_link": "S'inscrire"
+    "sign_up_link": "S'inscrire",
+    "dashboard_link": "Tableau de bord"
   },
   "BaseTemplate": {
     "description": "Gestion locative simple pour les propriétaires",

@@ -5,7 +5,8 @@
     "counter_link": "Contador",
     "portfolio_link": "Portafolio",
     "sign_in_link": "Iniciar sesión",
-    "sign_up_link": "Registrarse"
+    "sign_up_link": "Registrarse",
+    "dashboard_link": "Panel de Control"
   },
   "BaseTemplate": {
     "description": "Gestión de alquiler simple para propietarios",

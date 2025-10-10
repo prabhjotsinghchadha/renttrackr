@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -12,6 +13,13 @@ export default async function Layout(props: {
     namespace: 'RootLayout',
   });
 
+  // Check if user is authenticated
+  const { userId } = await auth();
+  const isAuthenticated = !!userId;
+
+  // Construct localized dashboard URL
+  const dashboardUrl = locale === 'en' ? '/dashboard/' : `/${locale}/dashboard/`;
+
   return (
     <>
       {/* Header */}
@@ -21,12 +29,21 @@ export default async function Layout(props: {
             🏠 RentTrackr
           </Link>
           <nav className="flex gap-4">
-            <Link
-              href="/sign-in/"
-              className="rounded-lg border-2 border-blue-600 bg-transparent px-6 py-3 text-xl font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white"
-            >
-              {t('sign_in_link')}
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href={dashboardUrl}
+                className="rounded-lg border-2 border-blue-600 bg-transparent px-6 py-3 text-xl font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white"
+              >
+                {t('dashboard_link')}
+              </Link>
+            ) : (
+              <Link
+                href="/sign-in/"
+                className="rounded-lg border-2 border-blue-600 bg-transparent px-6 py-3 text-xl font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white"
+              >
+                {t('sign_in_link')}
+              </Link>
+            )}
           </nav>
         </div>
       </header>

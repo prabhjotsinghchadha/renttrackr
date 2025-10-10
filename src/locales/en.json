@@ -5,7 +5,8 @@
     "counter_link": "Counter",
     "portfolio_link": "Portfolio",
     "sign_in_link": "Sign in",
-    "sign_up_link": "Sign up"
+    "sign_up_link": "Sign up",
+    "dashboard_link": "Dashboard"
   },
   "BaseTemplate": {
     "description": "Simple rental property management for property owners",
