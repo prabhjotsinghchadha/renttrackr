@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { routing } from '@/libs/I18nRouting';
+import { ClerkLocalizations } from '@/utils/AppConfig';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
@@ -47,12 +49,39 @@ export default async function RootLayout(props: {
 
   setRequestLocale(locale);
 
+  const clerkLocale =
+    ClerkLocalizations.supportedLocales[locale] ?? ClerkLocalizations.defaultLocale;
+
+  let signInUrl = '/sign-in';
+  let signUpUrl = '/sign-up';
+  let dashboardUrl = '/dashboard';
+  let afterSignOutUrl = '/';
+
+  if (locale !== routing.defaultLocale) {
+    signInUrl = `/${locale}${signInUrl}`;
+    signUpUrl = `/${locale}${signUpUrl}`;
+    dashboardUrl = `/${locale}${dashboardUrl}`;
+    afterSignOutUrl = `/${locale}${afterSignOutUrl}`;
+  }
+
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider>
-          <PostHogProvider>{props.children}</PostHogProvider>
-        </NextIntlClientProvider>
+        <ClerkProvider
+          appearance={{
+            cssLayerName: 'clerk', // Ensure Clerk is compatible with Tailwind CSS v4
+          }}
+          localization={clerkLocale}
+          signInUrl={signInUrl}
+          signUpUrl={signUpUrl}
+          signInFallbackRedirectUrl={dashboardUrl}
+          signUpFallbackRedirectUrl={dashboardUrl}
+          afterSignOutUrl={afterSignOutUrl}
+        >
+          <NextIntlClientProvider>
+            <PostHogProvider>{props.children}</PostHogProvider>
+          </NextIntlClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
