@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { getPaymentMetrics } from '@/actions/PaymentActions';
+import { getPropertyCount } from '@/actions/PropertyActions';
+import { getTenantCount } from '@/actions/TenantActions';
 import { getCurrentUser } from '@/helpers/AuthHelper';
 
 export async function generateMetadata(props: {
@@ -19,7 +22,7 @@ export async function generateMetadata(props: {
 }
 
 export default async function Dashboard(props: { params: Promise<{ locale: string }> }) {
-  const { locale } = await props.params;
+  const { locale} = await props.params;
   setRequestLocale(locale);
   const t = await getTranslations({
     locale,
@@ -29,7 +32,10 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
   // Get the current user from the database
   const user = await getCurrentUser();
 
-  // TODO: Fetch dashboard data from database
+  // Fetch dashboard data from database
+  const propertyCount = await getPropertyCount();
+  const tenantCount = await getTenantCount();
+  const paymentMetrics = await getPaymentMetrics();
 
   return (
     <div className="py-8 md:py-12">
@@ -47,7 +53,7 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
             <div className="text-lg font-semibold text-gray-600">{t('total_properties')}</div>
             <div className="text-5xl">🏠</div>
           </div>
-          <div className="mt-4 text-4xl font-bold text-gray-800">0</div>
+          <div className="mt-4 text-4xl font-bold text-gray-800">{propertyCount}</div>
           <Link
             href="/dashboard/properties"
             className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"
@@ -61,7 +67,7 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
             <div className="text-lg font-semibold text-gray-600">{t('active_tenants')}</div>
             <div className="text-5xl">👥</div>
           </div>
-          <div className="mt-4 text-4xl font-bold text-gray-800">0</div>
+          <div className="mt-4 text-4xl font-bold text-gray-800">{tenantCount}</div>
           <Link
             href="/dashboard/tenants"
             className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"
@@ -75,7 +81,9 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
             <div className="text-lg font-semibold text-gray-600">{t('monthly_revenue')}</div>
             <div className="text-5xl">💰</div>
           </div>
-          <div className="mt-4 text-4xl font-bold text-green-600">$0</div>
+          <div className="mt-4 text-4xl font-bold text-green-600">
+            ${paymentMetrics.totalCollected.toFixed(2)}
+          </div>
           <Link
             href="/dashboard/rents"
             className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"
@@ -89,7 +97,7 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
             <div className="text-lg font-semibold text-gray-600">{t('overdue_payments')}</div>
             <div className="text-5xl">⚠️</div>
           </div>
-          <div className="mt-4 text-4xl font-bold text-red-600">0</div>
+          <div className="mt-4 text-4xl font-bold text-red-600">{paymentMetrics.overdue}</div>
           <Link
             href="/dashboard/rents"
             className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"

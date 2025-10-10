@@ -134,7 +134,8 @@
     "add_property": "Add Property",
     "no_properties": "No properties yet",
     "no_properties_description": "Get started by adding your first property.",
-    "add_first_property": "Add your first property"
+    "add_first_property": "Add your first property",
+    "added_on": "Added on"
   },
   "PropertyDetail": {
     "meta_title": "Property Details",

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { getUserProperties } from '@/actions/PropertyActions';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -25,8 +26,9 @@ export default async function PropertiesPage(props: { params: Promise<{ locale: 
     namespace: 'Properties',
   });
 
-  // TODO: Fetch properties from database
-  const properties = [];
+  // Fetch properties from database
+  const result = await getUserProperties();
+  const properties = result.properties || [];
 
   return (
     <div className="py-8 md:py-12">
@@ -56,7 +58,21 @@ export default async function PropertiesPage(props: { params: Promise<{ locale: 
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Property cards will be rendered here */}
+          {properties.map((property) => (
+            <Link
+              key={property.id}
+              href={`/dashboard/properties/${property.id}`}
+              className="group rounded-xl bg-gray-50 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="mb-4 text-5xl">🏠</div>
+              <h3 className="mb-2 text-xl font-semibold text-gray-800 group-hover:text-blue-600">
+                {property.address}
+              </h3>
+              <p className="text-gray-600">
+                {t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}
+              </p>
+            </Link>
+          ))}
         </div>
       )}
     </div>
