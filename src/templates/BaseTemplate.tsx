@@ -9,49 +9,93 @@ export const BaseTemplate = (props: {
   const t = useTranslations('BaseTemplate');
 
   return (
-    <div className="min-h-screen w-full bg-white text-gray-700 antialiased">
-      <div className="mx-auto">
-        {/* Header */}
-        <header className="border-b border-gray-200 bg-white shadow-sm">
-          <div className="px-6 py-6 md:px-12 lg:px-16 xl:px-24">
-            {/* Logo and Description */}
-            <div className="mb-6">
-              <h1 className="mb-2 flex items-center gap-2 text-3xl font-bold text-gray-800 md:text-4xl">
-                <span className="text-4xl">🏠</span>
+    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700 antialiased">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
+        <div className="mx-auto max-w-[1920px]">
+          <div className="flex items-center justify-between gap-6 px-6 py-4 md:px-8 lg:px-12">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <span className="text-3xl" aria-hidden="true">
+                🏠
+              </span>
+              <h1 className="text-2xl font-bold text-gray-800 lg:text-3xl">
                 {AppConfig.name}
               </h1>
-              <p className="text-lg text-gray-600">{t('description')}</p>
             </div>
 
-            {/* Navigation */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <nav aria-label="Main navigation">
-                <ul className="flex flex-wrap gap-x-6 gap-y-3 text-lg">{props.leftNav}</ul>
+            {/* Navigation Container */}
+            <div className="flex flex-1 items-center justify-between gap-6">
+              {/* Main Navigation */}
+              <nav
+                aria-label="Main navigation"
+                className="hidden flex-1 justify-center lg:flex"
+              >
+                <ul className="flex flex-wrap items-center gap-x-1 xl:gap-x-2">
+                  {props.leftNav}
+                </ul>
               </nav>
 
+              {/* Right Navigation */}
               {props.rightNav && (
-                <nav aria-label="Secondary navigation">
-                  <ul className="flex flex-wrap gap-x-6 gap-y-3 text-lg">{props.rightNav}</ul>
+                <nav aria-label="Secondary navigation" className="hidden lg:flex">
+                  <ul className="flex items-center gap-x-4">{props.rightNav}</ul>
                 </nav>
               )}
             </div>
+
+            {/* Mobile Menu Button - Placeholder for future implementation */}
+            <button
+              type="button"
+              className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800 lg:hidden"
+              aria-label="Toggle menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
           </div>
-        </header>
 
-        {/* Main Content */}
-        <main className="min-h-[calc(100vh-300px)] px-6 md:px-12 lg:px-16 xl:px-24">
-          {props.children}
-        </main>
+          {/* Mobile Navigation */}
+          <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 lg:hidden">
+            <nav aria-label="Mobile main navigation" className="mb-4">
+              <ul className="space-y-2">{props.leftNav}</ul>
+            </nav>
+            {props.rightNav && (
+              <nav aria-label="Mobile secondary navigation" className="border-t border-gray-200 pt-4">
+                <ul className="space-y-2">{props.rightNav}</ul>
+              </nav>
+            )}
+          </div>
+        </div>
+      </header>
 
-        {/* Footer */}
-        <footer className="border-t border-gray-200 bg-gray-50 px-6 py-12 text-center md:px-12 lg:px-16 xl:px-24">
-          <p className="text-lg leading-relaxed text-gray-600">
+      {/* Main Content */}
+      <main className="mx-auto w-full max-w-[1920px] flex-1 px-6 py-8 md:px-8 md:py-12 lg:px-12">
+        {props.children}
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-gray-800 px-6 py-8 text-center md:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1920px]">
+          <p className="text-lg leading-relaxed text-blue-200">
             {`© Copyright ${new Date().getFullYear()} ${AppConfig.name}. `}
             {t.rich('made_with', {
               author: () => (
                 <a
                   href="https://prabhjotsinghchadha.com"
-                  className="text-blue-600 transition-colors hover:text-blue-700 hover:underline"
+                  className="text-blue-300 transition-colors hover:text-white hover:underline"
                 >
                   Prabhjot Singh Chadha
                 </a>
@@ -64,8 +108,8 @@ export const BaseTemplate = (props: {
            * The link doesn't need to appear on every pages, one link on one page is enough.
            * For example, in the `About` page. Thank you for your support, it'll mean a lot to me.
            */}
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
   );
 };

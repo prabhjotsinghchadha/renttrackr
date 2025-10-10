@@ -22,7 +22,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('dashboard_link')}
             </Link>
@@ -30,7 +30,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/properties/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('properties_link')}
             </Link>
@@ -38,7 +38,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/tenants/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('tenants_link')}
             </Link>
@@ -46,7 +46,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/rents/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('rents_link')}
             </Link>
@@ -54,7 +54,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/expenses/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('expenses_link')}
             </Link>
@@ -62,7 +62,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/renovations/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('renovations_link')}
             </Link>
@@ -70,7 +70,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/parking/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('parking_link')}
             </Link>
@@ -78,7 +78,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/financials/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('financials_link')}
             </Link>
@@ -86,7 +86,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/user-profile/"
-              className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >
               {t('user_profile_link')}
             </Link>
@@ -98,7 +98,7 @@ export default async function DashboardLayout(props: {
           <li>
             <SignOutButton>
               <button
-                className="font-semibold text-gray-700 transition-colors hover:text-blue-600"
+                className="block rounded-lg px-4 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
                 type="button"
               >
                 {t('sign_out')}
@@ -106,7 +106,7 @@ export default async function DashboardLayout(props: {
             </SignOutButton>
           </li>
 
-          <li>
+          <li className="flex items-center">
             <LocaleSwitcher />
           </li>
         </>
