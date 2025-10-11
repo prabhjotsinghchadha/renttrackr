@@ -125,6 +125,8 @@
     "upcoming_tasks": "Tareas Próximas",
     "no_recent_payments": "No hay pagos recientes para mostrar",
     "no_upcoming_tasks": "No hay tareas próximas",
+    "view_all_payments": "Ver Todos los Pagos",
+    "view_all_tasks": "Ver Todas las Tareas",
     "hello_message": "¡Hola {email}!",
     "alternative_message": "¿Quiere construir su SaaS más rápido usando la misma pila? Pruebe <url></url>."
   },

@@ -125,6 +125,8 @@
     "upcoming_tasks": "Upcoming Tasks",
     "no_recent_payments": "No recent payments to display",
     "no_upcoming_tasks": "No upcoming tasks",
+    "view_all_payments": "View All Payments",
+    "view_all_tasks": "View All Tasks",
     "hello_message": "Hello {email}!",
     "alternative_message": "Want to build your SaaS faster using the same stack? Try <url></url>."
   },

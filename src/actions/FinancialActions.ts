@@ -425,7 +425,7 @@ export async function generateTaxSummary() {
         if (!acc[category]) {
           acc[category] = { amount: 0, count: 0, items: [] };
         }
-        
+
         const categoryData = acc[category];
         if (categoryData) {
           categoryData.amount += expense.amount;
