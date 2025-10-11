@@ -462,13 +462,22 @@
     "annual_income": "Annual Income",
     "annual_expenses": "Annual Expenses",
     "calculate": "Calculate",
+    "reset": "Reset",
+    "roi_result": "ROI Calculation Result",
+    "roi_percentage": "ROI Percentage",
+    "net_annual_income": "Net Annual Income",
+    "positive_roi_message": "Great! This investment shows positive returns.",
+    "negative_roi_message": "This investment is currently showing negative returns.",
     "reports": "Reports",
     "income_statement": "Income Statement",
     "income_statement_description": "View detailed income breakdown",
     "cash_flow": "Cash Flow Analysis",
     "cash_flow_description": "Track money in and out",
     "tax_summary": "Tax Summary",
-    "tax_summary_description": "Prepare for tax season"
+    "tax_summary_description": "Prepare for tax season",
+    "export_excel": "Export Excel",
+    "exporting": "Exporting...",
+    "export_error": "Failed to export report. Please try again."
   },
   "UserProfile": {
     "meta_title": "User Profile"

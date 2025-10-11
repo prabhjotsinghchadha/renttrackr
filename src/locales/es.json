@@ -462,13 +462,22 @@
     "annual_income": "Ingresos Anuales",
     "annual_expenses": "Gastos Anuales",
     "calculate": "Calcular",
+    "reset": "Restablecer",
+    "roi_result": "Resultado del Cálculo de ROI",
+    "roi_percentage": "Porcentaje de ROI",
+    "net_annual_income": "Ingresos Netos Anuales",
+    "positive_roi_message": "¡Excelente! Esta inversión muestra retornos positivos.",
+    "negative_roi_message": "Esta inversión actualmente muestra retornos negativos.",
     "reports": "Informes",
     "income_statement": "Estado de Resultados",
     "income_statement_description": "Ver desglose detallado de ingresos",
     "cash_flow": "Análisis de Flujo de Caja",
     "cash_flow_description": "Rastrea entradas y salidas de dinero",
     "tax_summary": "Resumen Fiscal",
-    "tax_summary_description": "Prepárate para la temporada de impuestos"
+    "tax_summary_description": "Prepárate para la temporada de impuestos",
+    "export_excel": "Exportar Excel",
+    "exporting": "Exportando...",
+    "export_error": "Error al exportar informe. Por favor intenta de nuevo."
   },
   "UserProfile": {
     "meta_title": "Perfil de Usuario"

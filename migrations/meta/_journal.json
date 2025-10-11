@@ -8,6 +8,13 @@
       "when": 1760039529985,
       "tag": "0000_aberrant_sway",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760213434074,
+      "tag": "0001_broad_black_bolt",
+      "breakpoints": true
     }
   ]
 }
