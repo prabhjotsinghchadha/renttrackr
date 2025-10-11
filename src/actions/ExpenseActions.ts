@@ -175,6 +175,49 @@ export async function deleteExpense(expenseId: string) {
 }
 
 /**
+ * Get all expenses with property information
+ */
+export async function getExpensesWithPropertyInfo() {
+  try {
+    const user = await requireAuth();
+
+    // Get all user's properties
+    const properties = await db
+      .select()
+      .from(propertySchema)
+      .where(eq(propertySchema.userId, user.id));
+
+    if (properties.length === 0) {
+      return { success: true, expenses: [] };
+    }
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get all expenses for these properties
+    const expenses = await db
+      .select()
+      .from(expenseSchema)
+      .where(inArray(expenseSchema.propertyId, propertyIds))
+      .orderBy(sql`${expenseSchema.date} DESC`);
+
+    // Combine expense and property information
+    const expensesWithInfo = expenses.map((expense) => {
+      const property = properties.find((p) => p.id === expense.propertyId);
+
+      return {
+        ...expense,
+        propertyAddress: property?.address || 'Unknown',
+      };
+    });
+
+    return { success: true, expenses: expensesWithInfo };
+  } catch (error) {
+    console.error('Error fetching expenses with property info:', error);
+    return { success: false, expenses: [], error: 'Failed to fetch expenses' };
+  }
+}
+
+/**
  * Get expense metrics for the current user
  */
 export async function getExpenseMetrics() {
