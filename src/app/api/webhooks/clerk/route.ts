@@ -21,10 +21,7 @@ export async function POST(req: Request) {
 
   if (!WEBHOOK_SECRET) {
     console.error('CLERK_WEBHOOK_SECRET is not set');
-    return NextResponse.json(
-      { error: 'Webhook secret not configured' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
   }
 
   // Get the headers
@@ -35,10 +32,7 @@ export async function POST(req: Request) {
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return NextResponse.json(
-      { error: 'Missing svix headers' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Missing svix headers' }, { status: 400 });
   }
 
   // Get the body
@@ -59,10 +53,7 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error('Error verifying webhook:', err);
-    return NextResponse.json(
-      { error: 'Invalid signature' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
   // Handle the webhook event
@@ -72,14 +63,13 @@ export async function POST(req: Request) {
     const { id, email_addresses, first_name, last_name } = evt.data;
 
     // Get the primary email
-    const primaryEmail = email_addresses.find((email) => email.id === evt.data.primary_email_address_id);
+    const primaryEmail = email_addresses.find(
+      (email) => email.id === evt.data.primary_email_address_id,
+    );
 
     if (!primaryEmail) {
       console.error('No primary email found for user:', id);
-      return NextResponse.json(
-        { error: 'No primary email found' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'No primary email found' }, { status: 400 });
     }
 
     // Create the user in our database
@@ -92,10 +82,7 @@ export async function POST(req: Request) {
 
     if (!result.success) {
       console.error('Failed to create user in database:', result.error);
-      return NextResponse.json(
-        { error: 'Failed to create user' },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
     }
 
     console.warn('User created:', result.user);
@@ -103,14 +90,13 @@ export async function POST(req: Request) {
     const { id, email_addresses, first_name, last_name } = evt.data;
 
     // Get the primary email
-    const primaryEmail = email_addresses.find((email) => email.id === evt.data.primary_email_address_id);
+    const primaryEmail = email_addresses.find(
+      (email) => email.id === evt.data.primary_email_address_id,
+    );
 
     if (!primaryEmail) {
       console.error('No primary email found for user:', id);
-      return NextResponse.json(
-        { error: 'No primary email found' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'No primary email found' }, { status: 400 });
     }
 
     // Update the user in our database
@@ -122,10 +108,7 @@ export async function POST(req: Request) {
 
     if (!result.success) {
       console.error('Failed to update user in database:', result.error);
-      return NextResponse.json(
-        { error: 'Failed to update user' },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
     }
 
     console.warn('User updated:', result.user);
@@ -134,10 +117,7 @@ export async function POST(req: Request) {
 
     if (!id) {
       console.error('No user ID found in delete event');
-      return NextResponse.json(
-        { error: 'No user ID found' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'No user ID found' }, { status: 400 });
     }
 
     // Delete the user from our database
@@ -145,10 +125,7 @@ export async function POST(req: Request) {
 
     if (!result.success) {
       console.error('Failed to delete user from database:', result.error);
-      return NextResponse.json(
-        { error: 'Failed to delete user' },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
     }
 
     console.warn('User deleted:', id);
@@ -156,4 +133,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ success: true });
 }
-

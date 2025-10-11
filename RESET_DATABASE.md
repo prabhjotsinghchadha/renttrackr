@@ -68,10 +68,12 @@ After the server starts:
 ## Why This Happened
 
 The old database had:
+
 - `users.id` as `uuid` type
 - `properties.user_id` as `uuid` type
 
 The new schema has:
+
 - `users.id` as `varchar(255)` (for Clerk user IDs)
 - `properties.user_id` as `varchar(255)`
 
@@ -97,4 +99,3 @@ rm -rf local.db && npm run dev
 ```
 
 Done! 🎉
-

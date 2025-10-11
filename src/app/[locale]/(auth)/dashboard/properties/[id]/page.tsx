@@ -32,7 +32,7 @@ export default async function PropertyDetailPage(props: {
 
   // Fetch property from database
   const result = await getPropertyById(id);
-  
+
   if (!result.success || !result.property) {
     notFound();
   }
@@ -96,7 +96,7 @@ export default async function PropertyDetailPage(props: {
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-gray-800">{t('units')}</h2>
             </div>
-            
+
             {units.length === 0 ? (
               <div className="mb-6 rounded-lg bg-yellow-50 p-6 text-center">
                 <div className="mb-3 text-5xl">🏢</div>
@@ -128,7 +128,7 @@ export default async function PropertyDetailPage(props: {
                 ))}
               </div>
             )}
-            
+
             <AddUnitForm propertyId={id} />
           </div>
         </div>

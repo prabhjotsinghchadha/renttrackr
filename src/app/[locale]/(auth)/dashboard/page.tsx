@@ -22,7 +22,7 @@ export async function generateMetadata(props: {
 }
 
 export default async function Dashboard(props: { params: Promise<{ locale: string }> }) {
-  const { locale} = await props.params;
+  const { locale } = await props.params;
   setRequestLocale(locale);
   const t = await getTranslations({
     locale,

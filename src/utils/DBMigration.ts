@@ -14,18 +14,24 @@ try {
   // Check if the error is about tables already existing
   const errorMessage = error instanceof Error ? error.message : String(error);
   const errorCause = error && typeof error === 'object' && 'cause' in error ? error.cause : null;
-  const causeMessage = errorCause && typeof errorCause === 'object' && 'message' in errorCause 
-    ? String(errorCause.message) 
-    : '';
-  
+  const causeMessage =
+    errorCause && typeof errorCause === 'object' && 'message' in errorCause
+      ? String(errorCause.message)
+      : '';
+
   // Check if this is a "relation already exists" error (PostgreSQL error code 42P07)
-  const isAlreadyExistsError = 
-    errorMessage.includes('already exists') || 
+  const isAlreadyExistsError =
+    errorMessage.includes('already exists') ||
     causeMessage.includes('already exists') ||
-    (errorCause && typeof errorCause === 'object' && 'code' in errorCause && errorCause.code === '42P07');
-  
+    (errorCause &&
+      typeof errorCause === 'object' &&
+      'code' in errorCause &&
+      errorCause.code === '42P07');
+
   if (isAlreadyExistsError) {
-    console.warn('⚠️  Tables already exist, skipping migration. This is normal if you\'ve already run migrations.');
+    console.warn(
+      "⚠️  Tables already exist, skipping migration. This is normal if you've already run migrations.",
+    );
     console.warn('💡 Tip: If you want a fresh start, delete the local.db file and restart.');
   } else {
     // Re-throw other errors

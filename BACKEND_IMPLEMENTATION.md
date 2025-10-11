@@ -9,6 +9,7 @@ We've implemented a complete user management system that automatically syncs Cle
 #### Files Created:
 
 **`src/actions/UserActions.ts`** - Server Actions for User CRUD
+
 - ✅ `createUser()` - Create new user in database
 - ✅ `updateUser()` - Update user information
 - ✅ `deleteUser()` - Remove user from database
@@ -17,6 +18,7 @@ We've implemented a complete user management system that automatically syncs Cle
 - ✅ `userExists()` - Check if user exists
 
 **`src/app/api/webhooks/clerk/route.ts`** - Clerk Webhook Handler
+
 - ✅ Handles `user.created` events
 - ✅ Handles `user.updated` events
 - ✅ Handles `user.deleted` events
@@ -24,20 +26,24 @@ We've implemented a complete user management system that automatically syncs Cle
 - ✅ Proper error handling and logging
 
 **`src/helpers/AuthHelper.ts`** - Authentication Helpers
+
 - ✅ `getCurrentUser()` - Get current user with fallback creation
 - ✅ `requireAuth()` - Require authentication (throws if not authenticated)
 - ✅ `getCurrentUserId()` - Get Clerk user ID
 
 **`src/libs/Env.ts`** - Updated
+
 - ✅ Added `CLERK_WEBHOOK_SECRET` environment variable validation
 
 #### Files Updated:
 
 **`src/app/[locale]/(auth)/dashboard/page.tsx`**
+
 - ✅ Now fetches current user from database
 - ✅ Displays personalized welcome message with user's name
 
 **Translation Files** (`src/locales/*.json`)
+
 - ✅ Added `welcome_back` translation key in English, Spanish, and French
 
 ### 2. Database Schema
@@ -60,6 +66,7 @@ export const userSchema = pgTable('users', {
 ### 3. Dependencies
 
 **Installed:**
+
 - ✅ `svix` - For Clerk webhook signature verification
 
 ## 🔧 Setup Required
@@ -165,7 +172,7 @@ import { getCurrentUser } from '@/helpers/AuthHelper';
 
 export default async function MyPage() {
   const user = await getCurrentUser();
-  
+
   return (
     <div>
       <h1>Hello, {user?.name || 'Guest'}!</h1>
@@ -182,7 +189,7 @@ import { requireAuth } from '@/helpers/AuthHelper';
 
 export default async function ProtectedPage() {
   const user = await requireAuth(); // Throws if not authenticated
-  
+
   return <div>Welcome, {user.name}!</div>;
 }
 ```
@@ -198,7 +205,7 @@ import { propertySchema } from '@/models/Schema';
 
 export async function createProperty(data: { address: string }) {
   const user = await requireAuth();
-  
+
   const [property] = await db
     .insert(propertySchema)
     .values({
@@ -206,7 +213,7 @@ export async function createProperty(data: { address: string }) {
       address: data.address,
     })
     .returning();
-  
+
   return property;
 }
 ```
@@ -224,23 +231,28 @@ export async function createProperty(data: { address: string }) {
 Now that user authentication is set up, you can:
 
 1. **Create Property Actions** (`src/actions/PropertyActions.ts`)
+
    - Create, read, update, delete properties
    - Link properties to users
 
 2. **Create Tenant Actions** (`src/actions/TenantActions.ts`)
+
    - Manage tenant information
    - Link tenants to units
 
 3. **Create Lease Actions** (`src/actions/LeaseActions.ts`)
+
    - Manage lease agreements
    - Track lease dates and terms
 
 4. **Create Payment Actions** (`src/actions/PaymentActions.ts`)
+
    - Record rent payments
    - Track late fees
    - Calculate totals
 
 5. **Create Expense Actions** (`src/actions/ExpenseActions.ts`)
+
    - Log property expenses
    - Categorize expenses
    - Generate reports
@@ -266,4 +278,3 @@ See `BACKEND_SETUP.md` for detailed setup instructions and troubleshooting.
 ---
 
 **Status**: ✅ Backend user management is fully implemented and ready to use!
-

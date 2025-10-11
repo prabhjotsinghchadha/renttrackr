@@ -3,6 +3,7 @@
 ## Problem
 
 You're seeing this error:
+
 ```
 Error: relation "users" already exists
 ```
@@ -14,17 +15,20 @@ This happens because the `users` table (and other tables) already exist in your 
 ### Option 1: Let the App Handle It (Easiest - ✅ FIXED)
 
 I've updated `src/utils/DBMigration.ts` to gracefully handle the "already exists" error. The app will now:
+
 - Try to run migrations
 - If tables already exist (PostgreSQL error code 42P07), it will skip with a warning
 - Continue running normally without crashing
 
 **Just restart your dev server:**
+
 ```bash
 # Press Ctrl+C to stop the current server
 npm run dev
 ```
 
 You should see:
+
 ```
 ⚠️  Tables already exist, skipping migration. This is normal if you've already run migrations.
 💡 Tip: If you want a fresh start, delete the local.db file and restart.
@@ -57,11 +61,13 @@ npm run dev
 If you're using a remote database (like Neon) and want to keep your data, you can manually mark the migration as completed.
 
 1. Connect to your database using Drizzle Studio:
+
 ```bash
 npm run db:studio
 ```
 
 2. Or use psql/database client and run:
+
 ```sql
 -- Create migrations tracking table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
@@ -77,6 +83,7 @@ ON CONFLICT DO NOTHING;
 ```
 
 3. Restart your dev server:
+
 ```bash
 npm run dev
 ```
@@ -114,4 +121,3 @@ After restarting your dev server, you should:
 4. ✅ See the dashboard
 
 If you still see errors, try **Option 2** (clean slate) for local development.
-

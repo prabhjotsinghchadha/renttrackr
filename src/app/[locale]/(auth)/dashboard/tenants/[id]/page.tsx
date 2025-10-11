@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getLeasesByTenantId } from '@/actions/LeaseActions';
 import { getTenantById } from '@/actions/TenantActions';
 
 export async function generateMetadata(props: {
@@ -31,12 +32,18 @@ export default async function TenantDetailPage(props: {
 
   // Fetch tenant from database
   const result = await getTenantById(id);
-  
+
   if (!result.success || !result.tenant) {
     notFound();
   }
 
   const tenant = result.tenant;
+
+  // Fetch leases for this tenant
+  const leasesResult = await getLeasesByTenantId(id);
+  const leases = leasesResult.success ? leasesResult.leases : [];
+  const activeLease = leases.find((lease: any) => new Date(lease.endDate) >= new Date());
+  const hasActiveLease = !!activeLease;
 
   return (
     <div className="py-8 md:py-12">
@@ -100,8 +107,63 @@ export default async function TenantDetailPage(props: {
 
           {/* Lease section */}
           <div className="rounded-xl bg-gray-50 p-8">
-            <h2 className="mb-6 text-2xl font-semibold text-gray-800">{t('lease_info')}</h2>
-            <p className="text-lg text-gray-600">{t('lease_coming_soon')}</p>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-gray-800">{t('lease_info')}</h2>
+              {!hasActiveLease && (
+                <Link
+                  href={`/${locale}/dashboard/tenants/${id}/lease/new`}
+                  className="rounded-xl bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition-all duration-300 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none"
+                >
+                  {t('create_lease')}
+                </Link>
+              )}
+            </div>
+            {hasActiveLease ? (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-green-50 p-4">
+                  <span className="text-lg font-semibold text-green-700">{t('active_lease')}</span>
+                </div>
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('lease_start')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    {new Date(activeLease.startDate).toLocaleDateString(locale, {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('lease_end')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    {new Date(activeLease.endDate).toLocaleDateString(locale, {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('monthly_rent')}:</span>
+                  <span className="ml-2 text-lg font-semibold text-green-600">
+                    ${activeLease.rent.toFixed(2)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">
+                    {t('security_deposit')}:
+                  </span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    ${activeLease.deposit.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center">
+                <div className="mb-4 text-6xl">📄</div>
+                <p className="text-lg text-gray-600">{t('no_active_lease')}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -110,12 +172,21 @@ export default async function TenantDetailPage(props: {
           <div className="rounded-xl bg-gray-50 p-8">
             <h3 className="mb-6 text-xl font-semibold text-gray-800">{t('quick_actions')}</h3>
             <div className="space-y-3">
-              <button
-                type="button"
-                className="w-full rounded-xl border-2 border-blue-600 bg-white px-6 py-3 text-lg font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:ring-4 focus:ring-blue-300 focus:outline-none"
-              >
-                {t('record_payment')}
-              </button>
+              {hasActiveLease ? (
+                <Link
+                  href={`/${locale}/dashboard/rents/new`}
+                  className="block w-full rounded-xl border-2 border-blue-600 bg-white px-6 py-3 text-center text-lg font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:ring-4 focus:ring-blue-300 focus:outline-none"
+                >
+                  {t('record_payment')}
+                </Link>
+              ) : (
+                <Link
+                  href={`/${locale}/dashboard/tenants/${id}/lease/new`}
+                  className="block w-full rounded-xl border-2 border-blue-600 bg-white px-6 py-3 text-center text-lg font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:ring-4 focus:ring-blue-300 focus:outline-none"
+                >
+                  {t('create_lease')}
+                </Link>
+              )}
               <button
                 type="button"
                 className="w-full rounded-xl border-2 border-gray-300 bg-white px-6 py-3 text-lg font-semibold text-gray-700 transition-all duration-300 hover:border-gray-400 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 focus:outline-none"
@@ -134,4 +205,3 @@ export default async function TenantDetailPage(props: {
     </div>
   );
 }
-

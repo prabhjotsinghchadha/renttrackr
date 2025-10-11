@@ -213,4 +213,3 @@ export function TenantForm({ locale }: TenantFormProps) {
     </form>
   );
 }
-

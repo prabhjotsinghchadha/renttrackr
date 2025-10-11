@@ -7,11 +7,7 @@ import { userSchema } from '@/models/Schema';
 /**
  * Create a new user in the database
  */
-export async function createUser(data: {
-  id: string;
-  email: string;
-  name?: string | null;
-}) {
+export async function createUser(data: { id: string; email: string; name?: string | null }) {
   try {
     const [user] = await db
       .insert(userSchema)
@@ -111,4 +107,3 @@ export async function userExists(userId: string): Promise<boolean> {
     return false;
   }
 }
-

@@ -11,12 +11,12 @@ import { propertySchema, unitSchema } from '@/models/Schema';
 export async function getUserProperties() {
   try {
     const user = await requireAuth();
-    
+
     const properties = await db
       .select()
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
-    
+
     return { success: true, properties };
   } catch (error) {
     console.error('Error fetching properties:', error);
@@ -30,26 +30,20 @@ export async function getUserProperties() {
 export async function getPropertyById(propertyId: string) {
   try {
     const user = await requireAuth();
-    
+
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
       .limit(1);
-    
+
     if (!property) {
       return { success: false, property: null, error: 'Property not found' };
     }
-    
+
     // Get units for this property
-    const units = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.propertyId, propertyId));
-    
+    const units = await db.select().from(unitSchema).where(eq(unitSchema.propertyId, propertyId));
+
     return { success: true, property, units };
   } catch (error) {
     console.error('Error fetching property:', error);
@@ -60,12 +54,10 @@ export async function getPropertyById(propertyId: string) {
 /**
  * Create a new property
  */
-export async function createProperty(data: {
-  address: string;
-}) {
+export async function createProperty(data: { address: string }) {
   try {
     const user = await requireAuth();
-    
+
     const [property] = await db
       .insert(propertySchema)
       .values({
@@ -73,7 +65,7 @@ export async function createProperty(data: {
         address: data.address,
       })
       .returning();
-    
+
     return { success: true, property };
   } catch (error) {
     console.error('Error creating property:', error);
@@ -88,27 +80,24 @@ export async function updateProperty(
   propertyId: string,
   data: {
     address?: string;
-  }
+  },
 ) {
   try {
     const user = await requireAuth();
-    
+
     const [property] = await db
       .update(propertySchema)
       .set({
         address: data.address,
         updatedAt: new Date(),
       })
-      .where(and(
-        eq(propertySchema.id, propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
       .returning();
-    
+
     if (!property) {
       return { success: false, property: null, error: 'Property not found' };
     }
-    
+
     return { success: true, property };
   } catch (error) {
     console.error('Error updating property:', error);
@@ -122,14 +111,11 @@ export async function updateProperty(
 export async function deleteProperty(propertyId: string) {
   try {
     const user = await requireAuth();
-    
+
     await db
       .delete(propertySchema)
-      .where(and(
-        eq(propertySchema.id, propertyId),
-        eq(propertySchema.userId, user.id)
-      ));
-    
+      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)));
+
     return { success: true };
   } catch (error) {
     console.error('Error deleting property:', error);
@@ -143,12 +129,12 @@ export async function deleteProperty(propertyId: string) {
 export async function getPropertyCount() {
   try {
     const user = await requireAuth();
-    
+
     const properties = await db
       .select()
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
-    
+
     return properties.length;
   } catch (error) {
     console.error('Error counting properties:', error);
@@ -162,34 +148,34 @@ export async function getPropertyCount() {
 export async function getUserUnits() {
   try {
     const user = await requireAuth();
-    
+
     // Get all user's property IDs
     const properties = await db
       .select({ id: propertySchema.id, address: propertySchema.address })
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
-    
+
     if (properties.length === 0) {
       return { success: true, units: [] };
     }
-    
-    const propertyIds = properties.map(p => p.id);
-    
+
+    const propertyIds = properties.map((p) => p.id);
+
     // Get all units for these properties
     const allUnits = await db
       .select()
       .from(unitSchema)
       .where(inArray(unitSchema.propertyId, propertyIds));
-    
+
     // Enrich units with property address
-    const enrichedUnits = allUnits.map(unit => {
-      const property = properties.find(p => p.id === unit.propertyId);
+    const enrichedUnits = allUnits.map((unit) => {
+      const property = properties.find((p) => p.id === unit.propertyId);
       return {
         ...unit,
         propertyAddress: property?.address || 'Unknown',
       };
     });
-    
+
     return { success: true, units: enrichedUnits };
   } catch (error) {
     console.error('Error fetching units:', error);
@@ -207,21 +193,18 @@ export async function createUnit(data: {
 }) {
   try {
     const user = await requireAuth();
-    
+
     // Verify the property belongs to the user
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, data.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(and(eq(propertySchema.id, data.propertyId), eq(propertySchema.userId, user.id)))
       .limit(1);
-    
+
     if (!property) {
       return { success: false, unit: null, error: 'Property not found or unauthorized' };
     }
-    
+
     const [unit] = await db
       .insert(unitSchema)
       .values({
@@ -230,7 +213,7 @@ export async function createUnit(data: {
         rentAmount: data.rentAmount,
       })
       .returning();
-    
+
     return { success: true, unit };
   } catch (error) {
     console.error('Error creating unit:', error);
@@ -246,35 +229,34 @@ export async function updateUnit(
   data: {
     unitNumber?: string;
     rentAmount?: number;
-  }
+  },
 ) {
   try {
     const user = await requireAuth();
-    
+
     // Verify the unit belongs to the user's property
     const [existingUnit] = await db
       .select()
       .from(unitSchema)
       .where(eq(unitSchema.id, unitId))
       .limit(1);
-    
+
     if (!existingUnit) {
       return { success: false, unit: null, error: 'Unit not found' };
     }
-    
+
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, existingUnit.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(
+        and(eq(propertySchema.id, existingUnit.propertyId), eq(propertySchema.userId, user.id)),
+      )
       .limit(1);
-    
+
     if (!property) {
       return { success: false, unit: null, error: 'Unauthorized' };
     }
-    
+
     const [unit] = await db
       .update(unitSchema)
       .set({
@@ -284,7 +266,7 @@ export async function updateUnit(
       })
       .where(eq(unitSchema.id, unitId))
       .returning();
-    
+
     return { success: true, unit };
   } catch (error) {
     console.error('Error updating unit:', error);
@@ -298,37 +280,29 @@ export async function updateUnit(
 export async function deleteUnit(unitId: string) {
   try {
     const user = await requireAuth();
-    
+
     // Verify the unit belongs to the user's property
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, unitId))
-      .limit(1);
-    
+    const [unit] = await db.select().from(unitSchema).where(eq(unitSchema.id, unitId)).limit(1);
+
     if (!unit) {
       return { success: false, error: 'Unit not found' };
     }
-    
+
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, unit.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
       .limit(1);
-    
+
     if (!property) {
       return { success: false, error: 'Unauthorized' };
     }
-    
+
     await db.delete(unitSchema).where(eq(unitSchema.id, unitId));
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error deleting unit:', error);
     return { success: false, error: 'Failed to delete unit' };
   }
 }
-

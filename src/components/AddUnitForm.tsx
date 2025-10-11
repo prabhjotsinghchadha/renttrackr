@@ -75,7 +75,7 @@ export function AddUnitForm({ propertyId, onSuccess }: AddUnitFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-xl bg-white p-6 shadow-md">
       <h3 className="text-xl font-semibold text-gray-800">{t('add_new_unit')}</h3>
-      
+
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label htmlFor="unitNumber" className="mb-2 block text-sm font-semibold text-gray-700">
@@ -144,4 +144,3 @@ export function AddUnitForm({ propertyId, onSuccess }: AddUnitFormProps) {
     </form>
   );
 }
-

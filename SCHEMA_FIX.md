@@ -7,28 +7,31 @@ The original schema used `uuid` type for the user ID, but Clerk uses string IDs 
 ## Changes Made
 
 ### 1. Updated User Schema
+
 Changed the `id` field from `uuid` to `varchar(255)` to support Clerk user IDs:
 
 ```typescript
 // Before
-id: uuid('id').defaultRandom().primaryKey()
+id: uuid('id').defaultRandom().primaryKey();
 
 // After
-id: varchar('id', { length: 255 }).primaryKey() // Clerk user ID
+id: varchar('id', { length: 255 }).primaryKey(); // Clerk user ID
 ```
 
 ### 2. Updated Property Schema
+
 Changed the `userId` foreign key to match:
 
 ```typescript
 // Before
-userId: uuid('user_id')
+userId: uuid('user_id');
 
 // After
-userId: varchar('user_id', { length: 255 })
+userId: varchar('user_id', { length: 255 });
 ```
 
 ### 3. Fresh Database & Migration
+
 - Deleted old `local.db` directory
 - Deleted old migrations
 - Generated new migration with correct schema: `0000_aberrant_sway.sql`
@@ -46,11 +49,13 @@ The migration will run automatically and create all tables with the correct sche
 ## Expected Behavior
 
 When you start the server, you should see:
+
 ```
 ✅ Database migrations completed successfully
 ```
 
 Then:
+
 1. ✅ Visit http://localhost:3000
 2. ✅ Sign up or sign in with Clerk
 3. ✅ Your user data will be saved to the database
@@ -74,6 +79,7 @@ Clerk uses custom string IDs (format: `user_xxxxx`) instead of standard UUIDs. T
 ## Going Forward
 
 All new users will be automatically:
+
 1. Created via Clerk webhook when they sign up
 2. Stored in your database with their Clerk ID
 3. Linked to their properties, tenants, leases, etc.
@@ -83,4 +89,3 @@ The cascade delete is configured, so if a user is deleted from Clerk, all their 
 ---
 
 **Status**: ✅ Schema is now compatible with Clerk user IDs!
-

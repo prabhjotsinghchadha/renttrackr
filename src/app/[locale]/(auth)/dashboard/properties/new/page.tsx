@@ -50,4 +50,3 @@ export default async function NewPropertyPage(props: { params: Promise<{ locale:
     </div>
   );
 }
-

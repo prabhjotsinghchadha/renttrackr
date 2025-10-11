@@ -65,6 +65,7 @@ If you have important data and want to keep it, you need to alter the existing t
 ### ⚠️ Warning:
 
 This will only work if:
+
 - You don't have any users yet (users table is empty)
 - OR you're okay with deleting all users and starting fresh with user authentication
 
@@ -94,8 +95,8 @@ ALTER TABLE "properties" ALTER COLUMN "user_id" TYPE varchar(255);
 ALTER TABLE "users" ALTER COLUMN "id" TYPE varchar(255);
 
 -- Step 5: Re-add foreign key constraint
-ALTER TABLE "properties" ADD CONSTRAINT "properties_user_id_users_id_fk" 
-  FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") 
+ALTER TABLE "properties" ADD CONSTRAINT "properties_user_id_users_id_fk"
+  FOREIGN KEY ("user_id") REFERENCES "public"."users"("id")
   ON DELETE cascade ON UPDATE no action;
 
 -- Step 6: Update migration tracking
@@ -108,9 +109,9 @@ ON CONFLICT DO NOTHING;
 
 ```sql
 -- Check the column types
-SELECT 
-  column_name, 
-  data_type, 
+SELECT
+  column_name,
+  data_type,
   character_maximum_length
 FROM information_schema.columns
 WHERE table_name = 'users' AND column_name = 'id';
@@ -136,6 +137,7 @@ npm run db:migrate
 ```
 
 **However**, this might fail if:
+
 - The first migration (0000_aberrant_sway) was already applied
 - Tables already exist
 
@@ -148,6 +150,7 @@ If it fails, use **Option 1** or **Option 2** above.
 After completing any of the above options:
 
 1. **Start your dev server:**
+
    ```bash
    npm run dev
    ```
@@ -201,6 +204,7 @@ DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/dbname
 ## Summary
 
 **Easiest approach for Neon:**
+
 1. Go to Neon SQL Editor
 2. Drop all tables (run the DROP TABLE commands from Option 1)
 3. Run `npm run db:migrate` locally
@@ -208,9 +212,9 @@ DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/dbname
 5. Sign in and verify!
 
 **For local development:**
+
 ```bash
 rm -rf local.db && npm run dev
 ```
 
 🎉 Done!
-

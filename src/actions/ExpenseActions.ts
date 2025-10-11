@@ -11,26 +11,26 @@ import { expenseSchema, propertySchema } from '@/models/Schema';
 export async function getUserExpenses() {
   try {
     const user = await requireAuth();
-    
+
     // Get all user's property IDs
     const properties = await db
       .select({ id: propertySchema.id })
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
-    
+
     if (properties.length === 0) {
       return { success: true, expenses: [] };
     }
-    
-    const propertyIds = properties.map(p => p.id);
-    
+
+    const propertyIds = properties.map((p) => p.id);
+
     // Get all expenses for these properties
     const expenses = await db
       .select()
       .from(expenseSchema)
       .where(inArray(expenseSchema.propertyId, propertyIds))
       .orderBy(sql`${expenseSchema.date} DESC`);
-    
+
     return { success: true, expenses };
   } catch (error) {
     console.error('Error fetching expenses:', error);
@@ -49,21 +49,18 @@ export async function createExpense(data: {
 }) {
   try {
     const user = await requireAuth();
-    
+
     // Verify the property belongs to the user
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, data.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(and(eq(propertySchema.id, data.propertyId), eq(propertySchema.userId, user.id)))
       .limit(1);
-    
+
     if (!property) {
       return { success: false, expense: null, error: 'Property not found or unauthorized' };
     }
-    
+
     const [expense] = await db
       .insert(expenseSchema)
       .values({
@@ -73,7 +70,7 @@ export async function createExpense(data: {
         date: data.date,
       })
       .returning();
-    
+
     return { success: true, expense };
   } catch (error) {
     console.error('Error creating expense:', error);
@@ -90,36 +87,35 @@ export async function updateExpense(
     type?: string;
     amount?: number;
     date?: Date;
-  }
+  },
 ) {
   try {
     const user = await requireAuth();
-    
+
     // Get the expense
     const [existingExpense] = await db
       .select()
       .from(expenseSchema)
       .where(eq(expenseSchema.id, expenseId))
       .limit(1);
-    
+
     if (!existingExpense) {
       return { success: false, expense: null, error: 'Expense not found' };
     }
-    
+
     // Verify ownership
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, existingExpense.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(
+        and(eq(propertySchema.id, existingExpense.propertyId), eq(propertySchema.userId, user.id)),
+      )
       .limit(1);
-    
+
     if (!property) {
       return { success: false, expense: null, error: 'Unauthorized' };
     }
-    
+
     const [expense] = await db
       .update(expenseSchema)
       .set({
@@ -130,7 +126,7 @@ export async function updateExpense(
       })
       .where(eq(expenseSchema.id, expenseId))
       .returning();
-    
+
     return { success: true, expense };
   } catch (error) {
     console.error('Error updating expense:', error);
@@ -144,34 +140,33 @@ export async function updateExpense(
 export async function deleteExpense(expenseId: string) {
   try {
     const user = await requireAuth();
-    
+
     // Get the expense
     const [existingExpense] = await db
       .select()
       .from(expenseSchema)
       .where(eq(expenseSchema.id, expenseId))
       .limit(1);
-    
+
     if (!existingExpense) {
       return { success: false, error: 'Expense not found' };
     }
-    
+
     // Verify ownership
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(
-        eq(propertySchema.id, existingExpense.propertyId),
-        eq(propertySchema.userId, user.id)
-      ))
+      .where(
+        and(eq(propertySchema.id, existingExpense.propertyId), eq(propertySchema.userId, user.id)),
+      )
       .limit(1);
-    
+
     if (!property) {
       return { success: false, error: 'Unauthorized' };
     }
-    
+
     await db.delete(expenseSchema).where(eq(expenseSchema.id, expenseId));
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error deleting expense:', error);
@@ -185,7 +180,7 @@ export async function deleteExpense(expenseId: string) {
 export async function getExpenseMetrics() {
   try {
     const result = await getUserExpenses();
-    
+
     if (!result.success || !result.expenses) {
       return {
         totalThisMonth: 0,
@@ -194,46 +189,45 @@ export async function getExpenseMetrics() {
         association: 0,
       };
     }
-    
+
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
-    
+
     const totalThisMonth = result.expenses
-      .filter(e => {
+      .filter((e) => {
         const expenseDate = new Date(e.date);
         return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
       })
       .reduce((sum, e) => sum + e.amount, 0);
-    
+
     const totalThisYear = result.expenses
-      .filter(e => {
+      .filter((e) => {
         const expenseDate = new Date(e.date);
         return expenseDate.getFullYear() === currentYear;
       })
       .reduce((sum, e) => sum + e.amount, 0);
-    
+
     const maintenance = result.expenses
-      .filter(e => {
+      .filter((e) => {
         const expenseDate = new Date(e.date);
         return (
-          (e.type.toLowerCase().includes('maintenance') || 
-           e.type.toLowerCase().includes('repair')) &&
+          (e.type.toLowerCase().includes('maintenance') ||
+            e.type.toLowerCase().includes('repair')) &&
           expenseDate.getFullYear() === currentYear
         );
       })
       .reduce((sum, e) => sum + e.amount, 0);
-    
+
     const association = result.expenses
-      .filter(e => {
+      .filter((e) => {
         const expenseDate = new Date(e.date);
         return (
-          e.type.toLowerCase().includes('association') &&
-          expenseDate.getFullYear() === currentYear
+          e.type.toLowerCase().includes('association') && expenseDate.getFullYear() === currentYear
         );
       })
       .reduce((sum, e) => sum + e.amount, 0);
-    
+
     return {
       totalThisMonth,
       totalThisYear,
@@ -250,4 +244,3 @@ export async function getExpenseMetrics() {
     };
   }
 }
-

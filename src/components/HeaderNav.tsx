@@ -48,4 +48,3 @@ export function HeaderNav({ locale }: HeaderNavProps) {
     </nav>
   );
 }
-

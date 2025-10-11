@@ -19,21 +19,14 @@ export const BaseTemplate = (props: {
               <span className="text-3xl" aria-hidden="true">
                 🏠
               </span>
-              <h1 className="text-2xl font-bold text-gray-800 lg:text-3xl">
-                {AppConfig.name}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-800 lg:text-3xl">{AppConfig.name}</h1>
             </div>
 
             {/* Navigation Container */}
             <div className="flex flex-1 items-center justify-between gap-6">
               {/* Main Navigation */}
-              <nav
-                aria-label="Main navigation"
-                className="hidden flex-1 justify-center lg:flex"
-              >
-                <ul className="flex flex-wrap items-center gap-x-1 xl:gap-x-2">
-                  {props.leftNav}
-                </ul>
+              <nav aria-label="Main navigation" className="hidden flex-1 justify-center lg:flex">
+                <ul className="flex flex-wrap items-center gap-x-1 xl:gap-x-2">{props.leftNav}</ul>
               </nav>
 
               {/* Right Navigation */}
@@ -73,7 +66,10 @@ export const BaseTemplate = (props: {
               <ul className="space-y-2">{props.leftNav}</ul>
             </nav>
             {props.rightNav && (
-              <nav aria-label="Mobile secondary navigation" className="border-t border-gray-200 pt-4">
+              <nav
+                aria-label="Mobile secondary navigation"
+                className="border-t border-gray-200 pt-4"
+              >
                 <ul className="space-y-2">{props.rightNav}</ul>
               </nav>
             )}

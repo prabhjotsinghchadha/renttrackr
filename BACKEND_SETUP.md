@@ -5,6 +5,7 @@ This guide explains how the backend is configured to sync Clerk users with your 
 ## Overview
 
 The application uses:
+
 - **Clerk** for authentication
 - **PostgreSQL** (via Neon) for data storage
 - **Drizzle ORM** for database operations
@@ -20,7 +21,9 @@ The application uses:
 ## Files Created
 
 ### 1. User Actions (`src/actions/UserActions.ts`)
+
 Server actions for CRUD operations on users:
+
 - `createUser()` - Create a new user
 - `updateUser()` - Update user information
 - `deleteUser()` - Delete a user
@@ -29,13 +32,17 @@ Server actions for CRUD operations on users:
 - `userExists()` - Check if user exists
 
 ### 2. Webhook Handler (`src/app/api/webhooks/clerk/route.ts`)
+
 Handles Clerk webhook events:
+
 - `user.created` - Creates user in database
 - `user.updated` - Updates user information
 - `user.deleted` - Removes user from database
 
 ### 3. Auth Helper (`src/helpers/AuthHelper.ts`)
+
 Helper functions for authentication:
+
 - `getCurrentUser()` - Get current user from database (with fallback)
 - `requireAuth()` - Require authentication (throws error if not authenticated)
 - `getCurrentUserId()` - Get current Clerk user ID
@@ -112,11 +119,11 @@ import { getCurrentUser } from '@/helpers/AuthHelper';
 
 export default async function MyPage() {
   const user = await getCurrentUser();
-  
+
   if (!user) {
     return <div>Please sign in</div>;
   }
-  
+
   return <div>Hello, {user.name}!</div>;
 }
 ```
@@ -129,7 +136,7 @@ import { requireAuth } from '@/helpers/AuthHelper';
 export default async function ProtectedPage() {
   // Throws error if not authenticated
   const user = await requireAuth();
-  
+
   return <div>Welcome, {user.name}!</div>;
 }
 ```
@@ -187,4 +194,3 @@ Now that user authentication is set up, you can:
 - Keep your `CLERK_WEBHOOK_SECRET` private
 - Webhook signature verification is automatically handled
 - All user actions are server-side only ('use server')
-
