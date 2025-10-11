@@ -148,4 +148,44 @@ export const applianceSchema = pgTable('appliances', {
     .notNull(),
 });
 
-// TODO: Add models for RenovationTask, ParkingPermit, etc.
+// Renovation model
+export const renovationSchema = pgTable('renovations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id')
+    .notNull()
+    .references(() => propertySchema.id, { onDelete: 'cascade' }),
+  unitId: uuid('unit_id').references(() => unitSchema.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(), // e.g. "Kitchen Upgrade - 2025"
+  startDate: timestamp('start_date', { mode: 'date' }),
+  endDate: timestamp('end_date', { mode: 'date' }),
+  totalCost: real('total_cost').default(0),
+  notes: varchar('notes', { length: 1000 }),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Renovation item model
+export const renovationItemSchema = pgTable('renovation_items', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  renovationId: uuid('renovation_id')
+    .notNull()
+    .references(() => renovationSchema.id, { onDelete: 'cascade' }),
+  category: varchar('category', { length: 255 }).notNull(), // e.g., "Mould Remover"
+  description: varchar('description', { length: 1000 }), // e.g., "Metal Threshold / Sweep - Entrance"
+  vendor: varchar('vendor', { length: 255 }), // e.g., "Home Depot", "Sherman Williams"
+  quantity: integer('quantity').default(1),
+  unitCost: real('unit_cost'),
+  totalCost: real('total_cost'),
+  purchaseDate: timestamp('purchase_date', { mode: 'date' }),
+  notes: varchar('notes', { length: 1000 }),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// TODO: Add models for ParkingPermit, etc.
