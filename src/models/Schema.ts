@@ -188,4 +188,35 @@ export const renovationItemSchema = pgTable('renovation_items', {
     .notNull(),
 });
 
-// TODO: Add models for ParkingPermit, etc.
+// Parking permit model
+export const parkingPermitSchema = pgTable('parking_permits', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id')
+    .notNull()
+    .references(() => propertySchema.id, { onDelete: 'cascade' }),
+  tenantId: uuid('tenant_id').references(() => tenantSchema.id, { onDelete: 'set null' }),
+  building: varchar('building', { length: 100 }), // e.g., "552 D"
+  permitNumber: varchar('permit_number', { length: 50 }).notNull(),
+  status: varchar('status', { length: 50 }).default('Active'), // Active, Cancelled, etc.
+  vehicleMake: varchar('vehicle_make', { length: 100 }),
+  vehicleModel: varchar('vehicle_model', { length: 100 }),
+  vehicleYear: varchar('vehicle_year', { length: 10 }),
+  vehicleColor: varchar('vehicle_color', { length: 100 }),
+  licensePlate: varchar('license_plate', { length: 50 }),
+  comments: varchar('comments', { length: 2000 }),
+  issuedAt: timestamp('issued_at', { mode: 'date' }).defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Parking activity model (for tracking changes and comments)
+export const parkingActivitySchema = pgTable('parking_activity', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  parkingPermitId: uuid('parking_permit_id')
+    .notNull()
+    .references(() => parkingPermitSchema.id, { onDelete: 'cascade' }),
+  note: varchar('note', { length: 1000 }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+});
