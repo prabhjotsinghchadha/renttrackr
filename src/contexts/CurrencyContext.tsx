@@ -20,13 +20,13 @@ export const CURRENCIES: Record<string, Currency> = {
     code: 'INR',
     symbol: '₹',
     name: 'Indian Rupee',
-    exchangeRate: 83.0, // Approximate rate
+    exchangeRate: 88.72, // Approximate rate
   },
   AUD: {
     code: 'AUD',
     symbol: 'A$',
     name: 'Australian Dollar',
-    exchangeRate: 1.5, // Approximate rate
+    exchangeRate: 1.53, // Approximate rate
   },
 };
 
