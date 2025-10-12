@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { getRenovationMetrics, getRenovationsWithDetails } from '@/actions/RenovationActions';
+import { deleteRenovation, getRenovationMetrics, getRenovationsWithDetails, updateRenovation } from '@/actions/RenovationActions';
+import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
+import { EditRenovationForm } from '@/components/EditRenovationForm';
+import { ViewRenovationDetails } from '@/components/ViewRenovationDetails';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -160,18 +163,42 @@ export default async function RenovationsPage(props: { params: Promise<{ locale:
                         )}
                       </div>
                       <div className="ml-4 flex gap-2">
-                        <button
-                          type="button"
-                          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                        >
-                          {t('view_details')}
-                        </button>
-                        <button
-                          type="button"
-                          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                        >
-                          {t('edit')}
-                        </button>
+                        <ViewRenovationDetails
+                          renovation={renovation}
+                          locale={locale}
+                        />
+                        <EditRenovationForm
+                          renovation={renovation}
+                          locale={locale}
+                          onUpdate={async (updatedRenovation: {
+                            title: string;
+                            startDate?: Date;
+                            endDate?: Date;
+                            totalCost?: number;
+                            notes?: string;
+                          }) => {
+                            'use server';
+                            const result = await updateRenovation(renovation.id, updatedRenovation);
+                            if (result.success) {
+                              // Refresh the page to show updated data
+                              window.location.reload();
+                            }
+                            return result;
+                          }}
+                        />
+                        <DeleteRenovationDialog
+                          renovation={renovation}
+                          locale={locale}
+                          onDelete={async () => {
+                            'use server';
+                            const result = await deleteRenovation(renovation.id);
+                            if (result.success) {
+                              // Refresh the page to show updated data
+                              window.location.reload();
+                            }
+                            return result;
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
