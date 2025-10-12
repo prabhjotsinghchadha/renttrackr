@@ -1,4 +1,6 @@
+'use client';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { AppConfig } from '@/utils/AppConfig';
 
 export const BaseTemplate = (props: {
@@ -7,6 +9,7 @@ export const BaseTemplate = (props: {
   children: React.ReactNode;
 }) => {
   const t = useTranslations('BaseTemplate');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700 antialiased">
@@ -37,31 +40,50 @@ export const BaseTemplate = (props: {
               )}
             </div>
 
-            {/* Mobile Menu Button - Placeholder for future implementation */}
+            {/* Mobile Menu Button */}
             <button
               type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800 lg:hidden"
               aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
-              </svg>
+              {isMobileMenuOpen ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                </svg>
+              )}
             </button>
           </div>
 
           {/* Mobile Navigation */}
-          <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 lg:hidden">
+          <div
+            className={`border-t border-gray-200 bg-gray-50 px-6 py-4 transition-all duration-300 ease-in-out lg:hidden ${
+              isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 overflow-hidden opacity-0'
+            }`}
+          >
             <nav aria-label="Mobile main navigation" className="mb-4">
               <ul className="space-y-2">{props.leftNav}</ul>
             </nav>

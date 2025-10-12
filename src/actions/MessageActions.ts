@@ -43,7 +43,7 @@ export async function sendWhatsAppMessage(input: SendMessageInput): Promise<Send
     if (validatedInput.tenantName) {
       let greeting: string;
       let closing: string;
-      
+
       switch (validatedInput.locale) {
         case 'es':
           greeting = 'Hola';
@@ -57,7 +57,7 @@ export async function sendWhatsAppMessage(input: SendMessageInput): Promise<Send
           greeting = 'Hello';
           closing = 'Best regards,\nRentTrackr Team';
       }
-      
+
       messageContent = `${greeting} ${validatedInput.tenantName},\n\n${validatedInput.message}\n\n${closing}`;
     }
 
@@ -104,7 +104,7 @@ export async function sendPaymentReminder(
   locale: string = 'en',
 ): Promise<SendMessageResult> {
   let message: string;
-  
+
   switch (locale) {
     case 'es':
       message = `Este es un recordatorio amigable de que su pago de alquiler de $${amount.toFixed(2)} vence el ${dueDate}. Por favor realice su pago lo antes posible para evitar cargos por demora. ¡Gracias!`;
@@ -134,7 +134,7 @@ export async function sendLeaseRenewalReminder(
   locale: string = 'en',
 ): Promise<SendMessageResult> {
   let message: string;
-  
+
   switch (locale) {
     case 'es':
       message = `Su contrato de arrendamiento está programado para expirar el ${leaseEndDate}. Por favor contáctenos para discutir opciones de renovación o programar una inspección de salida. ¡Nos encantaría que se quede!`;
