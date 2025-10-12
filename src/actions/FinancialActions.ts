@@ -161,10 +161,7 @@ export async function getFinancialReportData() {
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
 
-    console.warn('User properties:', properties.length);
-
     if (properties.length === 0) {
-      console.warn('No properties found for user');
       return { success: true, data: { properties: [], payments: [], expenses: [] } };
     }
 
@@ -217,14 +214,6 @@ export async function getFinancialReportData() {
       .where(inArray(expenseSchema.propertyId, propertyIds))
       .orderBy(sql`${expenseSchema.date} DESC`);
 
-    console.warn('Data retrieved:', {
-      properties: properties.length,
-      units: units.length,
-      tenants: tenants.length,
-      leases: leases.length,
-      payments: payments.length,
-      expenses: expenses.length,
-    });
 
     // Combine data with property and tenant information
     const paymentsWithDetails = payments.map((payment) => {
@@ -279,22 +268,11 @@ export async function generateIncomeStatement() {
     const now = new Date();
     const currentYear = now.getFullYear();
 
-    console.warn('Financial data debug:', {
-      totalPayments: payments.length,
-      totalExpenses: expenses.length,
-      currentYear,
-      paymentYears: payments.map((p) => new Date(p.date).getFullYear()),
-      expenseYears: expenses.map((e) => new Date(e.date).getFullYear()),
-    });
 
     // Filter data for current year
     const yearPayments = payments.filter((p) => new Date(p.date).getFullYear() === currentYear);
     const yearExpenses = expenses.filter((e) => new Date(e.date).getFullYear() === currentYear);
 
-    console.warn('Filtered data:', {
-      yearPayments: yearPayments.length,
-      yearExpenses: yearExpenses.length,
-    });
 
     // Group payments by month
     const monthlyRevenue = Array.from({ length: 12 }, (_, i) => {
@@ -585,7 +563,6 @@ export async function exportIncomeStatementToExcel() {
       result.data.paymentCount === 0 &&
       result.data.expenseCount === 0
     ) {
-      console.warn('No current year data found, using all available data');
       result = await generateIncomeStatementAllData();
     }
 
@@ -594,6 +571,7 @@ export async function exportIncomeStatementToExcel() {
     }
 
     const { data } = result;
+    
     const workbook = XLSX.utils.book_new();
 
     // Summary sheet
@@ -614,11 +592,11 @@ export async function exportIncomeStatementToExcel() {
     // Monthly revenue sheet
     const monthlyData = [
       ['Month', 'Revenue', 'Payment Count'],
-      ...data.monthlyRevenue.map((month) => [
+      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0 ? data.monthlyRevenue.map((month) => [
         month.month,
         `$${month.revenue.toFixed(2)}`,
         month.count,
-      ]),
+      ]) : [['No data available', '$0.00', 0]]),
     ];
 
     const monthlySheet = XLSX.utils.aoa_to_sheet(monthlyData);
@@ -627,18 +605,19 @@ export async function exportIncomeStatementToExcel() {
     // Expenses by category sheet
     const expenseData = [
       ['Category', 'Amount', 'Count'],
-      ...data.expensesByCategory.map((category) => [
+      ...(data.expensesByCategory && data.expensesByCategory.length > 0 ? data.expensesByCategory.map((category) => [
         category.category,
         `$${category.amount.toFixed(2)}`,
         category.count,
-      ]),
+      ]) : [['No data available', '$0.00', 0]]),
     ];
 
     const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
     XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses by Category');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    return { success: true, buffer, filename: `income-statement-${data.year}.xlsx` };
+    const base64 = Buffer.from(buffer).toString('base64');
+    return { success: true, buffer: base64, filename: `income-statement-${data.year}.xlsx` };
   } catch (error) {
     console.error('Error exporting income statement:', error);
     return { success: false, error: 'Failed to export income statement' };
@@ -692,7 +671,8 @@ export async function exportCashFlowToExcel() {
     XLSX.utils.book_append_sheet(workbook, monthlySheet, 'Monthly Cash Flow');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    return { success: true, buffer, filename: `cash-flow-analysis-${data.year}.xlsx` };
+    const base64 = Buffer.from(buffer).toString('base64');
+    return { success: true, buffer: base64, filename: `cash-flow-analysis-${data.year}.xlsx` };
   } catch (error) {
     console.error('Error exporting cash flow analysis:', error);
     return { success: false, error: 'Failed to export cash flow analysis' };
@@ -759,7 +739,8 @@ export async function exportTaxSummaryToExcel() {
     XLSX.utils.book_append_sheet(workbook, detailedSheet, 'Detailed Expenses');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    return { success: true, buffer, filename: `tax-summary-${data.year}.xlsx` };
+    const base64 = Buffer.from(buffer).toString('base64');
+    return { success: true, buffer: base64, filename: `tax-summary-${data.year}.xlsx` };
   } catch (error) {
     console.error('Error exporting tax summary:', error);
     return { success: false, error: 'Failed to export tax summary' };
@@ -781,7 +762,6 @@ export async function exportIncomeStatementToCSV() {
       result.data.paymentCount === 0 &&
       result.data.expenseCount === 0
     ) {
-      console.warn('No current year data found, using all available data');
       result = await generateIncomeStatementAllData();
     }
 
@@ -790,6 +770,7 @@ export async function exportIncomeStatementToCSV() {
     }
 
     const { data } = result;
+
 
     // Create CSV data
     const csvData = [
@@ -806,27 +787,28 @@ export async function exportIncomeStatementToCSV() {
       // Monthly revenue section
       ['Monthly Revenue'],
       ['Month', 'Revenue', 'Payment Count'],
-      ...data.monthlyRevenue.map((month) => [
+      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0 ? data.monthlyRevenue.map((month) => [
         month.month,
         `$${month.revenue.toFixed(2)}`,
         month.count,
-      ]),
+      ]) : [['No data available', '$0.00', 0]]),
       [''],
       // Expenses by category section
       ['Expenses by Category'],
       ['Category', 'Amount', 'Count'],
-      ...data.expensesByCategory.map((category) => [
+      ...(data.expensesByCategory && data.expensesByCategory.length > 0 ? data.expensesByCategory.map((category) => [
         category.category,
         `$${category.amount.toFixed(2)}`,
         category.count,
-      ]),
+      ]) : [['No data available', '$0.00', 0]]),
     ];
 
     // Convert to CSV string
     const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
 
     const buffer = Buffer.from(csvString, 'utf-8');
-    return { success: true, buffer, filename: `income-statement-${data.year}.csv` };
+    const base64 = buffer.toString('base64');
+    return { success: true, buffer: base64, filename: `income-statement-${data.year}.csv` };
   } catch (error) {
     console.error('Error exporting income statement to CSV:', error);
     return { success: false, error: 'Failed to export income statement to CSV' };
@@ -876,7 +858,8 @@ export async function exportCashFlowToCSV() {
     const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
 
     const buffer = Buffer.from(csvString, 'utf-8');
-    return { success: true, buffer, filename: `cash-flow-analysis-${data.year}.csv` };
+    const base64 = buffer.toString('base64');
+    return { success: true, buffer: base64, filename: `cash-flow-analysis-${data.year}.csv` };
   } catch (error) {
     console.error('Error exporting cash flow analysis to CSV:', error);
     return { success: false, error: 'Failed to export cash flow analysis to CSV' };
@@ -935,7 +918,8 @@ export async function exportTaxSummaryToCSV() {
     const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
 
     const buffer = Buffer.from(csvString, 'utf-8');
-    return { success: true, buffer, filename: `tax-summary-${data.year}.csv` };
+    const base64 = buffer.toString('base64');
+    return { success: true, buffer: base64, filename: `tax-summary-${data.year}.csv` };
   } catch (error) {
     console.error('Error exporting tax summary to CSV:', error);
     return { success: false, error: 'Failed to export tax summary to CSV' };

@@ -41,7 +41,6 @@ export function FinancialReports({ locale: _locale }: FinancialReportsProps) {
             result.data.paymentCount === 0 &&
             result.data.expenseCount === 0
           ) {
-            console.warn('No current year data found, using all available data');
             result = await generateIncomeStatementAllData();
           }
           break;
@@ -91,8 +90,11 @@ export function FinancialReports({ locale: _locale }: FinancialReportsProps) {
       }
 
       if (result.success && result.buffer) {
-        // Create blob and download
-        const blob = new Blob([result.buffer], {
+        // Convert base64 to blob and download
+        const byteCharacters = atob(result.buffer);
+        const byteNumbers: number[] = Array.from({length: byteCharacters.length}, (_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         });
         const url = window.URL.createObjectURL(blob);
@@ -136,8 +138,9 @@ export function FinancialReports({ locale: _locale }: FinancialReportsProps) {
       }
 
       if (result.success && result.buffer) {
-        // Create blob and download
-        const blob = new Blob([result.buffer], {
+        // Convert base64 to blob and download
+        const csvContent = atob(result.buffer);
+        const blob = new Blob([csvContent], {
           type: 'text/csv;charset=utf-8;',
         });
         const url = window.URL.createObjectURL(blob);
