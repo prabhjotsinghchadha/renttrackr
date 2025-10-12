@@ -239,6 +239,159 @@ export async function getPaymentsWithDetails() {
 }
 
 /**
+ * Update an existing payment
+ */
+export async function updatePayment(
+  paymentId: string,
+  data: {
+    amount: number;
+    date: Date;
+    lateFee?: number;
+  },
+) {
+  try {
+    const user = await requireAuth();
+
+    // First, verify the payment exists and belongs to the user
+    const [payment] = await db
+      .select()
+      .from(paymentSchema)
+      .where(eq(paymentSchema.id, paymentId))
+      .limit(1);
+
+    if (!payment) {
+      return { success: false, payment: null, error: 'Payment not found' };
+    }
+
+    // Verify ownership through lease -> tenant -> unit -> property chain
+    const [lease] = await db
+      .select()
+      .from(leaseSchema)
+      .where(eq(leaseSchema.id, payment.leaseId))
+      .limit(1);
+
+    if (!lease) {
+      return { success: false, payment: null, error: 'Lease not found' };
+    }
+
+    const [tenant] = await db
+      .select()
+      .from(tenantSchema)
+      .where(eq(tenantSchema.id, lease.tenantId))
+      .limit(1);
+
+    if (!tenant) {
+      return { success: false, payment: null, error: 'Tenant not found' };
+    }
+
+    const [unit] = await db
+      .select()
+      .from(unitSchema)
+      .where(eq(unitSchema.id, tenant.unitId))
+      .limit(1);
+
+    if (!unit) {
+      return { success: false, payment: null, error: 'Unit not found' };
+    }
+
+    const [property] = await db
+      .select()
+      .from(propertySchema)
+      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+      .limit(1);
+
+    if (!property) {
+      return { success: false, payment: null, error: 'Unauthorized' };
+    }
+
+    // Update the payment
+    const [updatedPayment] = await db
+      .update(paymentSchema)
+      .set({
+        amount: data.amount,
+        date: data.date,
+        lateFee: data.lateFee || null,
+      })
+      .where(eq(paymentSchema.id, paymentId))
+      .returning();
+
+    return { success: true, payment: updatedPayment };
+  } catch (error) {
+    console.error('Error updating payment:', error);
+    return { success: false, payment: null, error: 'Failed to update payment' };
+  }
+}
+
+/**
+ * Delete a payment
+ */
+export async function deletePayment(paymentId: string) {
+  try {
+    const user = await requireAuth();
+
+    // First, verify the payment exists and belongs to the user
+    const [payment] = await db
+      .select()
+      .from(paymentSchema)
+      .where(eq(paymentSchema.id, paymentId))
+      .limit(1);
+
+    if (!payment) {
+      return { success: false, error: 'Payment not found' };
+    }
+
+    // Verify ownership through lease -> tenant -> unit -> property chain
+    const [lease] = await db
+      .select()
+      .from(leaseSchema)
+      .where(eq(leaseSchema.id, payment.leaseId))
+      .limit(1);
+
+    if (!lease) {
+      return { success: false, error: 'Lease not found' };
+    }
+
+    const [tenant] = await db
+      .select()
+      .from(tenantSchema)
+      .where(eq(tenantSchema.id, lease.tenantId))
+      .limit(1);
+
+    if (!tenant) {
+      return { success: false, error: 'Tenant not found' };
+    }
+
+    const [unit] = await db
+      .select()
+      .from(unitSchema)
+      .where(eq(unitSchema.id, tenant.unitId))
+      .limit(1);
+
+    if (!unit) {
+      return { success: false, error: 'Unit not found' };
+    }
+
+    const [property] = await db
+      .select()
+      .from(propertySchema)
+      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+      .limit(1);
+
+    if (!property) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Delete the payment
+    await db.delete(paymentSchema).where(eq(paymentSchema.id, paymentId));
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting payment:', error);
+    return { success: false, error: 'Failed to delete payment' };
+  }
+}
+
+/**
  * Get payment metrics for the current user
  */
 export async function getPaymentMetrics() {

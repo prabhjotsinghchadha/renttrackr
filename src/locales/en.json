@@ -341,7 +341,20 @@
     "unit": "Unit",
     "amount": "Amount",
     "date": "Date",
-    "actions": "Actions"
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edit_payment": "Edit Payment",
+    "delete_payment": "Delete Payment",
+    "confirm_delete": "Are you sure you want to delete this payment?",
+    "delete_confirmation": "This action cannot be undone.",
+    "confirm": "Confirm",
+    "updating": "Updating...",
+    "deleting": "Deleting...",
+    "update_error": "Failed to update payment. Please try again.",
+    "delete_error": "Failed to delete payment. Please try again.",
+    "payment_updated": "Payment updated successfully",
+    "payment_deleted": "Payment deleted successfully"
   },
   "Expenses": {
     "meta_title": "Expenses",

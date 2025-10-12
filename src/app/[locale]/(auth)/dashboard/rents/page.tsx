@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { getPaymentMetrics, getPaymentsWithDetails } from '@/actions/PaymentActions';
+import {
+  deletePayment,
+  getPaymentMetrics,
+  getPaymentsWithDetails,
+  updatePayment,
+} from '@/actions/PaymentActions';
+import { DeletePaymentDialog } from '@/components/DeletePaymentDialog';
+import { EditPaymentForm } from '@/components/EditPaymentForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -101,6 +108,9 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                     <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
                       {t('date')}
                     </th>
+                    <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
+                      {t('actions')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -125,6 +135,40 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                           month: 'short',
                           day: 'numeric',
                         })}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex gap-2">
+                          <EditPaymentForm
+                            payment={payment}
+                            locale={locale}
+                            onUpdate={async (updatedPayment: {
+                              amount: number;
+                              date: Date;
+                              lateFee?: number;
+                            }) => {
+                              'use server';
+                              const result = await updatePayment(payment.id, updatedPayment);
+                              if (result.success) {
+                                // Refresh the page to show updated data
+                                window.location.reload();
+                              }
+                              return result;
+                            }}
+                          />
+                          <DeletePaymentDialog
+                            payment={payment}
+                            locale={locale}
+                            onDelete={async () => {
+                              'use server';
+                              const result = await deletePayment(payment.id);
+                              if (result.success) {
+                                // Refresh the page to show updated data
+                                window.location.reload();
+                              }
+                              return result;
+                            }}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}

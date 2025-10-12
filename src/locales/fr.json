@@ -341,7 +341,20 @@
     "unit": "Unité",
     "amount": "Montant",
     "date": "Date",
-    "actions": "Actions"
+    "actions": "Actions",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "edit_payment": "Modifier Paiement",
+    "delete_payment": "Supprimer Paiement",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer ce paiement ?",
+    "delete_confirmation": "Cette action ne peut pas être annulée.",
+    "confirm": "Confirmer",
+    "updating": "Mise à jour...",
+    "deleting": "Suppression...",
+    "update_error": "Échec de la mise à jour du paiement. Veuillez réessayer.",
+    "delete_error": "Échec de la suppression du paiement. Veuillez réessayer.",
+    "payment_updated": "Paiement mis à jour avec succès",
+    "payment_deleted": "Paiement supprimé avec succès"
   },
   "Expenses": {
     "meta_title": "Dépenses",

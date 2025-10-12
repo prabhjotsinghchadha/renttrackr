@@ -341,7 +341,20 @@
     "unit": "Unidad",
     "amount": "Monto",
     "date": "Fecha",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "edit_payment": "Editar Pago",
+    "delete_payment": "Eliminar Pago",
+    "confirm_delete": "¿Estás seguro de que quieres eliminar este pago?",
+    "delete_confirmation": "Esta acción no se puede deshacer.",
+    "confirm": "Confirmar",
+    "updating": "Actualizando...",
+    "deleting": "Eliminando...",
+    "update_error": "Error al actualizar el pago. Por favor intenta de nuevo.",
+    "delete_error": "Error al eliminar el pago. Por favor intenta de nuevo.",
+    "payment_updated": "Pago actualizado exitosamente",
+    "payment_deleted": "Pago eliminado exitosamente"
   },
   "Expenses": {
     "meta_title": "Gastos",
