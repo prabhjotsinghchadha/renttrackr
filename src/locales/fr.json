@@ -391,7 +391,21 @@
     "property_required": "Veuillez sélectionner une propriété",
     "type_required": "Veuillez entrer un type de dépense",
     "amount_required": "Veuillez entrer un montant de dépense valide",
-    "create_error": "Échec de l'ajout de la dépense. Veuillez réessayer."
+    "create_error": "Échec de l'ajout de la dépense. Veuillez réessayer.",
+    "actions": "Actions",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "edit_expense": "Modifier Dépense",
+    "delete_expense": "Supprimer Dépense",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette dépense ?",
+    "delete_confirmation": "Cette action ne peut pas être annulée.",
+    "confirm": "Confirmer",
+    "updating": "Mise à jour...",
+    "deleting": "Suppression...",
+    "update_error": "Échec de la mise à jour de la dépense. Veuillez réessayer.",
+    "delete_error": "Échec de la suppression de la dépense. Veuillez réessayer.",
+    "expense_updated": "Dépense mise à jour avec succès",
+    "expense_deleted": "Dépense supprimée avec succès"
   },
   "Renovations": {
     "meta_title": "Rénovations",

@@ -391,7 +391,21 @@
     "property_required": "Please select a property",
     "type_required": "Please enter an expense type",
     "amount_required": "Please enter a valid expense amount",
-    "create_error": "Failed to add expense. Please try again."
+    "create_error": "Failed to add expense. Please try again.",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edit_expense": "Edit Expense",
+    "delete_expense": "Delete Expense",
+    "confirm_delete": "Are you sure you want to delete this expense?",
+    "delete_confirmation": "This action cannot be undone.",
+    "confirm": "Confirm",
+    "updating": "Updating...",
+    "deleting": "Deleting...",
+    "update_error": "Failed to update expense. Please try again.",
+    "delete_error": "Failed to delete expense. Please try again.",
+    "expense_updated": "Expense updated successfully",
+    "expense_deleted": "Expense deleted successfully"
   },
   "Renovations": {
     "meta_title": "Renovations",

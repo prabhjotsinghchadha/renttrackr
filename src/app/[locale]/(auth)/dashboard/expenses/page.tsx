@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { getExpenseMetrics, getExpensesWithPropertyInfo } from '@/actions/ExpenseActions';
+import { deleteExpense, getExpenseMetrics, getExpensesWithPropertyInfo, updateExpense } from '@/actions/ExpenseActions';
+import { DeleteExpenseDialog } from '@/components/DeleteExpenseDialog';
+import { EditExpenseForm } from '@/components/EditExpenseForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -106,6 +108,9 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
                     <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
                       {t('date')}
                     </th>
+                    <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
+                      {t('actions')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -125,6 +130,36 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
                           month: 'short',
                           day: 'numeric',
                         })}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex gap-2">
+                          <EditExpenseForm
+                            expense={expense}
+                            locale={locale}
+                            onUpdate={async (updatedExpense: { type: string; amount: number; date: Date }) => {
+                              'use server';
+                              const result = await updateExpense(expense.id, updatedExpense);
+                              if (result.success) {
+                                // Refresh the page to show updated data
+                                window.location.reload();
+                              }
+                              return result;
+                            }}
+                          />
+                          <DeleteExpenseDialog
+                            expense={expense}
+                            locale={locale}
+                            onDelete={async () => {
+                              'use server';
+                              const result = await deleteExpense(expense.id);
+                              if (result.success) {
+                                // Refresh the page to show updated data
+                                window.location.reload();
+                              }
+                              return result;
+                            }}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}

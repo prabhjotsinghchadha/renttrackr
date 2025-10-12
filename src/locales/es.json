@@ -391,7 +391,21 @@
     "property_required": "Por favor selecciona una propiedad",
     "type_required": "Por favor ingresa un tipo de gasto",
     "amount_required": "Por favor ingresa un monto de gasto válido",
-    "create_error": "Error al agregar gasto. Por favor intenta de nuevo."
+    "create_error": "Error al agregar gasto. Por favor intenta de nuevo.",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "edit_expense": "Editar Gasto",
+    "delete_expense": "Eliminar Gasto",
+    "confirm_delete": "¿Estás seguro de que quieres eliminar este gasto?",
+    "delete_confirmation": "Esta acción no se puede deshacer.",
+    "confirm": "Confirmar",
+    "updating": "Actualizando...",
+    "deleting": "Eliminando...",
+    "update_error": "Error al actualizar el gasto. Por favor intenta de nuevo.",
+    "delete_error": "Error al eliminar el gasto. Por favor intenta de nuevo.",
+    "expense_updated": "Gasto actualizado exitosamente",
+    "expense_deleted": "Gasto eliminado exitosamente"
   },
   "Renovations": {
     "meta_title": "Renovaciones",
