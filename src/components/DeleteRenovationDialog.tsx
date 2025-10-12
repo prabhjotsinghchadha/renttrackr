@@ -32,7 +32,11 @@ type DeleteRenovationDialogProps = {
   onDelete: () => Promise<{ success: boolean; error?: string }>;
 };
 
-export function DeleteRenovationDialog({ renovation, locale, onDelete }: DeleteRenovationDialogProps) {
+export function DeleteRenovationDialog({
+  renovation,
+  locale,
+  onDelete,
+}: DeleteRenovationDialogProps) {
   const t = useTranslations('Renovations');
   const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);

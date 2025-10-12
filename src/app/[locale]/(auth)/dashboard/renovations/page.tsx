@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { deleteRenovation, getRenovationMetrics, getRenovationsWithDetails, updateRenovation } from '@/actions/RenovationActions';
+import {
+  deleteRenovation,
+  getRenovationMetrics,
+  getRenovationsWithDetails,
+  updateRenovation,
+} from '@/actions/RenovationActions';
 import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
 import { EditRenovationForm } from '@/components/EditRenovationForm';
@@ -164,10 +169,7 @@ export default async function RenovationsPage(props: { params: Promise<{ locale:
                         )}
                       </div>
                       <div className="ml-4 flex gap-2">
-                        <ViewRenovationDetails
-                          renovation={renovation}
-                          locale={locale}
-                        />
+                        <ViewRenovationDetails renovation={renovation} locale={locale} />
                         <EditRenovationForm
                           renovation={renovation}
                           locale={locale}

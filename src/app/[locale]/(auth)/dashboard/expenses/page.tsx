@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { deleteExpense, getExpenseMetrics, getExpensesWithPropertyInfo, updateExpense } from '@/actions/ExpenseActions';
+import {
+  deleteExpense,
+  getExpenseMetrics,
+  getExpensesWithPropertyInfo,
+  updateExpense,
+} from '@/actions/ExpenseActions';
 import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteExpenseDialog } from '@/components/DeleteExpenseDialog';
 import { EditExpenseForm } from '@/components/EditExpenseForm';
@@ -141,7 +146,11 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
                           <EditExpenseForm
                             expense={expense}
                             locale={locale}
-                            onUpdate={async (updatedExpense: { type: string; amount: number; date: Date }) => {
+                            onUpdate={async (updatedExpense: {
+                              type: string;
+                              amount: number;
+                              date: Date;
+                            }) => {
                               'use server';
                               const result = await updateExpense(expense.id, updatedExpense);
                               if (result.success) {

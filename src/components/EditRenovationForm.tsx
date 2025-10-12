@@ -40,7 +40,11 @@ type EditRenovationFormProps = {
   }) => Promise<{ success: boolean; error?: string }>;
 };
 
-export function EditRenovationForm({ renovation, locale: _locale, onUpdate }: EditRenovationFormProps) {
+export function EditRenovationForm({
+  renovation,
+  locale: _locale,
+  onUpdate,
+}: EditRenovationFormProps) {
   const t = useTranslations('Renovations');
   const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
@@ -48,7 +52,9 @@ export function EditRenovationForm({ renovation, locale: _locale, onUpdate }: Ed
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: renovation.title,
-    startDate: renovation.startDate ? new Date(renovation.startDate).toISOString().split('T')[0] : '',
+    startDate: renovation.startDate
+      ? new Date(renovation.startDate).toISOString().split('T')[0]
+      : '',
     endDate: renovation.endDate ? new Date(renovation.endDate).toISOString().split('T')[0] : '',
     totalCost: renovation.totalCost?.toString() || '',
     notes: renovation.notes || '',
@@ -91,8 +97,12 @@ export function EditRenovationForm({ renovation, locale: _locale, onUpdate }: Ed
         setOpen(false);
         setFormData({
           title: renovation.title,
-          startDate: renovation.startDate ? new Date(renovation.startDate).toISOString().split('T')[0] : '',
-          endDate: renovation.endDate ? new Date(renovation.endDate).toISOString().split('T')[0] : '',
+          startDate: renovation.startDate
+            ? new Date(renovation.startDate).toISOString().split('T')[0]
+            : '',
+          endDate: renovation.endDate
+            ? new Date(renovation.endDate).toISOString().split('T')[0]
+            : '',
           totalCost: renovation.totalCost?.toString() || '',
           notes: renovation.notes || '',
         });
@@ -111,7 +121,9 @@ export function EditRenovationForm({ renovation, locale: _locale, onUpdate }: Ed
     setError(null);
     setFormData({
       title: renovation.title,
-      startDate: renovation.startDate ? new Date(renovation.startDate).toISOString().split('T')[0] : '',
+      startDate: renovation.startDate
+        ? new Date(renovation.startDate).toISOString().split('T')[0]
+        : '',
       endDate: renovation.endDate ? new Date(renovation.endDate).toISOString().split('T')[0] : '',
       totalCost: renovation.totalCost?.toString() || '',
       notes: renovation.notes || '',

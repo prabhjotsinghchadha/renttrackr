@@ -196,10 +196,13 @@ export function EditParkingForm({ permit, locale: _locale, onUpdate }: EditParki
                 className="col-span-3 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={loadingTenants}
               >
-                <option value="">{t('select_tenant')} ({t('optional')})</option>
+                <option value="">
+                  {t('select_tenant')} ({t('optional')})
+                </option>
                 {tenants.map((tenant) => (
                   <option key={tenant.id} value={tenant.id}>
-                    {tenant.name} - {t('unit_number')} {tenant.unitNumber} ({tenant.propertyAddress})
+                    {tenant.name} - {t('unit_number')} {tenant.unitNumber} ({tenant.propertyAddress}
+                    )
                   </option>
                 ))}
               </select>
@@ -244,11 +247,11 @@ export function EditParkingForm({ permit, locale: _locale, onUpdate }: EditParki
                 placeholder={t('building_placeholder')}
               />
             </div>
-            
+
             <div className="col-span-4">
               <h4 className="mb-3 font-semibold text-gray-800">{t('vehicle_information')}</h4>
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="vehicleMake" className="text-right">
                 {t('vehicle_make')}

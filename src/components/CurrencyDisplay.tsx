@@ -9,10 +9,6 @@ type CurrencyDisplayProps = {
 
 export function CurrencyDisplay({ amount, className }: CurrencyDisplayProps) {
   const { formatCurrency } = useCurrency();
-  
-  return (
-    <span className={className}>
-      {formatCurrency(amount)}
-    </span>
-  );
+
+  return <span className={className}>{formatCurrency(amount)}</span>;
 }

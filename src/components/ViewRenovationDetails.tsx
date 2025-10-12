@@ -88,7 +88,7 @@ export function ViewRenovationDetails({ renovation, locale }: ViewRenovationDeta
           <div className="space-y-4">
             <div className="rounded-lg bg-gray-50 p-4">
               <h4 className="mb-3 font-semibold text-gray-800">{renovation.title}</h4>
-              
+
               <div className="grid gap-3 text-sm">
                 {renovation.startDate && (
                   <div className="flex justify-between">
@@ -102,7 +102,7 @@ export function ViewRenovationDetails({ renovation, locale }: ViewRenovationDeta
                     </span>
                   </div>
                 )}
-                
+
                 {renovation.endDate && (
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600">{t('end_date')}:</span>
@@ -115,7 +115,7 @@ export function ViewRenovationDetails({ renovation, locale }: ViewRenovationDeta
                     </span>
                   </div>
                 )}
-                
+
                 {renovation.totalCost && renovation.totalCost > 0 && (
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600">{t('total_cost')}:</span>

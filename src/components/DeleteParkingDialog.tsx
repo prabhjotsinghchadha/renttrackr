@@ -37,7 +37,11 @@ type DeleteParkingDialogProps = {
   onDelete: () => Promise<{ success: boolean; error?: string }>;
 };
 
-export function DeleteParkingDialog({ permit, locale: _locale, onDelete }: DeleteParkingDialogProps) {
+export function DeleteParkingDialog({
+  permit,
+  locale: _locale,
+  onDelete,
+}: DeleteParkingDialogProps) {
   const t = useTranslations('Parking');
   const { formatCurrency: _formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
