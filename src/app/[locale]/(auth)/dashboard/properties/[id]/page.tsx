@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPropertyById } from '@/actions/PropertyActions';
 import { AddUnitForm } from '@/components/AddUnitForm';
+import { PropertyActions } from '@/components/PropertyActions';
+import { UnitActions } from '@/components/UnitActions';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; id: string }>;
@@ -58,20 +60,7 @@ export default async function PropertyDetailPage(props: {
             {t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            className="rounded-xl border-2 border-blue-600 bg-white px-6 py-3 text-lg font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:ring-4 focus:ring-blue-300 focus:outline-none"
-          >
-            {t('edit_property')}
-          </button>
-          <button
-            type="button"
-            className="rounded-xl border-2 border-red-600 bg-white px-6 py-3 text-lg font-semibold text-red-600 transition-all duration-300 hover:bg-red-600 hover:text-white focus:ring-4 focus:ring-red-300 focus:outline-none"
-          >
-            {t('delete_property')}
-          </button>
-        </div>
+        <PropertyActions propertyId={id} propertyAddress={property.address} locale={locale} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -118,12 +107,12 @@ export default async function PropertyDetailPage(props: {
                         {t('rent')}: ${unit.rentAmount.toFixed(2)}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      className="rounded-lg border-2 border-red-500 bg-white px-4 py-2 text-sm font-semibold text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white focus:ring-4 focus:ring-red-300 focus:outline-none"
-                    >
-                      {t('delete')}
-                    </button>
+                    <UnitActions
+                      unitId={unit.id}
+                      unitNumber={unit.unitNumber}
+                      propertyAddress={property.address}
+                      locale={locale}
+                    />
                   </div>
                 ))}
               </div>
