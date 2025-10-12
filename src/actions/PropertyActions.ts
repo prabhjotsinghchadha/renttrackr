@@ -54,7 +54,7 @@ export async function getPropertyById(propertyId: string) {
 /**
  * Create a new property
  */
-export async function createProperty(data: { 
+export async function createProperty(data: {
   address: string;
   acquiredOn?: Date;
   principalAmount?: number;

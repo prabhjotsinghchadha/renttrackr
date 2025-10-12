@@ -5,6 +5,7 @@ import {
   deletePayment,
   getPaymentMetrics,
   getPaymentsWithDetails,
+  getPendingAndOverdueDetails,
   updatePayment,
 } from '@/actions/PaymentActions';
 import { CurrencyDisplay } from '@/components/CurrencyDisplay';
@@ -39,6 +40,9 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
   const payments = paymentsResult.success ? paymentsResult.payments : [];
 
   const metrics = await getPaymentMetrics();
+  const pendingOverdueResult = await getPendingAndOverdueDetails();
+  const pendingPayments = pendingOverdueResult.success ? pendingOverdueResult.pending : [];
+  const overduePayments = pendingOverdueResult.success ? pendingOverdueResult.overdue : [];
 
   return (
     <div className="py-8 md:py-12">
@@ -81,6 +85,131 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
           <div className="text-4xl font-bold text-gray-800">
             <CurrencyDisplay amount={metrics.lateFees} />
           </div>
+        </div>
+      </div>
+
+      {/* Pending and Overdue Payments */}
+      <div className="mb-10 grid gap-6 lg:grid-cols-2">
+        {/* Pending Payments */}
+        <div className="rounded-xl bg-gray-50 p-8">
+          <h2 className="mb-6 text-2xl font-semibold text-gray-800">
+            {t('pending_payments')} ({pendingPayments.length})
+          </h2>
+          {pendingPayments.length > 0 ? (
+            <div className="space-y-4">
+              {pendingPayments.slice(0, 5).map((payment: any) => (
+                <div
+                  key={`pending-${payment.tenantName}-${payment.dueDate.getTime()}`}
+                  className="flex items-center justify-between rounded-lg border-l-4 border-yellow-500 bg-white p-4 shadow-sm"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">⏳</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">{payment.tenantName}</p>
+                        <p className="text-sm text-gray-600">
+                          {payment.propertyAddress} - Unit {payment.unitNumber}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Due: {new Date(payment.dueDate).toLocaleDateString(locale)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-yellow-600">
+                      <CurrencyDisplay amount={payment.amount} />
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {payment.daysUntilDue === 0
+                        ? t('due_today')
+                        : payment.daysUntilDue === 1
+                          ? t('due_tomorrow')
+                          : `${payment.daysUntilDue} ${t('days')}`}
+                    </p>
+                    <Link
+                      href={`/${locale}/dashboard/rents/new?tenant=${encodeURIComponent(payment.tenantName)}&amount=${payment.amount}`}
+                      className="mt-2 inline-block rounded-lg bg-yellow-600 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-yellow-700"
+                    >
+                      {t('record_payment')}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {pendingPayments.length > 5 && (
+                <div className="pt-4 text-center">
+                  <p className="text-sm text-gray-600">
+                    +{pendingPayments.length - 5} more pending payments
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <div className="mb-4 text-6xl">✅</div>
+              <p className="text-lg text-gray-600">{t('no_pending_payments')}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Overdue Payments */}
+        <div className="rounded-xl bg-gray-50 p-8">
+          <h2 className="mb-6 text-2xl font-semibold text-gray-800">
+            {t('overdue_payments')} ({overduePayments.length})
+          </h2>
+          {overduePayments.length > 0 ? (
+            <div className="space-y-4">
+              {overduePayments.slice(0, 5).map((payment: any) => (
+                <div
+                  key={`overdue-${payment.tenantName}-${payment.dueDate.getTime()}`}
+                  className="flex items-center justify-between rounded-lg border-l-4 border-red-500 bg-white p-4 shadow-sm"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">⚠️</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">{payment.tenantName}</p>
+                        <p className="text-sm text-gray-600">
+                          {payment.propertyAddress} - Unit {payment.unitNumber}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Due: {new Date(payment.dueDate).toLocaleDateString(locale)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-red-600">
+                      <CurrencyDisplay amount={payment.amount} />
+                    </p>
+                    <p className="text-xs text-red-500">
+                      {payment.daysOverdue === 1
+                        ? `1 ${t('day_overdue')}`
+                        : `${payment.daysOverdue} ${t('days_overdue')}`}
+                    </p>
+                    <Link
+                      href={`/${locale}/dashboard/rents/new?tenant=${encodeURIComponent(payment.tenantName)}&amount=${payment.amount}`}
+                      className="mt-2 inline-block rounded-lg bg-red-600 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-red-700"
+                    >
+                      {t('record_payment')}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {overduePayments.length > 5 && (
+                <div className="pt-4 text-center">
+                  <p className="text-sm text-gray-600">
+                    +{overduePayments.length - 5} more overdue payments
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <div className="mb-4 text-6xl">🎉</div>
+              <p className="text-lg text-gray-600">{t('no_overdue_payments')}</p>
+            </div>
+          )}
         </div>
       </div>
 

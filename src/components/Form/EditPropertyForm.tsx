@@ -30,14 +30,10 @@ export function EditPropertyForm({
   const t = useTranslations('PropertyDetail');
   const [address, setAddress] = useState(currentAddress);
   const [acquiredOn, setAcquiredOn] = useState(
-    currentAcquiredOn ? currentAcquiredOn.toISOString().split('T')[0] : ''
+    currentAcquiredOn ? currentAcquiredOn.toISOString().split('T')[0] : '',
   );
-  const [principalAmount, setPrincipalAmount] = useState(
-    currentPrincipalAmount?.toString() || ''
-  );
-  const [rateOfInterest, setRateOfInterest] = useState(
-    currentRateOfInterest?.toString() || ''
-  );
+  const [principalAmount, setPrincipalAmount] = useState(currentPrincipalAmount?.toString() || '');
+  const [rateOfInterest, setRateOfInterest] = useState(currentRateOfInterest?.toString() || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -117,7 +113,10 @@ export function EditPropertyForm({
           </div>
 
           <div>
-            <label htmlFor="principalAmount" className="mb-2 block text-lg font-semibold text-gray-800">
+            <label
+              htmlFor="principalAmount"
+              className="mb-2 block text-lg font-semibold text-gray-800"
+            >
               {t('principal_amount')}
             </label>
             <input
@@ -135,7 +134,10 @@ export function EditPropertyForm({
           </div>
 
           <div>
-            <label htmlFor="rateOfInterest" className="mb-2 block text-lg font-semibold text-gray-800">
+            <label
+              htmlFor="rateOfInterest"
+              className="mb-2 block text-lg font-semibold text-gray-800"
+            >
               {t('rate_of_interest')}
             </label>
             <input

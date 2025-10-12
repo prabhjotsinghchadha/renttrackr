@@ -14,13 +14,13 @@ type PropertyActionsProps = {
   locale: string;
 };
 
-export function PropertyActions({ 
-  propertyId, 
-  propertyAddress, 
+export function PropertyActions({
+  propertyId,
+  propertyAddress,
   propertyAcquiredOn,
   propertyPrincipalAmount,
   propertyRateOfInterest,
-  locale 
+  locale,
 }: PropertyActionsProps) {
   const t = useTranslations('PropertyDetail');
   const [showEditForm, setShowEditForm] = useState(false);

@@ -392,10 +392,323 @@ export async function deletePayment(paymentId: string) {
 }
 
 /**
+ * Calculate pending and overdue payments for a user
+ */
+async function calculatePendingAndOverduePayments(userId: string) {
+  try {
+    // Get all user's properties
+    const properties = await db
+      .select({ id: propertySchema.id })
+      .from(propertySchema)
+      .where(eq(propertySchema.userId, userId));
+
+    if (properties.length === 0) {
+      return { pending: 0, overdue: 0 };
+    }
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get all units for these properties
+    const units = await db
+      .select()
+      .from(unitSchema)
+      .where(inArray(unitSchema.propertyId, propertyIds));
+
+    if (units.length === 0) {
+      return { pending: 0, overdue: 0 };
+    }
+
+    const unitIds = units.map((u) => u.id);
+
+    // Get all tenants for these units
+    const tenants = await db
+      .select()
+      .from(tenantSchema)
+      .where(inArray(tenantSchema.unitId, unitIds));
+
+    if (tenants.length === 0) {
+      return { pending: 0, overdue: 0 };
+    }
+
+    const tenantIds = tenants.map((t) => t.id);
+
+    // Get all active leases for these tenants
+    const leases = await db
+      .select()
+      .from(leaseSchema)
+      .where(inArray(leaseSchema.tenantId, tenantIds));
+
+    if (leases.length === 0) {
+      return { pending: 0, overdue: 0 };
+    }
+
+    const leaseIds = leases.map((l) => l.id);
+
+    // Get all payments for these leases
+    const payments = await db
+      .select()
+      .from(paymentSchema)
+      .where(inArray(paymentSchema.leaseId, leaseIds));
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const currentDate = now.getDate();
+
+    let pending = 0;
+    let overdue = 0;
+
+    // Calculate for each lease
+    for (const lease of leases) {
+      const leaseStartDate = new Date(lease.startDate);
+      const leaseEndDate = new Date(lease.endDate);
+
+      // Skip if lease hasn't started yet or has ended
+      if (now < leaseStartDate || now > leaseEndDate) {
+        continue;
+      }
+
+      // Calculate how many months have passed since lease start
+      const monthsSinceStart =
+        (currentYear - leaseStartDate.getFullYear()) * 12 +
+        (currentMonth - leaseStartDate.getMonth());
+
+      // For each month of the lease, check if rent is due/overdue
+      for (let monthOffset = 0; monthOffset <= monthsSinceStart; monthOffset++) {
+        const rentDueDate = new Date(leaseStartDate);
+        rentDueDate.setMonth(rentDueDate.getMonth() + monthOffset);
+
+        // Skip if this month's rent is in the future
+        if (
+          rentDueDate.getMonth() > currentMonth ||
+          (rentDueDate.getMonth() === currentMonth && rentDueDate.getDate() > currentDate)
+        ) {
+          continue;
+        }
+
+        // Check if rent for this month has been paid
+        const monthPayments = payments.filter((p) => {
+          const paymentDate = new Date(p.date);
+          return (
+            p.leaseId === lease.id &&
+            paymentDate.getMonth() === rentDueDate.getMonth() &&
+            paymentDate.getFullYear() === rentDueDate.getFullYear()
+          );
+        });
+
+        const totalPaidForMonth = monthPayments.reduce((sum, p) => sum + p.amount, 0);
+        const rentAmount = lease.rent;
+
+        if (totalPaidForMonth < rentAmount) {
+          const unpaidAmount = rentAmount - totalPaidForMonth;
+
+          // Determine if it's pending or overdue
+          const daysPastDue = Math.floor(
+            (now.getTime() - rentDueDate.getTime()) / (1000 * 60 * 60 * 24),
+          );
+
+          if (daysPastDue > 0) {
+            // Overdue (past due date)
+            overdue += unpaidAmount;
+          } else {
+            // Pending (due date hasn't passed yet)
+            pending += unpaidAmount;
+          }
+        }
+      }
+    }
+
+    return { pending, overdue };
+  } catch (error) {
+    console.error('Error calculating pending and overdue payments:', error);
+    return { pending: 0, overdue: 0 };
+  }
+}
+
+/**
+ * Get detailed pending and overdue payment information
+ */
+export async function getPendingAndOverdueDetails() {
+  try {
+    const user = await requireAuth();
+
+    // Get all user's properties
+    const properties = await db
+      .select()
+      .from(propertySchema)
+      .where(eq(propertySchema.userId, user.id));
+
+    if (properties.length === 0) {
+      return { success: true, pending: [], overdue: [] };
+    }
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get all units for these properties
+    const units = await db
+      .select()
+      .from(unitSchema)
+      .where(inArray(unitSchema.propertyId, propertyIds));
+
+    if (units.length === 0) {
+      return { success: true, pending: [], overdue: [] };
+    }
+
+    const unitIds = units.map((u) => u.id);
+
+    // Get all tenants for these units
+    const tenants = await db
+      .select()
+      .from(tenantSchema)
+      .where(inArray(tenantSchema.unitId, unitIds));
+
+    if (tenants.length === 0) {
+      return { success: true, pending: [], overdue: [] };
+    }
+
+    const tenantIds = tenants.map((t) => t.id);
+
+    // Get all active leases for these tenants
+    const leases = await db
+      .select()
+      .from(leaseSchema)
+      .where(inArray(leaseSchema.tenantId, tenantIds));
+
+    if (leases.length === 0) {
+      return { success: true, pending: [], overdue: [] };
+    }
+
+    const leaseIds = leases.map((l) => l.id);
+
+    // Get all payments for these leases
+    const payments = await db
+      .select()
+      .from(paymentSchema)
+      .where(inArray(paymentSchema.leaseId, leaseIds));
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const currentDate = now.getDate();
+
+    const pending: Array<{
+      tenantName: string;
+      unitNumber: string;
+      propertyAddress: string;
+      amount: number;
+      dueDate: Date;
+      daysUntilDue: number;
+    }> = [];
+
+    const overdue: Array<{
+      tenantName: string;
+      unitNumber: string;
+      propertyAddress: string;
+      amount: number;
+      dueDate: Date;
+      daysOverdue: number;
+    }> = [];
+
+    // Calculate for each lease
+    for (const lease of leases) {
+      const leaseStartDate = new Date(lease.startDate);
+      const leaseEndDate = new Date(lease.endDate);
+
+      // Skip if lease hasn't started yet or has ended
+      if (now < leaseStartDate || now > leaseEndDate) {
+        continue;
+      }
+
+      // Find tenant and unit info
+      const tenant = tenants.find((t) => t.id === lease.tenantId);
+      const unit = units.find((u) => u.id === tenant?.unitId);
+      const property = properties.find((p) => p.id === unit?.propertyId);
+
+      if (!tenant || !unit || !property) {
+        continue;
+      }
+
+      // Calculate how many months have passed since lease start
+      const monthsSinceStart =
+        (currentYear - leaseStartDate.getFullYear()) * 12 +
+        (currentMonth - leaseStartDate.getMonth());
+
+      // For each month of the lease, check if rent is due/overdue
+      for (let monthOffset = 0; monthOffset <= monthsSinceStart; monthOffset++) {
+        const rentDueDate = new Date(leaseStartDate);
+        rentDueDate.setMonth(rentDueDate.getMonth() + monthOffset);
+
+        // Skip if this month's rent is in the future
+        if (
+          rentDueDate.getMonth() > currentMonth ||
+          (rentDueDate.getMonth() === currentMonth && rentDueDate.getDate() > currentDate)
+        ) {
+          continue;
+        }
+
+        // Check if rent for this month has been paid
+        const monthPayments = payments.filter((p) => {
+          const paymentDate = new Date(p.date);
+          return (
+            p.leaseId === lease.id &&
+            paymentDate.getMonth() === rentDueDate.getMonth() &&
+            paymentDate.getFullYear() === rentDueDate.getFullYear()
+          );
+        });
+
+        const totalPaidForMonth = monthPayments.reduce((sum, p) => sum + p.amount, 0);
+        const rentAmount = lease.rent;
+
+        if (totalPaidForMonth < rentAmount) {
+          const unpaidAmount = rentAmount - totalPaidForMonth;
+          const daysPastDue = Math.floor(
+            (now.getTime() - rentDueDate.getTime()) / (1000 * 60 * 60 * 24),
+          );
+
+          const baseInfo = {
+            tenantName: tenant.name,
+            unitNumber: unit.unitNumber,
+            propertyAddress: property.address,
+            amount: unpaidAmount,
+            dueDate: rentDueDate,
+          };
+
+          if (daysPastDue > 0) {
+            // Overdue
+            overdue.push({
+              ...baseInfo,
+              daysOverdue: daysPastDue,
+            });
+          } else {
+            // Pending
+            pending.push({
+              ...baseInfo,
+              daysUntilDue: Math.abs(daysPastDue),
+            });
+          }
+        }
+      }
+    }
+
+    // Sort pending by days until due (ascending)
+    pending.sort((a, b) => a.daysUntilDue - b.daysUntilDue);
+
+    // Sort overdue by days overdue (descending - most overdue first)
+    overdue.sort((a, b) => b.daysOverdue - a.daysOverdue);
+
+    return { success: true, pending, overdue };
+  } catch (error) {
+    console.error('Error getting pending and overdue details:', error);
+    return { success: false, pending: [], overdue: [], error: 'Failed to get payment details' };
+  }
+}
+
+/**
  * Get payment metrics for the current user
  */
 export async function getPaymentMetrics() {
   try {
+    const user = await requireAuth();
     const result = await getUserPayments();
 
     if (!result.success || !result.payments) {
@@ -425,13 +738,13 @@ export async function getPaymentMetrics() {
       })
       .reduce((sum, p) => sum + (p.lateFee || 0), 0);
 
-    // TODO: Calculate pending and overdue based on lease rent amounts and due dates
-    // For now, return placeholder values
+    // Calculate pending and overdue based on lease rent amounts and due dates
+    const { pending, overdue } = await calculatePendingAndOverduePayments(user.id);
 
     return {
       totalCollected,
-      pending: 0,
-      overdue: 0,
+      pending,
+      overdue,
       lateFees,
     };
   } catch (error) {

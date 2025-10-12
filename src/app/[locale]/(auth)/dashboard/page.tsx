@@ -49,7 +49,7 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
       </div>
 
       {/* Key Metrics */}
-      <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="flex items-center justify-between">
             <div className="text-lg font-semibold text-gray-600">{t('total_properties')}</div>
@@ -96,10 +96,28 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
 
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="flex items-center justify-between">
+            <div className="text-lg font-semibold text-gray-600">{t('pending_payments')}</div>
+            <div className="text-5xl">⏳</div>
+          </div>
+          <div className="mt-4 text-4xl font-bold text-yellow-600">
+            ${paymentMetrics.pending.toFixed(2)}
+          </div>
+          <Link
+            href="/dashboard/rents"
+            className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"
+          >
+            {t('view_details')} →
+          </Link>
+        </div>
+
+        <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <div className="flex items-center justify-between">
             <div className="text-lg font-semibold text-gray-600">{t('overdue_payments')}</div>
             <div className="text-5xl">⚠️</div>
           </div>
-          <div className="mt-4 text-4xl font-bold text-red-600">{paymentMetrics.overdue}</div>
+          <div className="mt-4 text-4xl font-bold text-red-600">
+            ${paymentMetrics.overdue.toFixed(2)}
+          </div>
           <Link
             href="/dashboard/rents"
             className="mt-4 inline-block text-lg text-blue-600 transition-colors hover:text-blue-700"

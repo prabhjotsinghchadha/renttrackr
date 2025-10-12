@@ -31,7 +31,7 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         return;
       }
 
-      const result = await createProperty({ 
+      const result = await createProperty({
         address: address.trim(),
         acquiredOn: acquiredOn ? new Date(acquiredOn) : undefined,
         principalAmount: principalAmount ? Number.parseFloat(principalAmount) : undefined,

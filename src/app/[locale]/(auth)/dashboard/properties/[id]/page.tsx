@@ -60,13 +60,13 @@ export default async function PropertyDetailPage(props: {
             {t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <PropertyActions 
-          propertyId={id} 
+        <PropertyActions
+          propertyId={id}
           propertyAddress={property.address}
           propertyAcquiredOn={property.acquiredOn || undefined}
           propertyPrincipalAmount={property.principalAmount || undefined}
           propertyRateOfInterest={property.rateOfInterest || undefined}
-          locale={locale} 
+          locale={locale}
         />
       </div>
 
@@ -90,7 +90,9 @@ export default async function PropertyDetailPage(props: {
               )}
               {property.principalAmount && (
                 <div>
-                  <span className="text-lg font-semibold text-gray-700">{t('principal_amount')}:</span>
+                  <span className="text-lg font-semibold text-gray-700">
+                    {t('principal_amount')}:
+                  </span>
                   <span className="ml-2 text-lg text-gray-600">
                     ${property.principalAmount.toLocaleString()}
                   </span>
@@ -98,10 +100,10 @@ export default async function PropertyDetailPage(props: {
               )}
               {property.rateOfInterest && (
                 <div>
-                  <span className="text-lg font-semibold text-gray-700">{t('rate_of_interest')}:</span>
-                  <span className="ml-2 text-lg text-gray-600">
-                    {property.rateOfInterest}%
+                  <span className="text-lg font-semibold text-gray-700">
+                    {t('rate_of_interest')}:
                   </span>
+                  <span className="ml-2 text-lg text-gray-600">{property.rateOfInterest}%</span>
                 </div>
               )}
               <div>

@@ -1,10 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getLeasesWithTenantInfo } from '@/actions/LeaseActions';
-import { createPayment } from '@/actions/PaymentActions';
+import { createPayment, getPendingAndOverdueDetails } from '@/actions/PaymentActions';
 
 type PaymentFormProps = {
   locale: string;
@@ -22,33 +22,71 @@ type LeaseInfo = {
 
 export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('Rents');
   const [leaseId, setLeaseId] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [lateFee, setLateFee] = useState('');
   const [leases, setLeases] = useState<LeaseInfo[]>([]);
+  const [pendingOverdue, setPendingOverdue] = useState<{
+    pending: any[];
+    overdue: any[];
+  }>({ pending: [], overdue: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingLeases, setIsLoadingLeases] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchLeases = async () => {
+    const fetchData = async () => {
       try {
-        const result = await getLeasesWithTenantInfo();
-        if (result.success && result.leases) {
-          setLeases(result.leases as LeaseInfo[]);
+        const [leasesResult, pendingOverdueResult] = await Promise.all([
+          getLeasesWithTenantInfo(),
+          getPendingAndOverdueDetails(),
+        ]);
+
+        if (leasesResult.success && leasesResult.leases) {
+          setLeases(leasesResult.leases as LeaseInfo[]);
+        }
+
+        if (pendingOverdueResult.success) {
+          setPendingOverdue({
+            pending: pendingOverdueResult.pending || [],
+            overdue: pendingOverdueResult.overdue || [],
+          });
         }
       } catch (err) {
-        console.error('Error fetching leases:', err);
+        console.error('Error fetching data:', err);
         setError(t('error_loading_leases'));
       } finally {
         setIsLoadingLeases(false);
       }
     };
 
-    fetchLeases();
+    fetchData();
   }, [t]);
+
+  // Handle URL parameters for pre-filling form
+  useEffect(() => {
+    const tenantParam = searchParams.get('tenant');
+    const amountParam = searchParams.get('amount');
+    
+    if (tenantParam && leases.length > 0) {
+      // Find the lease for the specified tenant
+      const matchingLease = leases.find(lease => 
+        lease.tenantName.toLowerCase().includes(tenantParam.toLowerCase())
+      );
+      
+      if (matchingLease) {
+        setLeaseId(matchingLease.id);
+        if (amountParam) {
+          setAmount(amountParam);
+        } else {
+          setAmount(matchingLease.rent.toString());
+        }
+      }
+    }
+  }, [searchParams, leases]);
 
   const handleLeaseChange = (selectedLeaseId: string) => {
     setLeaseId(selectedLeaseId);
@@ -57,6 +95,22 @@ export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
     if (selectedLease) {
       setAmount(selectedLease.rent.toString());
     }
+  };
+
+  const getLeasePaymentStatus = (leaseId: string) => {
+    const selectedLease = leases.find((l) => l.id === leaseId);
+    if (!selectedLease) return null;
+
+    const tenantName = selectedLease.tenantName;
+    const pendingForTenant = pendingOverdue.pending.filter((p) => p.tenantName === tenantName);
+    const overdueForTenant = pendingOverdue.overdue.filter((p) => p.tenantName === tenantName);
+
+    return {
+      pending: pendingForTenant,
+      overdue: overdueForTenant,
+      totalPending: pendingForTenant.reduce((sum, p) => sum + p.amount, 0),
+      totalOverdue: overdueForTenant.reduce((sum, p) => sum + p.amount, 0),
+    };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,6 +207,82 @@ export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
         </select>
         <p className="mt-2 text-sm text-gray-600">{t('tenant_help')}</p>
       </div>
+
+      {/* Payment Status */}
+      {leaseId && (
+        <div className="rounded-xl bg-blue-50 p-6">
+          <h3 className="mb-4 text-lg font-semibold text-gray-800">{t('payment_status')}</h3>
+          {(() => {
+            const status = getLeasePaymentStatus(leaseId);
+            if (!status) return null;
+
+            return (
+              <div className="space-y-3">
+                {status.totalOverdue > 0 && (
+                  <div className="flex items-center justify-between rounded-lg bg-red-100 p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">⚠️</span>
+                      <span className="font-medium text-red-800">{t('overdue_amount')}</span>
+                    </div>
+                    <span className="font-bold text-red-800">
+                      ${status.totalOverdue.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {status.totalPending > 0 && (
+                  <div className="flex items-center justify-between rounded-lg bg-yellow-100 p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">⏳</span>
+                      <span className="font-medium text-yellow-800">{t('pending_amount')}</span>
+                    </div>
+                    <span className="font-bold text-yellow-800">
+                      ${status.totalPending.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {status.totalOverdue === 0 && status.totalPending === 0 && (
+                  <div className="flex items-center justify-between rounded-lg bg-green-100 p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">✅</span>
+                      <span className="font-medium text-green-800">
+                        {t('all_payments_up_to_date')}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {status.overdue.length > 0 && (
+                  <div className="mt-3">
+                    <p className="mb-2 text-sm font-medium text-gray-700">{t('overdue_details')}</p>
+                    {status.overdue.map((payment: any) => (
+                      <div key={`overdue-${payment.tenantName}-${payment.dueDate.getTime()}`} className="mb-1 text-xs text-gray-600">
+                        ${payment.amount.toFixed(2)} due{' '}
+                        {new Date(payment.dueDate).toLocaleDateString()}({payment.daysOverdue}{' '}
+                        {payment.daysOverdue === 1 ? t('day_overdue') : t('days_overdue')})
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {status.pending.length > 0 && (
+                  <div className="mt-3">
+                    <p className="mb-2 text-sm font-medium text-gray-700">{t('pending_details')}</p>
+                    {status.pending.map((payment: any) => (
+                      <div key={`pending-${payment.tenantName}-${payment.dueDate.getTime()}`} className="mb-1 text-xs text-gray-600">
+                        ${payment.amount.toFixed(2)} due{' '}
+                        {new Date(payment.dueDate).toLocaleDateString()}
+                        {payment.daysUntilDue === 0
+                          ? ` (${t('due_today')})`
+                          : payment.daysUntilDue === 1
+                            ? ` (${t('due_tomorrow')})`
+                            : ` (${payment.daysUntilDue} ${t('days')})`}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
       <div>
         <label htmlFor="amount" className="mb-2 block text-lg font-semibold text-gray-800">

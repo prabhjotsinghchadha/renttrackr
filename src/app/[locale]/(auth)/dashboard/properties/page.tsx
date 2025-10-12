@@ -69,15 +69,23 @@ export default async function PropertiesPage(props: { params: Promise<{ locale: 
                 {property.address}
               </h3>
               <div className="space-y-1 text-sm text-gray-600">
-                <p>{t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}</p>
+                <p>
+                  {t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}
+                </p>
                 {property.acquiredOn && (
-                  <p>{t('acquired_on_label')}: {new Date(property.acquiredOn).toLocaleDateString()}</p>
+                  <p>
+                    {t('acquired_on_label')}: {new Date(property.acquiredOn).toLocaleDateString()}
+                  </p>
                 )}
                 {property.principalAmount && (
-                  <p>{t('principal_amount')}: ${property.principalAmount.toLocaleString()}</p>
+                  <p>
+                    {t('principal_amount')}: ${property.principalAmount.toLocaleString()}
+                  </p>
                 )}
                 {property.rateOfInterest && (
-                  <p>{t('rate_of_interest')}: {property.rateOfInterest}%</p>
+                  <p>
+                    {t('rate_of_interest')}: {property.rateOfInterest}%
+                  </p>
                 )}
               </div>
             </Link>

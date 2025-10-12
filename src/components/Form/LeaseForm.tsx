@@ -180,7 +180,10 @@ export function LeaseForm({
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label htmlFor="securityDeposit" className="mb-2 block text-lg font-semibold text-gray-800">
+          <label
+            htmlFor="securityDeposit"
+            className="mb-2 block text-lg font-semibold text-gray-800"
+          >
             {t('security_deposit')}
           </label>
           <input
