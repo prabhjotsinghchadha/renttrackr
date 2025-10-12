@@ -54,7 +54,12 @@ export async function getPropertyById(propertyId: string) {
 /**
  * Create a new property
  */
-export async function createProperty(data: { address: string }) {
+export async function createProperty(data: { 
+  address: string;
+  acquiredOn?: Date;
+  principalAmount?: number;
+  rateOfInterest?: number;
+}) {
   try {
     const user = await requireAuth();
 
@@ -63,6 +68,9 @@ export async function createProperty(data: { address: string }) {
       .values({
         userId: user.id,
         address: data.address,
+        acquiredOn: data.acquiredOn,
+        principalAmount: data.principalAmount,
+        rateOfInterest: data.rateOfInterest,
       })
       .returning();
 
@@ -80,6 +88,9 @@ export async function updateProperty(
   propertyId: string,
   data: {
     address?: string;
+    acquiredOn?: Date;
+    principalAmount?: number;
+    rateOfInterest?: number;
   },
 ) {
   try {
@@ -89,6 +100,9 @@ export async function updateProperty(
       .update(propertySchema)
       .set({
         address: data.address,
+        acquiredOn: data.acquiredOn,
+        principalAmount: data.principalAmount,
+        rateOfInterest: data.rateOfInterest,
         updatedAt: new Date(),
       })
       .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))

@@ -13,6 +13,9 @@ export function PropertyForm({ locale }: PropertyFormProps) {
   const router = useRouter();
   const t = useTranslations('Properties');
   const [address, setAddress] = useState('');
+  const [acquiredOn, setAcquiredOn] = useState('');
+  const [principalAmount, setPrincipalAmount] = useState('');
+  const [rateOfInterest, setRateOfInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,7 +31,12 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         return;
       }
 
-      const result = await createProperty({ address: address.trim() });
+      const result = await createProperty({ 
+        address: address.trim(),
+        acquiredOn: acquiredOn ? new Date(acquiredOn) : undefined,
+        principalAmount: principalAmount ? Number.parseFloat(principalAmount) : undefined,
+        rateOfInterest: rateOfInterest ? Number.parseFloat(rateOfInterest) : undefined,
+      });
       // console.log('📝 Form result:', result);
 
       if (result.success && result.property) {
@@ -65,6 +73,58 @@ export function PropertyForm({ locale }: PropertyFormProps) {
           required
         />
         <p className="mt-2 text-sm text-gray-600">{t('address_help')}</p>
+      </div>
+
+      <div>
+        <label htmlFor="acquiredOn" className="mb-2 block text-lg font-semibold text-gray-800">
+          {t('property_acquired_on')}
+        </label>
+        <input
+          type="date"
+          id="acquiredOn"
+          value={acquiredOn}
+          onChange={(e) => setAcquiredOn(e.target.value)}
+          disabled={isSubmitting}
+          className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        />
+        <p className="mt-2 text-sm text-gray-600">{t('acquired_on_help')}</p>
+      </div>
+
+      <div>
+        <label htmlFor="principalAmount" className="mb-2 block text-lg font-semibold text-gray-800">
+          {t('principal_amount')}
+        </label>
+        <input
+          type="number"
+          id="principalAmount"
+          value={principalAmount}
+          onChange={(e) => setPrincipalAmount(e.target.value)}
+          placeholder={t('principal_amount_placeholder')}
+          disabled={isSubmitting}
+          className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          min="0"
+          step="0.01"
+        />
+        <p className="mt-2 text-sm text-gray-600">{t('principal_amount_help')}</p>
+      </div>
+
+      <div>
+        <label htmlFor="rateOfInterest" className="mb-2 block text-lg font-semibold text-gray-800">
+          {t('rate_of_interest')}
+        </label>
+        <input
+          type="number"
+          id="rateOfInterest"
+          value={rateOfInterest}
+          onChange={(e) => setRateOfInterest(e.target.value)}
+          placeholder={t('rate_of_interest_placeholder')}
+          disabled={isSubmitting}
+          className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          min="0"
+          max="100"
+          step="0.01"
+        />
+        <p className="mt-2 text-sm text-gray-600">{t('rate_of_interest_help')}</p>
       </div>
 
       {error && (

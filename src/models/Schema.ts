@@ -45,6 +45,9 @@ export const propertySchema = pgTable('properties', {
     .notNull()
     .references(() => userSchema.id, { onDelete: 'cascade' }),
   address: varchar('address', { length: 500 }).notNull(),
+  acquiredOn: timestamp('acquired_on', { mode: 'date' }), // Property acquired date
+  principalAmount: real('principal_amount'), // Principal amount for mortgage/loan
+  rateOfInterest: real('rate_of_interest'), // Rate of interest (as percentage)
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' })
     .defaultNow()
@@ -91,7 +94,9 @@ export const leaseSchema = pgTable('leases', {
     .references(() => tenantSchema.id, { onDelete: 'cascade' }),
   startDate: timestamp('start_date', { mode: 'date' }).notNull(),
   endDate: timestamp('end_date', { mode: 'date' }).notNull(),
-  deposit: real('deposit').notNull(),
+  deposit: real('deposit').notNull(), // General deposit (keeping for backward compatibility)
+  securityDeposit: real('security_deposit'), // Security deposit amount
+  petDeposit: real('pet_deposit'), // Pet deposit amount
   rent: real('rent').notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' })

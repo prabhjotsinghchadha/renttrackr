@@ -26,6 +26,8 @@ export function LeaseForm({
   const [endDate, setEndDate] = useState('');
   const [rent, setRent] = useState(defaultRent?.toString() || '');
   const [deposit, setDeposit] = useState('');
+  const [securityDeposit, setSecurityDeposit] = useState('');
+  const [petDeposit, setPetDeposit] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -72,6 +74,8 @@ export function LeaseForm({
         endDate: new Date(endDate),
         rent: Number.parseFloat(rent),
         deposit: Number.parseFloat(deposit),
+        securityDeposit: securityDeposit ? Number.parseFloat(securityDeposit) : undefined,
+        petDeposit: petDeposit ? Number.parseFloat(petDeposit) : undefined,
       });
 
       if (result.success && result.lease) {
@@ -156,7 +160,7 @@ export function LeaseForm({
 
         <div>
           <label htmlFor="deposit" className="mb-2 block text-lg font-semibold text-gray-800">
-            {t('security_deposit')} <span className="text-red-600">*</span>
+            {t('general_deposit')} <span className="text-red-600">*</span>
           </label>
           <input
             type="number"
@@ -170,7 +174,45 @@ export function LeaseForm({
             className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             required
           />
-          <p className="mt-2 text-sm text-gray-600">{t('deposit_help')}</p>
+          <p className="mt-2 text-sm text-gray-600">{t('general_deposit_help')}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <div>
+          <label htmlFor="securityDeposit" className="mb-2 block text-lg font-semibold text-gray-800">
+            {t('security_deposit')}
+          </label>
+          <input
+            type="number"
+            id="securityDeposit"
+            value={securityDeposit}
+            onChange={(e) => setSecurityDeposit(e.target.value)}
+            placeholder="1500.00"
+            step="0.01"
+            min="0"
+            disabled={isSubmitting}
+            className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          />
+          <p className="mt-2 text-sm text-gray-600">{t('security_deposit_help')}</p>
+        </div>
+
+        <div>
+          <label htmlFor="petDeposit" className="mb-2 block text-lg font-semibold text-gray-800">
+            {t('pet_deposit')}
+          </label>
+          <input
+            type="number"
+            id="petDeposit"
+            value={petDeposit}
+            onChange={(e) => setPetDeposit(e.target.value)}
+            placeholder="500.00"
+            step="0.01"
+            min="0"
+            disabled={isSubmitting}
+            className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          />
+          <p className="mt-2 text-sm text-gray-600">{t('pet_deposit_help')}</p>
         </div>
       </div>
 

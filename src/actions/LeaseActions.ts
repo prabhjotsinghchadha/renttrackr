@@ -239,6 +239,8 @@ export async function createLease(data: {
   startDate: Date;
   endDate: Date;
   deposit: number;
+  securityDeposit?: number;
+  petDeposit?: number;
   rent: number;
 }) {
   try {
@@ -282,6 +284,8 @@ export async function createLease(data: {
         startDate: data.startDate,
         endDate: data.endDate,
         deposit: data.deposit,
+        securityDeposit: data.securityDeposit,
+        petDeposit: data.petDeposit,
         rent: data.rent,
       })
       .returning();
@@ -302,6 +306,8 @@ export async function updateLease(
     startDate?: Date;
     endDate?: Date;
     deposit?: number;
+    securityDeposit?: number;
+    petDeposit?: number;
     rent?: number;
   },
 ) {
@@ -320,6 +326,8 @@ export async function updateLease(
         startDate: data.startDate,
         endDate: data.endDate,
         deposit: data.deposit,
+        securityDeposit: data.securityDeposit,
+        petDeposit: data.petDeposit,
         rent: data.rent,
         updatedAt: new Date(),
       })

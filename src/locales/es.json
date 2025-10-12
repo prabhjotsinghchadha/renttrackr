@@ -139,6 +139,8 @@
     "no_properties_description": "Comienza agregando tu primera propiedad.",
     "add_first_property": "Agrega tu primera propiedad",
     "added_on": "Agregado el",
+    "acquired_on": "Adquirido el",
+    "acquired_on_label": "Adquirido el",
     "back_to_properties": "Volver a Propiedades",
     "add_property_description": "Ingresa la dirección de tu propiedad en alquiler para comenzar.",
     "property_address": "Dirección de la Propiedad",
@@ -148,7 +150,15 @@
     "create_property": "Crear Propiedad",
     "creating": "Creando...",
     "create_error": "Error al crear la propiedad. Por favor, intenta de nuevo.",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "property_acquired_on": "Propiedad Adquirida El",
+    "acquired_on_help": "Ingresa la fecha cuando adquiriste esta propiedad",
+    "principal_amount": "Monto Principal",
+    "principal_amount_placeholder": "250000.00",
+    "principal_amount_help": "Ingresa el monto principal de tu hipoteca o préstamo",
+    "rate_of_interest": "Tasa de Interés (%)",
+    "rate_of_interest_placeholder": "3.5",
+    "rate_of_interest_help": "Ingresa la tasa de interés anual como porcentaje"
   },
   "PropertyDetail": {
     "meta_title": "Detalles de Propiedad",

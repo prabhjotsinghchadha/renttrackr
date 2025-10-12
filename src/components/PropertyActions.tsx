@@ -8,10 +8,20 @@ import { EditPropertyForm } from './EditPropertyForm';
 type PropertyActionsProps = {
   propertyId: string;
   propertyAddress: string;
+  propertyAcquiredOn?: Date;
+  propertyPrincipalAmount?: number;
+  propertyRateOfInterest?: number;
   locale: string;
 };
 
-export function PropertyActions({ propertyId, propertyAddress, locale }: PropertyActionsProps) {
+export function PropertyActions({ 
+  propertyId, 
+  propertyAddress, 
+  propertyAcquiredOn,
+  propertyPrincipalAmount,
+  propertyRateOfInterest,
+  locale 
+}: PropertyActionsProps) {
   const t = useTranslations('PropertyDetail');
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -45,6 +55,9 @@ export function PropertyActions({ propertyId, propertyAddress, locale }: Propert
         <EditPropertyForm
           propertyId={propertyId}
           currentAddress={propertyAddress}
+          currentAcquiredOn={propertyAcquiredOn}
+          currentPrincipalAmount={propertyPrincipalAmount}
+          currentRateOfInterest={propertyRateOfInterest}
           locale={locale}
           onSuccess={handleEditSuccess}
           onCancel={() => setShowEditForm(false)}

@@ -60,7 +60,14 @@ export default async function PropertyDetailPage(props: {
             {t('added_on')}: {new Date(property.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <PropertyActions propertyId={id} propertyAddress={property.address} locale={locale} />
+        <PropertyActions 
+          propertyId={id} 
+          propertyAddress={property.address}
+          propertyAcquiredOn={property.acquiredOn || undefined}
+          propertyPrincipalAmount={property.principalAmount || undefined}
+          propertyRateOfInterest={property.rateOfInterest || undefined}
+          locale={locale} 
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -73,6 +80,30 @@ export default async function PropertyDetailPage(props: {
                 <span className="text-lg font-semibold text-gray-700">{t('address')}:</span>
                 <span className="ml-2 text-lg text-gray-600">{property.address}</span>
               </div>
+              {property.acquiredOn && (
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('acquired_on')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    {new Date(property.acquiredOn).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+              {property.principalAmount && (
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('principal_amount')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    ${property.principalAmount.toLocaleString()}
+                  </span>
+                </div>
+              )}
+              {property.rateOfInterest && (
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('rate_of_interest')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">
+                    {property.rateOfInterest}%
+                  </span>
+                </div>
+              )}
               <div>
                 <span className="text-lg font-semibold text-gray-700">{t('total_units')}:</span>
                 <span className="ml-2 text-lg text-gray-600">{units.length}</span>

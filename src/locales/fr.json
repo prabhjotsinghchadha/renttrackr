@@ -139,6 +139,8 @@
     "no_properties_description": "Commencez par ajouter votre première propriété.",
     "add_first_property": "Ajoutez votre première propriété",
     "added_on": "Ajouté le",
+    "acquired_on": "Acquis le",
+    "acquired_on_label": "Acquis le",
     "back_to_properties": "Retour aux Propriétés",
     "add_property_description": "Entrez l'adresse de votre propriété locative pour commencer.",
     "property_address": "Adresse de la Propriété",
@@ -148,7 +150,15 @@
     "create_property": "Créer Propriété",
     "creating": "Création...",
     "create_error": "Échec de la création de la propriété. Veuillez réessayer.",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "property_acquired_on": "Propriété Acquise Le",
+    "acquired_on_help": "Entrez la date à laquelle vous avez acquis cette propriété",
+    "principal_amount": "Montant Principal",
+    "principal_amount_placeholder": "250000.00",
+    "principal_amount_help": "Entrez le montant principal de votre hypothèque ou prêt",
+    "rate_of_interest": "Taux d'Intérêt (%)",
+    "rate_of_interest_placeholder": "3.5",
+    "rate_of_interest_help": "Entrez le taux d'intérêt annuel en pourcentage"
   },
   "PropertyDetail": {
     "meta_title": "Détails de la Propriété",
