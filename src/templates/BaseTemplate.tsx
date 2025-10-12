@@ -14,7 +14,7 @@ export const BaseTemplate = (props: {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700 antialiased">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
+      <header className="relative sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
         <div className="mx-auto max-w-[1920px]">
           <div className="flex items-center justify-between gap-6 px-6 py-4 md:px-8 lg:px-12">
             {/* Logo */}
@@ -80,8 +80,8 @@ export const BaseTemplate = (props: {
 
           {/* Mobile Navigation */}
           <div
-            className={`border-t border-gray-200 bg-gray-50 px-6 py-4 transition-all duration-300 ease-in-out lg:hidden ${
-              isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 overflow-hidden opacity-0'
+            className={`relative z-40 border-t border-gray-200 bg-white px-6 py-4 shadow-sm transition-all duration-300 ease-in-out lg:hidden ${
+              isMobileMenuOpen ? 'max-h-[37.5rem] opacity-100' : 'max-h-0 overflow-hidden opacity-0'
             }`}
           >
             <nav aria-label="Mobile main navigation" className="mb-4">
@@ -100,7 +100,7 @@ export const BaseTemplate = (props: {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto w-full max-w-[1920px] flex-1 px-6 py-8 md:px-8 md:py-12 lg:px-12">
+      <main className="relative z-10 mx-auto w-full max-w-[1920px] flex-1 px-6 py-8 md:px-8 md:py-12 lg:px-12">
         {props.children}
       </main>
 
