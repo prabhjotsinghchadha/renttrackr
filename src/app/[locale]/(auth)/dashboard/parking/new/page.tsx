@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { ParkingForm } from '@/components/ParkingForm';
+import { ParkingForm } from '@/components/Form/ParkingForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;

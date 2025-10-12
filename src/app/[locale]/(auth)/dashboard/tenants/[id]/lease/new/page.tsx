@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getUserUnits } from '@/actions/PropertyActions';
 import { getTenantById } from '@/actions/TenantActions';
-import { LeaseForm } from '@/components/LeaseForm';
+import { LeaseForm } from '@/components/Form/LeaseForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; id: string }>;

@@ -8,7 +8,7 @@ import {
   updateParkingPermit,
 } from '@/actions/ParkingActions';
 import { DeleteParkingDialog } from '@/components/DeleteParkingDialog';
-import { EditParkingForm } from '@/components/EditParkingForm';
+import { EditParkingForm } from '@/components/Form/EditParkingForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;

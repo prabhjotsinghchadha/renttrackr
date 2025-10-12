@@ -9,7 +9,7 @@ import {
 } from '@/actions/PaymentActions';
 import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeletePaymentDialog } from '@/components/DeletePaymentDialog';
-import { EditPaymentForm } from '@/components/EditPaymentForm';
+import { EditPaymentForm } from '@/components/Form/EditPaymentForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;

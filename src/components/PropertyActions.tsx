@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { DeletePropertyModal } from './DeletePropertyModal';
-import { EditPropertyForm } from './EditPropertyForm';
+import { EditPropertyForm } from './Form/EditPropertyForm';
 
 type PropertyActionsProps = {
   propertyId: string;

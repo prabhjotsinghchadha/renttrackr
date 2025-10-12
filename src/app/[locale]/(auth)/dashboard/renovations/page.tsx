@@ -9,7 +9,7 @@ import {
 } from '@/actions/RenovationActions';
 import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
-import { EditRenovationForm } from '@/components/EditRenovationForm';
+import { EditRenovationForm } from '@/components/Form/EditRenovationForm';
 import { ViewRenovationDetails } from '@/components/ViewRenovationDetails';
 
 export async function generateMetadata(props: {

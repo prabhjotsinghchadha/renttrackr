@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { DeleteTenantModal } from './DeleteTenantModal';
-import { EditTenantForm } from './EditTenantForm';
+import { EditTenantForm } from './Form/EditTenantForm';
 
 type TenantActionsProps = {
   tenantId: string;

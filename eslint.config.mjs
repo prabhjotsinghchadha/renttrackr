@@ -25,7 +25,7 @@ export default antfu(
     },
 
     // Ignored paths
-    ignores: ['migrations/**/*', '*.md'],
+    ignores: ['migrations/**/*', '*.md', 'Markdown/**/*', 'README.md'],
   },
   // --- Accessibility Rules ---
   jsxA11y.flatConfigs.recommended,

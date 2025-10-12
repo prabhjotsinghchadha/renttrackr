@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPropertyById } from '@/actions/PropertyActions';
-import { AddUnitForm } from '@/components/AddUnitForm';
+import { AddUnitForm } from '@/components/Form/AddUnitForm';
 import { PropertyActions } from '@/components/PropertyActions';
 import { UnitActions } from '@/components/UnitActions';
 

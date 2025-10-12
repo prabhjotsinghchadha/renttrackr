@@ -101,8 +101,7 @@ All text must meet **WCAG AAA** standards:
 **Primary:** System font stack for instant loading
 
 ```css
-font-family:
-  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 ```
 
 **Benefits:**

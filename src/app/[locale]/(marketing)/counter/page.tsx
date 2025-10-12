@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
-import { CounterForm } from '@/components/CounterForm';
 import { CurrentCount } from '@/components/CurrentCount';
+import { CounterForm } from '@/components/Form/CounterForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
