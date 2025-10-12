@@ -92,7 +92,9 @@ export function FinancialReports({ locale: _locale }: FinancialReportsProps) {
       if (result.success && result.buffer) {
         // Convert base64 to blob and download
         const byteCharacters = atob(result.buffer);
-        const byteNumbers: number[] = Array.from({length: byteCharacters.length}, (_, i) => byteCharacters.charCodeAt(i));
+        const byteNumbers: number[] = Array.from({ length: byteCharacters.length }, (_, i) =>
+          byteCharacters.charCodeAt(i),
+        );
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -381,13 +383,15 @@ export function FinancialReports({ locale: _locale }: FinancialReportsProps) {
                                 <>
                                   <td className="text-right font-semibold text-red-600">
                                     $
-                                    {viewData.data.monthlyData.find((m: any) => m.month === month.month)?.expenses?.toFixed(2) ||
-                                      '0.00'}
+                                    {viewData.data.monthlyData
+                                      .find((m: any) => m.month === month.month)
+                                      ?.expenses?.toFixed(2) || '0.00'}
                                   </td>
                                   <td className="text-right font-semibold text-blue-600">
                                     $
-                                    {viewData.data.monthlyData.find((m: any) => m.month === month.month)?.netCashFlow?.toFixed(2) ||
-                                      '0.00'}
+                                    {viewData.data.monthlyData
+                                      .find((m: any) => m.month === month.month)
+                                      ?.netCashFlow?.toFixed(2) || '0.00'}
                                   </td>
                                 </>
                               )}

@@ -214,7 +214,6 @@ export async function getFinancialReportData() {
       .where(inArray(expenseSchema.propertyId, propertyIds))
       .orderBy(sql`${expenseSchema.date} DESC`);
 
-
     // Combine data with property and tenant information
     const paymentsWithDetails = payments.map((payment) => {
       const lease = leases.find((l) => l.id === payment.leaseId);
@@ -268,11 +267,9 @@ export async function generateIncomeStatement() {
     const now = new Date();
     const currentYear = now.getFullYear();
 
-
     // Filter data for current year
     const yearPayments = payments.filter((p) => new Date(p.date).getFullYear() === currentYear);
     const yearExpenses = expenses.filter((e) => new Date(e.date).getFullYear() === currentYear);
-
 
     // Group payments by month
     const monthlyRevenue = Array.from({ length: 12 }, (_, i) => {
@@ -571,7 +568,7 @@ export async function exportIncomeStatementToExcel() {
     }
 
     const { data } = result;
-    
+
     const workbook = XLSX.utils.book_new();
 
     // Summary sheet
@@ -592,11 +589,13 @@ export async function exportIncomeStatementToExcel() {
     // Monthly revenue sheet
     const monthlyData = [
       ['Month', 'Revenue', 'Payment Count'],
-      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0 ? data.monthlyRevenue.map((month) => [
-        month.month,
-        `$${month.revenue.toFixed(2)}`,
-        month.count,
-      ]) : [['No data available', '$0.00', 0]]),
+      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0
+        ? data.monthlyRevenue.map((month) => [
+            month.month,
+            `$${month.revenue.toFixed(2)}`,
+            month.count,
+          ])
+        : [['No data available', '$0.00', 0]]),
     ];
 
     const monthlySheet = XLSX.utils.aoa_to_sheet(monthlyData);
@@ -605,11 +604,13 @@ export async function exportIncomeStatementToExcel() {
     // Expenses by category sheet
     const expenseData = [
       ['Category', 'Amount', 'Count'],
-      ...(data.expensesByCategory && data.expensesByCategory.length > 0 ? data.expensesByCategory.map((category) => [
-        category.category,
-        `$${category.amount.toFixed(2)}`,
-        category.count,
-      ]) : [['No data available', '$0.00', 0]]),
+      ...(data.expensesByCategory && data.expensesByCategory.length > 0
+        ? data.expensesByCategory.map((category) => [
+            category.category,
+            `$${category.amount.toFixed(2)}`,
+            category.count,
+          ])
+        : [['No data available', '$0.00', 0]]),
     ];
 
     const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
@@ -771,7 +772,6 @@ export async function exportIncomeStatementToCSV() {
 
     const { data } = result;
 
-
     // Create CSV data
     const csvData = [
       // Summary section
@@ -787,20 +787,24 @@ export async function exportIncomeStatementToCSV() {
       // Monthly revenue section
       ['Monthly Revenue'],
       ['Month', 'Revenue', 'Payment Count'],
-      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0 ? data.monthlyRevenue.map((month) => [
-        month.month,
-        `$${month.revenue.toFixed(2)}`,
-        month.count,
-      ]) : [['No data available', '$0.00', 0]]),
+      ...(data.monthlyRevenue && data.monthlyRevenue.length > 0
+        ? data.monthlyRevenue.map((month) => [
+            month.month,
+            `$${month.revenue.toFixed(2)}`,
+            month.count,
+          ])
+        : [['No data available', '$0.00', 0]]),
       [''],
       // Expenses by category section
       ['Expenses by Category'],
       ['Category', 'Amount', 'Count'],
-      ...(data.expensesByCategory && data.expensesByCategory.length > 0 ? data.expensesByCategory.map((category) => [
-        category.category,
-        `$${category.amount.toFixed(2)}`,
-        category.count,
-      ]) : [['No data available', '$0.00', 0]]),
+      ...(data.expensesByCategory && data.expensesByCategory.length > 0
+        ? data.expensesByCategory.map((category) => [
+            category.category,
+            `$${category.amount.toFixed(2)}`,
+            category.count,
+          ])
+        : [['No data available', '$0.00', 0]]),
     ];
 
     // Convert to CSV string
