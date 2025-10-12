@@ -10,6 +10,9 @@ import {
 import { DeleteParkingDialog } from '@/components/DeleteParkingDialog';
 import { EditParkingForm } from '@/components/Form/EditParkingForm';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

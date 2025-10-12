@@ -3,6 +3,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { getUserTenants } from '@/actions/TenantActions';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

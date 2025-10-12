@@ -5,6 +5,9 @@ import { getLeasesByTenantId } from '@/actions/LeaseActions';
 import { getTenantById } from '@/actions/TenantActions';
 import { TenantDetailClient } from '@/components/TenantDetailClient';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {

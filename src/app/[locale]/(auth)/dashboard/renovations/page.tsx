@@ -12,6 +12,9 @@ import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
 import { EditRenovationForm } from '@/components/Form/EditRenovationForm';
 import { ViewRenovationDetails } from '@/components/ViewRenovationDetails';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

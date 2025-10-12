@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { PaymentForm } from '@/components/PaymentForm';
 
 export async function generateMetadata(props: {
@@ -43,7 +44,9 @@ export default async function NewPaymentPage(props: { params: Promise<{ locale: 
       </div>
 
       <div className="rounded-xl bg-gray-50 p-8 md:p-12">
-        <PaymentForm locale={locale} />
+        <Suspense fallback={<div className="py-8 text-center">Loading payment form...</div>}>
+          <PaymentForm locale={locale} />
+        </Suspense>
       </div>
     </div>
   );

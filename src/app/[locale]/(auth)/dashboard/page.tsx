@@ -7,6 +7,9 @@ import { getPropertyCount } from '@/actions/PropertyActions';
 import { getTenantCount } from '@/actions/TenantActions';
 import { getCurrentUser } from '@/helpers/AuthHelper';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

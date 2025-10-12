@@ -11,6 +11,9 @@ import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteExpenseDialog } from '@/components/DeleteExpenseDialog';
 import { EditExpenseForm } from '@/components/Form/EditExpenseForm';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

@@ -4,6 +4,9 @@ import { getFinancialMetrics } from '@/actions/FinancialActions';
 import { FinancialReports } from '@/components/FinancialReports';
 import { ROICalculator } from '@/components/ROICalculator';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {

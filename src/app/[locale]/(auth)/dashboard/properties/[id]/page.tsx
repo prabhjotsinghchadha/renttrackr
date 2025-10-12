@@ -7,6 +7,9 @@ import { AddUnitForm } from '@/components/Form/AddUnitForm';
 import { PropertyActions } from '@/components/PropertyActions';
 import { UnitActions } from '@/components/UnitActions';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
