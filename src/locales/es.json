@@ -522,7 +522,21 @@
     "permit_number_required": "Por favor ingresa un número de permiso",
     "create_error": "Error al crear permiso de estacionamiento. Por favor intenta de nuevo.",
     "vehicle": "Vehículo",
-    "issued_date": "Fecha de Emisión"
+    "issued_date": "Fecha de Emisión",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "edit_permit": "Editar Permiso",
+    "delete_permit": "Eliminar Permiso",
+    "confirm_delete": "¿Estás seguro de que quieres eliminar este permiso de estacionamiento?",
+    "delete_confirmation": "Esta acción no se puede deshacer.",
+    "confirm": "Confirmar",
+    "updating": "Actualizando...",
+    "deleting": "Eliminando...",
+    "update_error": "Error al actualizar el permiso de estacionamiento. Por favor intenta de nuevo.",
+    "delete_error": "Error al eliminar el permiso de estacionamiento. Por favor intenta de nuevo.",
+    "permit_updated": "Permiso de estacionamiento actualizado exitosamente",
+    "permit_deleted": "Permiso de estacionamiento eliminado exitosamente"
   },
   "Financials": {
     "meta_title": "Informes Financieros",

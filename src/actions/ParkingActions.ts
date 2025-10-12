@@ -236,6 +236,7 @@ export async function createParkingPermit(data: {
 export async function updateParkingPermit(
   permitId: string,
   data: {
+    tenantId?: string;
     building?: string;
     permitNumber?: string;
     status?: string;
@@ -248,7 +249,7 @@ export async function updateParkingPermit(
   },
 ) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
 
     // Verify ownership
     const permitCheck = await getParkingPermitById(permitId);
@@ -256,9 +257,43 @@ export async function updateParkingPermit(
       return { success: false, permit: null, error: permitCheck.error };
     }
 
+    // If tenantId is provided, verify it belongs to the user's properties
+    if (data.tenantId) {
+      const [tenant] = await db
+        .select()
+        .from(tenantSchema)
+        .where(eq(tenantSchema.id, data.tenantId))
+        .limit(1);
+
+      if (!tenant) {
+        return { success: false, permit: null, error: 'Tenant not found' };
+      }
+
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, tenant.unitId))
+        .limit(1);
+
+      if (!unit) {
+        return { success: false, permit: null, error: 'Unit not found' };
+      }
+
+      const [tenantProperty] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!tenantProperty) {
+        return { success: false, permit: null, error: 'Tenant does not belong to your properties' };
+      }
+    }
+
     const [permit] = await db
       .update(parkingPermitSchema)
       .set({
+        tenantId: data.tenantId,
         building: data.building,
         permitNumber: data.permitNumber,
         status: data.status,
@@ -353,6 +388,62 @@ export async function addParkingActivity(data: { parkingPermitId: string; note: 
   } catch (error) {
     console.error('Error adding parking activity:', error);
     return { success: false, activity: null, error: 'Failed to add parking activity' };
+  }
+}
+
+/**
+ * Get available tenants for parking permit assignment
+ */
+export async function getAvailableTenants() {
+  try {
+    const user = await requireAuth();
+
+    // Get all user's properties
+    const properties = await db
+      .select()
+      .from(propertySchema)
+      .where(eq(propertySchema.userId, user.id));
+
+    if (properties.length === 0) {
+      return { success: true, tenants: [] };
+    }
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get all units for these properties
+    const units = await db
+      .select()
+      .from(unitSchema)
+      .where(inArray(unitSchema.propertyId, propertyIds));
+
+    if (units.length === 0) {
+      return { success: true, tenants: [] };
+    }
+
+    const unitIds = units.map((u) => u.id);
+
+    // Get all tenants for these units
+    const tenants = await db
+      .select()
+      .from(tenantSchema)
+      .where(inArray(tenantSchema.unitId, unitIds));
+
+    // Combine tenant, unit, and property information
+    const tenantsWithDetails = tenants.map((tenant) => {
+      const unit = units.find((u) => u.id === tenant.unitId);
+      const property = properties.find((p) => p.id === unit?.propertyId);
+
+      return {
+        ...tenant,
+        unitNumber: unit?.unitNumber || 'Unknown',
+        propertyAddress: property?.address || 'Unknown',
+      };
+    });
+
+    return { success: true, tenants: tenantsWithDetails };
+  } catch (error) {
+    console.error('Error fetching available tenants:', error);
+    return { success: false, tenants: [], error: 'Failed to fetch tenants' };
   }
 }
 

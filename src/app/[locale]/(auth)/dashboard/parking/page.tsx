@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { getParkingMetrics, getParkingPermitsWithDetails } from '@/actions/ParkingActions';
+import { deleteParkingPermit, getParkingMetrics, getParkingPermitsWithDetails, updateParkingPermit } from '@/actions/ParkingActions';
+import { DeleteParkingDialog } from '@/components/DeleteParkingDialog';
+import { EditParkingForm } from '@/components/EditParkingForm';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -103,6 +105,9 @@ export default async function ParkingPage(props: { params: Promise<{ locale: str
                     <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
                       {t('issued_date')}
                     </th>
+                    <th className="px-4 py-4 text-left text-lg font-semibold text-gray-700">
+                      {t('actions')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -162,6 +167,47 @@ export default async function ParkingPage(props: { params: Promise<{ locale: str
                             month: 'short',
                             day: 'numeric',
                           })}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex gap-2">
+                            <EditParkingForm
+                              permit={permit}
+                              locale={locale}
+                              onUpdate={async (updatedPermit: {
+                                tenantId?: string;
+                                building?: string;
+                                permitNumber: string;
+                                status: string;
+                                vehicleMake?: string;
+                                vehicleModel?: string;
+                                vehicleYear?: string;
+                                vehicleColor?: string;
+                                licensePlate?: string;
+                                comments?: string;
+                              }) => {
+                                'use server';
+                                const result = await updateParkingPermit(permit.id, updatedPermit);
+                                if (result.success) {
+                                  // Refresh the page to show updated data
+                                  window.location.reload();
+                                }
+                                return result;
+                              }}
+                            />
+                            <DeleteParkingDialog
+                              permit={permit}
+                              locale={locale}
+                              onDelete={async () => {
+                                'use server';
+                                const result = await deleteParkingPermit(permit.id);
+                                if (result.success) {
+                                  // Refresh the page to show updated data
+                                  window.location.reload();
+                                }
+                                return result;
+                              }}
+                            />
+                          </div>
                         </td>
                       </tr>
                     );
