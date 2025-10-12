@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 type Expense = {
   id: string;
@@ -36,6 +37,7 @@ type EditExpenseFormProps = {
 
 export function EditExpenseForm({ expense, locale: _locale, onUpdate }: EditExpenseFormProps) {
   const t = useTranslations('Expenses');
+  const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -114,6 +116,8 @@ export function EditExpenseForm({ expense, locale: _locale, onUpdate }: EditExpe
           <DialogTitle>{t('edit_expense')}</DialogTitle>
           <DialogDescription>
             {t('property')}: {expense.propertyAddress}
+            <br />
+            Current Amount: {formatCurrency(expense.amount)}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

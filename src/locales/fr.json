@@ -538,6 +538,12 @@
     "permit_updated": "Permis de stationnement mis à jour avec succès",
     "permit_deleted": "Permis de stationnement supprimé avec succès"
   },
+  "Currency": {
+    "currency": "Devise",
+    "usd": "Dollar Américain",
+    "inr": "Roupie Indienne",
+    "aud": "Dollar Australien"
+  },
   "Financials": {
     "meta_title": "Rapports Financiers",
     "meta_description": "Voir les rapports financiers et calculs de ROI",

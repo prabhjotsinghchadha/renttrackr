@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 type Payment = {
   id: string;
@@ -37,6 +38,7 @@ type EditPaymentFormProps = {
 
 export function EditPaymentForm({ payment, locale: _locale, onUpdate }: EditPaymentFormProps) {
   const t = useTranslations('Rents');
+  const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,6 +118,9 @@ export function EditPaymentForm({ payment, locale: _locale, onUpdate }: EditPaym
           <DialogTitle>{t('edit_payment')}</DialogTitle>
           <DialogDescription>
             {t('tenant_name')}: {payment.tenantName} - {t('unit_number')} {payment.unitNumber}
+            <br />
+            Current Amount: {formatCurrency(payment.amount)}
+            {payment.lateFee && ` (Late Fee: ${formatCurrency(payment.lateFee)})`}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

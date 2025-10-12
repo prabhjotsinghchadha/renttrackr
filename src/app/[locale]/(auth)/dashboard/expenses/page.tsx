@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { deleteExpense, getExpenseMetrics, getExpensesWithPropertyInfo, updateExpense } from '@/actions/ExpenseActions';
+import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteExpenseDialog } from '@/components/DeleteExpenseDialog';
 import { EditExpenseForm } from '@/components/EditExpenseForm';
 
@@ -52,25 +53,29 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
           <div className="mb-4 text-4xl">📅</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_this_month')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            ${metrics.totalThisMonth.toFixed(2)}
+            <CurrencyDisplay amount={metrics.totalThisMonth} />
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">📆</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_this_year')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            ${metrics.totalThisYear.toFixed(2)}
+            <CurrencyDisplay amount={metrics.totalThisYear} />
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">🔧</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('maintenance')}</div>
-          <div className="text-4xl font-bold text-gray-800">${metrics.maintenance.toFixed(2)}</div>
+          <div className="text-4xl font-bold text-gray-800">
+            <CurrencyDisplay amount={metrics.maintenance} />
+          </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">🏢</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('association')}</div>
-          <div className="text-4xl font-bold text-gray-800">${metrics.association.toFixed(2)}</div>
+          <div className="text-4xl font-bold text-gray-800">
+            <CurrencyDisplay amount={metrics.association} />
+          </div>
         </div>
       </div>
 
@@ -122,7 +127,7 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
                       <td className="px-4 py-4 text-lg text-gray-800">{expense.propertyAddress}</td>
                       <td className="px-4 py-4 text-lg text-gray-600">{expense.type}</td>
                       <td className="px-4 py-4 text-lg font-semibold text-red-600">
-                        ${expense.amount.toFixed(2)}
+                        <CurrencyDisplay amount={expense.amount} />
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
                         {new Date(expense.date).toLocaleDateString(locale, {

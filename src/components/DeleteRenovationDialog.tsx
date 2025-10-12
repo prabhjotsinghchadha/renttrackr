@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 type Renovation = {
   id: string;
@@ -33,6 +34,7 @@ type DeleteRenovationDialogProps = {
 
 export function DeleteRenovationDialog({ renovation, locale, onDelete }: DeleteRenovationDialogProps) {
   const t = useTranslations('Renovations');
+  const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +104,7 @@ export function DeleteRenovationDialog({ renovation, locale, onDelete }: DeleteR
               )}
               {renovation.totalCost && renovation.totalCost > 0 && (
                 <div className="font-medium">
-                  {t('total_cost')}: ${renovation.totalCost.toFixed(2)}
+                  {t('total_cost')}: {formatCurrency(renovation.totalCost)}
                 </div>
               )}
             </div>

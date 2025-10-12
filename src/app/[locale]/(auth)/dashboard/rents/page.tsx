@@ -7,6 +7,7 @@ import {
   getPaymentsWithDetails,
   updatePayment,
 } from '@/actions/PaymentActions';
+import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeletePaymentDialog } from '@/components/DeletePaymentDialog';
 import { EditPaymentForm } from '@/components/EditPaymentForm';
 
@@ -57,23 +58,29 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
           <div className="mb-4 text-4xl">💰</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_collected')}</div>
           <div className="text-4xl font-bold text-green-600">
-            ${metrics.totalCollected.toFixed(2)}
+            <CurrencyDisplay amount={metrics.totalCollected} />
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">⏳</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('pending_this_month')}</div>
-          <div className="text-4xl font-bold text-yellow-600">${metrics.pending.toFixed(2)}</div>
+          <div className="text-4xl font-bold text-yellow-600">
+            <CurrencyDisplay amount={metrics.pending} />
+          </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">⚠️</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('overdue')}</div>
-          <div className="text-4xl font-bold text-red-600">${metrics.overdue.toFixed(2)}</div>
+          <div className="text-4xl font-bold text-red-600">
+            <CurrencyDisplay amount={metrics.overdue} />
+          </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">📋</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('late_fees')}</div>
-          <div className="text-4xl font-bold text-gray-800">${metrics.lateFees.toFixed(2)}</div>
+          <div className="text-4xl font-bold text-gray-800">
+            <CurrencyDisplay amount={metrics.lateFees} />
+          </div>
         </div>
       </div>
 
@@ -124,10 +131,10 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                         {t('unit_number')} {payment.unitNumber}
                       </td>
                       <td className="px-4 py-4 text-lg font-semibold text-green-600">
-                        ${payment.amount.toFixed(2)}
+                        <CurrencyDisplay amount={payment.amount} />
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
-                        {payment.lateFee ? `$${payment.lateFee.toFixed(2)}` : '-'}
+                        {payment.lateFee ? <CurrencyDisplay amount={payment.lateFee} /> : '-'}
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
                         {new Date(payment.date).toLocaleDateString(locale, {

@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 type Expense = {
   id: string;
@@ -30,6 +31,7 @@ type DeleteExpenseDialogProps = {
 
 export function DeleteExpenseDialog({ expense, locale, onDelete }: DeleteExpenseDialogProps) {
   const t = useTranslations('Expenses');
+  const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +89,7 @@ export function DeleteExpenseDialog({ expense, locale, onDelete }: DeleteExpense
                 {t('type')}: {expense.type}
               </div>
               <div className="font-medium">
-                {t('amount')}: ${expense.amount.toFixed(2)}
+                {t('amount')}: {formatCurrency(expense.amount)}
               </div>
               <div className="font-medium">
                 {t('date')}: {new Date(expense.date).toLocaleDateString(locale)}

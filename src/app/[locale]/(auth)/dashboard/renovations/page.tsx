@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { deleteRenovation, getRenovationMetrics, getRenovationsWithDetails, updateRenovation } from '@/actions/RenovationActions';
+import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
 import { EditRenovationForm } from '@/components/EditRenovationForm';
 import { ViewRenovationDetails } from '@/components/ViewRenovationDetails';
@@ -154,7 +155,7 @@ export default async function RenovationsPage(props: { params: Promise<{ locale:
                           <p className="mb-1 text-sm text-gray-500">
                             <span className="font-medium">{t('total_cost')}:</span>{' '}
                             <span className="font-semibold text-green-600">
-                              ${renovation.totalCost.toFixed(2)}
+                              <CurrencyDisplay amount={renovation.totalCost} />
                             </span>
                           </p>
                         )}
