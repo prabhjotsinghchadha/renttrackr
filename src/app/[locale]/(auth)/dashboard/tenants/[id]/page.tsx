@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLeasesByTenantId } from '@/actions/LeaseActions';
 import { getTenantById } from '@/actions/TenantActions';
+import { TenantActions } from '@/components/TenantActions';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string; id: string }>;
@@ -58,20 +59,13 @@ export default async function TenantDetailPage(props: {
 
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">{tenant.name}</h1>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            className="rounded-xl border-2 border-blue-600 bg-white px-6 py-3 text-lg font-semibold text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:ring-4 focus:ring-blue-300 focus:outline-none"
-          >
-            {t('edit_tenant')}
-          </button>
-          <button
-            type="button"
-            className="rounded-xl border-2 border-red-600 bg-white px-6 py-3 text-lg font-semibold text-red-600 transition-all duration-300 hover:bg-red-600 hover:text-white focus:ring-4 focus:ring-red-300 focus:outline-none"
-          >
-            {t('delete_tenant')}
-          </button>
-        </div>
+        <TenantActions
+          tenantId={id}
+          tenantName={tenant.name}
+          tenantPhone={tenant.phone || undefined}
+          tenantEmail={tenant.email || undefined}
+          locale={locale}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
