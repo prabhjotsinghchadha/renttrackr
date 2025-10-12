@@ -1,5 +1,6 @@
 'use server';
 
+import { Buffer } from 'node:buffer';
 import { eq, inArray, sql } from 'drizzle-orm';
 import * as XLSX from 'xlsx';
 import { requireAuth } from '@/helpers/AuthHelper';
@@ -160,7 +161,10 @@ export async function getFinancialReportData() {
       .from(propertySchema)
       .where(eq(propertySchema.userId, user.id));
 
+    console.warn('User properties:', properties.length);
+
     if (properties.length === 0) {
+      console.warn('No properties found for user');
       return { success: true, data: { properties: [], payments: [], expenses: [] } };
     }
 
@@ -212,6 +216,15 @@ export async function getFinancialReportData() {
       .from(expenseSchema)
       .where(inArray(expenseSchema.propertyId, propertyIds))
       .orderBy(sql`${expenseSchema.date} DESC`);
+
+    console.warn('Data retrieved:', {
+      properties: properties.length,
+      units: units.length,
+      tenants: tenants.length,
+      leases: leases.length,
+      payments: payments.length,
+      expenses: expenses.length,
+    });
 
     // Combine data with property and tenant information
     const paymentsWithDetails = payments.map((payment) => {
@@ -266,9 +279,22 @@ export async function generateIncomeStatement() {
     const now = new Date();
     const currentYear = now.getFullYear();
 
+    console.warn('Financial data debug:', {
+      totalPayments: payments.length,
+      totalExpenses: expenses.length,
+      currentYear,
+      paymentYears: payments.map((p) => new Date(p.date).getFullYear()),
+      expenseYears: expenses.map((e) => new Date(e.date).getFullYear()),
+    });
+
     // Filter data for current year
     const yearPayments = payments.filter((p) => new Date(p.date).getFullYear() === currentYear);
     const yearExpenses = expenses.filter((e) => new Date(e.date).getFullYear() === currentYear);
+
+    console.warn('Filtered data:', {
+      yearPayments: yearPayments.length,
+      yearExpenses: yearExpenses.length,
+    });
 
     // Group payments by month
     const monthlyRevenue = Array.from({ length: 12 }, (_, i) => {
@@ -471,11 +497,97 @@ export async function generateTaxSummary() {
 }
 
 /**
+ * Generate income statement with all data (not just current year)
+ */
+export async function generateIncomeStatementAllData() {
+  try {
+    const result = await getFinancialReportData();
+
+    if (!result.success || !result.data) {
+      return { success: false, data: null, error: 'Failed to fetch data' };
+    }
+
+    const { payments, expenses } = result.data;
+
+    // Use all data instead of filtering by year
+    const allPayments = payments;
+    const allExpenses = expenses;
+
+    // Get the year range from the data
+    const paymentYears = payments.map((p) => new Date(p.date).getFullYear());
+    const expenseYears = expenses.map((e) => new Date(e.date).getFullYear());
+    const allYears = [...new Set([...paymentYears, ...expenseYears])];
+    const maxYear = Math.max(...allYears);
+
+    // Group payments by month across all years
+    const monthlyRevenue = Array.from({ length: 12 }, (_, i) => {
+      const monthPayments = allPayments.filter((p) => new Date(p.date).getMonth() === i);
+      return {
+        month: new Date(2024, i).toLocaleDateString('en-US', { month: 'long' }),
+        revenue: monthPayments.reduce((sum, p) => sum + p.amount, 0),
+        count: monthPayments.length,
+      };
+    });
+
+    // Group expenses by category
+    const expensesByCategory = allExpenses.reduce(
+      (acc, expense) => {
+        const category = expense.type;
+        if (!acc[category]) {
+          acc[category] = { amount: 0, count: 0 };
+        }
+        acc[category].amount += expense.amount;
+        acc[category].count += 1;
+        return acc;
+      },
+      {} as Record<string, { amount: number; count: number }>,
+    );
+
+    const totalRevenue = allPayments.reduce((sum, p) => sum + p.amount, 0);
+    const totalExpenses = allExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const netIncome = totalRevenue - totalExpenses;
+
+    return {
+      success: true,
+      data: {
+        year: maxYear, // Use the most recent year as the primary year
+        totalRevenue,
+        totalExpenses,
+        netIncome,
+        monthlyRevenue,
+        expensesByCategory: Object.entries(expensesByCategory).map(([category, data]) => ({
+          category,
+          amount: data.amount,
+          count: data.count,
+        })),
+        paymentCount: allPayments.length,
+        expenseCount: allExpenses.length,
+      },
+    };
+  } catch (error) {
+    console.error('Error generating income statement (all data):', error);
+    return { success: false, data: null, error: 'Failed to generate income statement' };
+  }
+}
+
+/**
  * Export income statement to Excel
  */
 export async function exportIncomeStatementToExcel() {
   try {
-    const result = await generateIncomeStatement();
+    // Try current year first, fallback to all data if no current year data
+    let result = await generateIncomeStatement();
+
+    // If no data for current year, use all data
+    if (
+      result.success &&
+      result.data &&
+      result.data.paymentCount === 0 &&
+      result.data.expenseCount === 0
+    ) {
+      console.warn('No current year data found, using all available data');
+      result = await generateIncomeStatementAllData();
+    }
 
     if (!result.success || !result.data) {
       return { success: false, error: 'Failed to generate income statement' };
@@ -651,5 +763,181 @@ export async function exportTaxSummaryToExcel() {
   } catch (error) {
     console.error('Error exporting tax summary:', error);
     return { success: false, error: 'Failed to export tax summary' };
+  }
+}
+
+/**
+ * Export income statement to CSV
+ */
+export async function exportIncomeStatementToCSV() {
+  try {
+    // Try current year first, fallback to all data if no current year data
+    let result = await generateIncomeStatement();
+
+    // If no data for current year, use all data
+    if (
+      result.success &&
+      result.data &&
+      result.data.paymentCount === 0 &&
+      result.data.expenseCount === 0
+    ) {
+      console.warn('No current year data found, using all available data');
+      result = await generateIncomeStatementAllData();
+    }
+
+    if (!result.success || !result.data) {
+      return { success: false, error: 'Failed to generate income statement' };
+    }
+
+    const { data } = result;
+
+    // Create CSV data
+    const csvData = [
+      // Summary section
+      ['Income Statement', `Year: ${data.year}`],
+      [''],
+      ['Total Revenue', `$${data.totalRevenue.toFixed(2)}`],
+      ['Total Expenses', `$${data.totalExpenses.toFixed(2)}`],
+      ['Net Income', `$${data.netIncome.toFixed(2)}`],
+      [''],
+      ['Payment Count', data.paymentCount],
+      ['Expense Count', data.expenseCount],
+      [''],
+      // Monthly revenue section
+      ['Monthly Revenue'],
+      ['Month', 'Revenue', 'Payment Count'],
+      ...data.monthlyRevenue.map((month) => [
+        month.month,
+        `$${month.revenue.toFixed(2)}`,
+        month.count,
+      ]),
+      [''],
+      // Expenses by category section
+      ['Expenses by Category'],
+      ['Category', 'Amount', 'Count'],
+      ...data.expensesByCategory.map((category) => [
+        category.category,
+        `$${category.amount.toFixed(2)}`,
+        category.count,
+      ]),
+    ];
+
+    // Convert to CSV string
+    const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
+
+    const buffer = Buffer.from(csvString, 'utf-8');
+    return { success: true, buffer, filename: `income-statement-${data.year}.csv` };
+  } catch (error) {
+    console.error('Error exporting income statement to CSV:', error);
+    return { success: false, error: 'Failed to export income statement to CSV' };
+  }
+}
+
+/**
+ * Export cash flow analysis to CSV
+ */
+export async function exportCashFlowToCSV() {
+  try {
+    const result = await generateCashFlowAnalysis();
+
+    if (!result.success || !result.data) {
+      return { success: false, error: 'Failed to generate cash flow analysis' };
+    }
+
+    const { data } = result;
+
+    // Create CSV data
+    const csvData = [
+      // Summary section
+      ['Cash Flow Analysis', `Year: ${data.year}`],
+      [''],
+      ['Total Revenue', `$${data.totalRevenue.toFixed(2)}`],
+      ['Total Expenses', `$${data.totalExpenses.toFixed(2)}`],
+      ['Total Net Cash Flow', `$${data.totalNetCashFlow.toFixed(2)}`],
+      [''],
+      ['Average Monthly Revenue', `$${data.averageMonthlyRevenue.toFixed(2)}`],
+      ['Average Monthly Expenses', `$${data.averageMonthlyExpenses.toFixed(2)}`],
+      ['Average Monthly Net Flow', `$${data.averageMonthlyNetFlow.toFixed(2)}`],
+      [''],
+      // Monthly cash flow section
+      ['Monthly Cash Flow'],
+      ['Month', 'Revenue', 'Expenses', 'Net Cash Flow', 'Payment Count', 'Expense Count'],
+      ...data.monthlyData.map((month) => [
+        month.month,
+        `$${month.revenue.toFixed(2)}`,
+        `$${month.expenses.toFixed(2)}`,
+        `$${month.netCashFlow.toFixed(2)}`,
+        month.paymentCount,
+        month.expenseCount,
+      ]),
+    ];
+
+    // Convert to CSV string
+    const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
+
+    const buffer = Buffer.from(csvString, 'utf-8');
+    return { success: true, buffer, filename: `cash-flow-analysis-${data.year}.csv` };
+  } catch (error) {
+    console.error('Error exporting cash flow analysis to CSV:', error);
+    return { success: false, error: 'Failed to export cash flow analysis to CSV' };
+  }
+}
+
+/**
+ * Export tax summary to CSV
+ */
+export async function exportTaxSummaryToCSV() {
+  try {
+    const result = await generateTaxSummary();
+
+    if (!result.success || !result.data) {
+      return { success: false, error: 'Failed to generate tax summary' };
+    }
+
+    const { data } = result;
+
+    // Create CSV data
+    const csvData = [
+      // Summary section
+      ['Tax Summary', `Year: ${data.year}`],
+      [''],
+      ['Total Revenue', `$${data.totalRevenue.toFixed(2)}`],
+      ['Total Expenses', `$${data.totalExpenses.toFixed(2)}`],
+      ['Taxable Income', `$${data.taxableIncome.toFixed(2)}`],
+      [''],
+      ['Payment Count', data.paymentCount],
+      ['Expense Count', data.expenseCount],
+      [''],
+      // Expenses by category section
+      ['Expenses by Category'],
+      ['Category', 'Amount', 'Count'],
+      ...data.categorizedExpenses.map((category) => [
+        category.category,
+        `$${category.amount.toFixed(2)}`,
+        category.count,
+      ]),
+      [''],
+      // Detailed expenses section
+      ['Detailed Expenses'],
+      ['Date', 'Category', 'Type', 'Amount', 'Property'],
+      ...data.categorizedExpenses.flatMap((category) =>
+        category.items.map((item) => [
+          new Date(item.date).toLocaleDateString(),
+          category.category,
+          item.type,
+          `$${item.amount.toFixed(2)}`,
+          item.property,
+        ]),
+      ),
+    ];
+
+    // Convert to CSV string
+    const csvString = csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
+
+    const buffer = Buffer.from(csvString, 'utf-8');
+    return { success: true, buffer, filename: `tax-summary-${data.year}.csv` };
+  } catch (error) {
+    console.error('Error exporting tax summary to CSV:', error);
+    return { success: false, error: 'Failed to export tax summary to CSV' };
   }
 }

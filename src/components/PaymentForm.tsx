@@ -70,13 +70,13 @@ export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
   useEffect(() => {
     const tenantParam = searchParams.get('tenant');
     const amountParam = searchParams.get('amount');
-    
+
     if (tenantParam && leases.length > 0) {
       // Find the lease for the specified tenant
-      const matchingLease = leases.find(lease => 
-        lease.tenantName.toLowerCase().includes(tenantParam.toLowerCase())
+      const matchingLease = leases.find((lease) =>
+        lease.tenantName.toLowerCase().includes(tenantParam.toLowerCase()),
       );
-      
+
       if (matchingLease) {
         setLeaseId(matchingLease.id);
         if (amountParam) {
@@ -254,7 +254,10 @@ export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
                   <div className="mt-3">
                     <p className="mb-2 text-sm font-medium text-gray-700">{t('overdue_details')}</p>
                     {status.overdue.map((payment: any) => (
-                      <div key={`overdue-${payment.tenantName}-${payment.dueDate.getTime()}`} className="mb-1 text-xs text-gray-600">
+                      <div
+                        key={`overdue-${payment.tenantName}-${payment.dueDate.getTime()}`}
+                        className="mb-1 text-xs text-gray-600"
+                      >
                         ${payment.amount.toFixed(2)} due{' '}
                         {new Date(payment.dueDate).toLocaleDateString()}({payment.daysOverdue}{' '}
                         {payment.daysOverdue === 1 ? t('day_overdue') : t('days_overdue')})
@@ -266,7 +269,10 @@ export function PaymentForm({ locale, onSuccess }: PaymentFormProps) {
                   <div className="mt-3">
                     <p className="mb-2 text-sm font-medium text-gray-700">{t('pending_details')}</p>
                     {status.pending.map((payment: any) => (
-                      <div key={`pending-${payment.tenantName}-${payment.dueDate.getTime()}`} className="mb-1 text-xs text-gray-600">
+                      <div
+                        key={`pending-${payment.tenantName}-${payment.dueDate.getTime()}`}
+                        className="mb-1 text-xs text-gray-600"
+                      >
                         ${payment.amount.toFixed(2)} due{' '}
                         {new Date(payment.dueDate).toLocaleDateString()}
                         {payment.daysUntilDue === 0
