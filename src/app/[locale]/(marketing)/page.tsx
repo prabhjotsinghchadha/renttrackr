@@ -103,25 +103,28 @@ export default async function Index(props: IIndexProps) {
             <h4 className="mb-4 text-xl font-semibold">{t('footer_support_title')}</h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#help"
+                <Link
+                  href="/support/"
                   className="text-lg text-blue-200 transition-colors hover:text-white"
                 >
                   {t('footer_help_center')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contact"
+                <Link
+                  href="/support/"
                   className="text-lg text-blue-200 transition-colors hover:text-white"
                 >
                   {t('footer_contact_us')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#faq" className="text-lg text-blue-200 transition-colors hover:text-white">
+                <Link
+                  href="/support/"
+                  className="text-lg text-blue-200 transition-colors hover:text-white"
+                >
                   {t('footer_faq')}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -139,20 +142,28 @@ export default async function Index(props: IIndexProps) {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#privacy"
+                <Link
+                  href="/privacy/"
                   className="text-lg text-blue-200 transition-colors hover:text-white"
                 >
                   {t('footer_privacy')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#terms"
+                <Link
+                  href="/terms/"
                   className="text-lg text-blue-200 transition-colors hover:text-white"
                 >
                   {t('footer_terms')}
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cancellation/"
+                  className="text-lg text-blue-200 transition-colors hover:text-white"
+                >
+                  {t('footer_cancellation')}
+                </Link>
               </li>
             </ul>
           </div>
