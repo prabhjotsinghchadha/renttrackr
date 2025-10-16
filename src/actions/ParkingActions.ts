@@ -185,24 +185,47 @@ export async function createParkingPermit(data: {
         return { success: false, permit: null, error: 'Tenant not found' };
       }
 
-      const [unit] = await db
-        .select()
-        .from(unitSchema)
-        .where(eq(unitSchema.id, tenant.unitId))
-        .limit(1);
+      // For tenants with units, check through unit -> property
+      // For tenants without units, check directly through property
+      if (tenant.unitId) {
+        const [unit] = await db
+          .select()
+          .from(unitSchema)
+          .where(eq(unitSchema.id, tenant.unitId))
+          .limit(1);
 
-      if (!unit) {
-        return { success: false, permit: null, error: 'Unit not found' };
-      }
+        if (!unit) {
+          return { success: false, permit: null, error: 'Unit not found' };
+        }
 
-      const [tenantProperty] = await db
-        .select()
-        .from(propertySchema)
-        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-        .limit(1);
+        const [tenantProperty] = await db
+          .select()
+          .from(propertySchema)
+          .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+          .limit(1);
 
-      if (!tenantProperty) {
-        return { success: false, permit: null, error: 'Tenant does not belong to your properties' };
+        if (!tenantProperty) {
+          return {
+            success: false,
+            permit: null,
+            error: 'Tenant does not belong to your properties',
+          };
+        }
+      } else {
+        // For tenants without units (single-family properties), check directly through property
+        const [tenantProperty] = await db
+          .select()
+          .from(propertySchema)
+          .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+          .limit(1);
+
+        if (!tenantProperty) {
+          return {
+            success: false,
+            permit: null,
+            error: 'Tenant does not belong to your properties',
+          };
+        }
       }
     }
 
@@ -269,24 +292,47 @@ export async function updateParkingPermit(
         return { success: false, permit: null, error: 'Tenant not found' };
       }
 
-      const [unit] = await db
-        .select()
-        .from(unitSchema)
-        .where(eq(unitSchema.id, tenant.unitId))
-        .limit(1);
+      // For tenants with units, check through unit -> property
+      // For tenants without units, check directly through property
+      if (tenant.unitId) {
+        const [unit] = await db
+          .select()
+          .from(unitSchema)
+          .where(eq(unitSchema.id, tenant.unitId))
+          .limit(1);
 
-      if (!unit) {
-        return { success: false, permit: null, error: 'Unit not found' };
-      }
+        if (!unit) {
+          return { success: false, permit: null, error: 'Unit not found' };
+        }
 
-      const [tenantProperty] = await db
-        .select()
-        .from(propertySchema)
-        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-        .limit(1);
+        const [tenantProperty] = await db
+          .select()
+          .from(propertySchema)
+          .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+          .limit(1);
 
-      if (!tenantProperty) {
-        return { success: false, permit: null, error: 'Tenant does not belong to your properties' };
+        if (!tenantProperty) {
+          return {
+            success: false,
+            permit: null,
+            error: 'Tenant does not belong to your properties',
+          };
+        }
+      } else {
+        // For tenants without units (single-family properties), check directly through property
+        const [tenantProperty] = await db
+          .select()
+          .from(propertySchema)
+          .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+          .limit(1);
+
+        if (!tenantProperty) {
+          return {
+            success: false,
+            permit: null,
+            error: 'Tenant does not belong to your properties',
+          };
+        }
       }
     }
 

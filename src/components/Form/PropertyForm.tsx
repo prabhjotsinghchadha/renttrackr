@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createProperty } from '@/actions/PropertyActions';
+import { AddUnitForm } from './AddUnitForm';
 
 type PropertyFormProps = {
   locale: string;
@@ -13,11 +14,22 @@ export function PropertyForm({ locale }: PropertyFormProps) {
   const router = useRouter();
   const t = useTranslations('Properties');
   const [address, setAddress] = useState('');
+  const [propertyType, setPropertyType] = useState('');
   const [acquiredOn, setAcquiredOn] = useState('');
   const [principalAmount, setPrincipalAmount] = useState('');
   const [rateOfInterest, setRateOfInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [createdPropertyId, setCreatedPropertyId] = useState<string | null>(null);
+
+  const propertyTypes = [
+    { value: 'single_family', label: t('property_types.single_family') },
+    { value: 'condo', label: t('property_types.condo') },
+    { value: 'townhouse', label: t('property_types.townhouse') },
+    { value: 'multiunit', label: t('property_types.multiunit') },
+    { value: 'apartment', label: t('property_types.apartment') },
+    { value: 'duplex', label: t('property_types.duplex') },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,19 +43,28 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         return;
       }
 
+      if (!propertyType) {
+        setError(t('property_type_required'));
+        setIsSubmitting(false);
+        return;
+      }
+
       const result = await createProperty({
         address: address.trim(),
+        propertyType,
         acquiredOn: acquiredOn ? new Date(acquiredOn) : undefined,
         principalAmount: principalAmount ? Number.parseFloat(principalAmount) : undefined,
         rateOfInterest: rateOfInterest ? Number.parseFloat(rateOfInterest) : undefined,
       });
-      // console.log('📝 Form result:', result);
 
       if (result.success && result.property) {
-        // console.log('✅ Success! Redirecting...');
-        // Redirect to the properties list
-        router.push(`/${locale}/dashboard/properties`);
-        router.refresh();
+        setCreatedPropertyId(result.property.id);
+
+        // If it's not a multi-unit property, redirect immediately
+        if (propertyType !== 'multiunit') {
+          router.push(`/${locale}/dashboard/properties`);
+          router.refresh();
+        }
       } else {
         console.error('❌ Form error:', result.error);
         setError(result.error || t('create_error'));
@@ -55,6 +76,34 @@ export function PropertyForm({ locale }: PropertyFormProps) {
       setIsSubmitting(false);
     }
   };
+
+  const handleUnitAdded = () => {
+    // Redirect to properties list after unit is added
+    router.push(`/${locale}/dashboard/properties`);
+    router.refresh();
+  };
+
+  // If property is created and it's multi-unit, show the unit form
+  if (createdPropertyId && propertyType === 'multiunit') {
+    return (
+      <div className="space-y-6">
+        <div className="rounded-xl bg-green-50 p-4 text-green-600">
+          <p className="text-lg font-semibold">{t('property_created')}</p>
+          <p className="text-sm">{t('add_unit_description')}</p>
+        </div>
+
+        <AddUnitForm propertyId={createdPropertyId} onSuccess={handleUnitAdded} />
+
+        <button
+          type="button"
+          onClick={() => router.push(`/${locale}/dashboard/properties`)}
+          className="rounded-xl border-2 border-gray-300 bg-white px-8 py-4 text-xl font-semibold text-gray-700 transition-all duration-300 hover:border-gray-400 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 focus:outline-none"
+        >
+          {t('skip_adding_units')}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,6 +122,28 @@ export function PropertyForm({ locale }: PropertyFormProps) {
           required
         />
         <p className="mt-2 text-sm text-gray-600">{t('address_help')}</p>
+      </div>
+
+      <div>
+        <label htmlFor="propertyType" className="mb-2 block text-lg font-semibold text-gray-800">
+          {t('property_type')} <span className="text-red-600">*</span>
+        </label>
+        <select
+          id="propertyType"
+          value={propertyType}
+          onChange={(e) => setPropertyType(e.target.value)}
+          disabled={isSubmitting}
+          className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">{t('select_property_type')}</option>
+          {propertyTypes.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
+        <p className="mt-2 text-sm text-gray-600">{t('property_type_help')}</p>
       </div>
 
       <div>

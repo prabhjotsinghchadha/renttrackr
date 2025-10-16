@@ -24,23 +24,11 @@ export async function getUserTenants() {
 
     const propertyIds = properties.map((p) => p.id);
 
-    // Get all units for these properties
-    const units = await db
-      .select({ id: unitSchema.id })
-      .from(unitSchema)
-      .where(inArray(unitSchema.propertyId, propertyIds));
-
-    if (units.length === 0) {
-      return { success: true, tenants: [] };
-    }
-
-    const unitIds = units.map((u) => u.id);
-
-    // Get all tenants for these units
+    // Get all tenants for these properties (both with and without units)
     const tenants = await db
       .select()
       .from(tenantSchema)
-      .where(inArray(tenantSchema.unitId, unitIds));
+      .where(inArray(tenantSchema.propertyId, propertyIds));
 
     return { success: true, tenants };
   } catch (error) {
@@ -67,24 +55,39 @@ export async function getTenantById(tenantId: string) {
     }
 
     // Verify the tenant belongs to the user's property
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, tenant.unitId))
-      .limit(1);
+    // For tenants with units, check through unit -> property
+    // For tenants without units, check directly through property
+    if (tenant.unitId) {
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, tenant.unitId))
+        .limit(1);
 
-    if (!unit) {
-      return { success: false, tenant: null, error: 'Unit not found' };
-    }
+      if (!unit) {
+        return { success: false, tenant: null, error: 'Unit not found' };
+      }
 
-    const [property] = await db
-      .select()
-      .from(propertySchema)
-      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-      .limit(1);
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
 
-    if (!property) {
-      return { success: false, tenant: null, error: 'Unauthorized' };
+      if (!property) {
+        return { success: false, tenant: null, error: 'Unauthorized' };
+      }
+    } else {
+      // For tenants without units (single-family properties), check directly through property
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, tenant: null, error: 'Unauthorized' };
+      }
     }
 
     return { success: true, tenant };
@@ -98,7 +101,8 @@ export async function getTenantById(tenantId: string) {
  * Create a new tenant
  */
 export async function createTenant(data: {
-  unitId: string;
+  propertyId?: string;
+  unitId?: string;
   name: string;
   phone?: string;
   email?: string;
@@ -106,31 +110,55 @@ export async function createTenant(data: {
   try {
     const user = await requireAuth();
 
-    // Verify the unit belongs to the user
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, data.unitId))
-      .limit(1);
+    let propertyId = data.propertyId;
 
-    if (!unit) {
-      return { success: false, tenant: null, error: 'Unit not found' };
-    }
+    // If unitId is provided, get the propertyId from the unit and verify ownership
+    if (data.unitId) {
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, data.unitId))
+        .limit(1);
 
-    const [property] = await db
-      .select()
-      .from(propertySchema)
-      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-      .limit(1);
+      if (!unit) {
+        return { success: false, tenant: null, error: 'Unit not found' };
+      }
 
-    if (!property) {
-      return { success: false, tenant: null, error: 'Unauthorized' };
+      propertyId = unit.propertyId;
+
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, tenant: null, error: 'Unauthorized' };
+      }
+    } else if (propertyId) {
+      // If propertyId is provided directly (for single-family properties), verify ownership
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, tenant: null, error: 'Property not found or unauthorized' };
+      }
+    } else {
+      return {
+        success: false,
+        tenant: null,
+        error: 'Either propertyId or unitId must be provided',
+      };
     }
 
     const [tenant] = await db
       .insert(tenantSchema)
       .values({
-        unitId: data.unitId,
+        propertyId: propertyId!,
+        unitId: data.unitId || null,
         name: data.name,
         phone: data.phone || null,
         email: data.email || null,

@@ -45,6 +45,7 @@ export const propertySchema = pgTable('properties', {
     .notNull()
     .references(() => userSchema.id, { onDelete: 'cascade' }),
   address: varchar('address', { length: 500 }).notNull(),
+  propertyType: varchar('property_type', { length: 50 }), // Property type: single_family, condo, townhouse, multiunit, apartment, duplex
   acquiredOn: timestamp('acquired_on', { mode: 'date' }), // Property acquired date
   principalAmount: real('principal_amount'), // Principal amount for mortgage/loan
   rateOfInterest: real('rate_of_interest'), // Rate of interest (as percentage)
@@ -73,9 +74,10 @@ export const unitSchema = pgTable('units', {
 // Tenant model
 export const tenantSchema = pgTable('tenants', {
   id: uuid('id').defaultRandom().primaryKey(),
-  unitId: uuid('unit_id')
+  propertyId: uuid('property_id')
     .notNull()
-    .references(() => unitSchema.id, { onDelete: 'cascade' }),
+    .references(() => propertySchema.id, { onDelete: 'cascade' }), // Direct property association
+  unitId: uuid('unit_id').references(() => unitSchema.id, { onDelete: 'cascade' }), // Optional - only for multi-unit properties
   name: varchar('name', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 50 }),
   email: varchar('email', { length: 255 }),

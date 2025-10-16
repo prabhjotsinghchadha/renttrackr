@@ -30,23 +30,11 @@ export async function getUserPayments() {
 
     const propertyIds = properties.map((p) => p.id);
 
-    // Get all units for these properties
-    const units = await db
-      .select({ id: unitSchema.id })
-      .from(unitSchema)
-      .where(inArray(unitSchema.propertyId, propertyIds));
-
-    if (units.length === 0) {
-      return { success: true, payments: [] };
-    }
-
-    const unitIds = units.map((u) => u.id);
-
-    // Get all tenants for these units
+    // Get all tenants for these properties (both with and without units)
     const tenants = await db
       .select({ id: tenantSchema.id })
       .from(tenantSchema)
-      .where(inArray(tenantSchema.unitId, unitIds));
+      .where(inArray(tenantSchema.propertyId, propertyIds));
 
     if (tenants.length === 0) {
       return { success: true, payments: [] };
@@ -103,7 +91,7 @@ export async function createPayment(data: {
       return { success: false, payment: null, error: 'Lease not found' };
     }
 
-    // Verify ownership through tenant -> unit -> property chain
+    // Verify ownership through tenant -> property chain
     const [tenant] = await db
       .select()
       .from(tenantSchema)
@@ -114,24 +102,39 @@ export async function createPayment(data: {
       return { success: false, payment: null, error: 'Tenant not found' };
     }
 
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, tenant.unitId))
-      .limit(1);
+    // For tenants with units, check through unit -> property
+    // For tenants without units, check directly through property
+    if (tenant.unitId) {
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, tenant.unitId))
+        .limit(1);
 
-    if (!unit) {
-      return { success: false, payment: null, error: 'Unit not found' };
-    }
+      if (!unit) {
+        return { success: false, payment: null, error: 'Unit not found' };
+      }
 
-    const [property] = await db
-      .select()
-      .from(propertySchema)
-      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-      .limit(1);
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
 
-    if (!property) {
-      return { success: false, payment: null, error: 'Unauthorized' };
+      if (!property) {
+        return { success: false, payment: null, error: 'Unauthorized' };
+      }
+    } else {
+      // For tenants without units (single-family properties), check directly through property
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, payment: null, error: 'Unauthorized' };
+      }
     }
 
     const [payment] = await db
@@ -170,23 +173,17 @@ export async function getPaymentsWithDetails() {
 
     const propertyIds = properties.map((p) => p.id);
 
-    // Get all units for these properties
+    // Get all units for these properties (for multi-unit properties)
     const units = await db
       .select()
       .from(unitSchema)
       .where(inArray(unitSchema.propertyId, propertyIds));
 
-    if (units.length === 0) {
-      return { success: true, payments: [] };
-    }
-
-    const unitIds = units.map((u) => u.id);
-
-    // Get all tenants for these units
+    // Get all tenants for these properties (both with and without units)
     const tenants = await db
       .select()
       .from(tenantSchema)
-      .where(inArray(tenantSchema.unitId, unitIds));
+      .where(inArray(tenantSchema.propertyId, propertyIds));
 
     if (tenants.length === 0) {
       return { success: true, payments: [] };
@@ -217,15 +214,15 @@ export async function getPaymentsWithDetails() {
     const paymentsWithDetails = payments.map((payment) => {
       const lease = leases.find((l) => l.id === payment.leaseId);
       const tenant = tenants.find((t) => t.id === lease?.tenantId);
-      const unit = units.find((u) => u.id === tenant?.unitId);
-      const property = properties.find((p) => p.id === unit?.propertyId);
+      const unit = tenant?.unitId ? units.find((u) => u.id === tenant.unitId) : null;
+      const property = properties.find((p) => p.id === tenant?.propertyId);
 
       return {
         ...payment,
         tenantName: tenant?.name || 'Unknown',
         tenantId: tenant?.id || '',
-        unitNumber: unit?.unitNumber || 'Unknown',
-        unitId: unit?.id || '',
+        unitNumber: unit?.unitNumber || null, // Can be null for single-family properties
+        unitId: unit?.id || null, // Can be null for single-family properties
         propertyAddress: property?.address || 'Unknown',
         propertyId: property?.id || '',
       };
@@ -284,24 +281,39 @@ export async function updatePayment(
       return { success: false, payment: null, error: 'Tenant not found' };
     }
 
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, tenant.unitId))
-      .limit(1);
+    // For tenants with units, check through unit -> property
+    // For tenants without units, check directly through property
+    if (tenant.unitId) {
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, tenant.unitId))
+        .limit(1);
 
-    if (!unit) {
-      return { success: false, payment: null, error: 'Unit not found' };
-    }
+      if (!unit) {
+        return { success: false, payment: null, error: 'Unit not found' };
+      }
 
-    const [property] = await db
-      .select()
-      .from(propertySchema)
-      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-      .limit(1);
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
 
-    if (!property) {
-      return { success: false, payment: null, error: 'Unauthorized' };
+      if (!property) {
+        return { success: false, payment: null, error: 'Unauthorized' };
+      }
+    } else {
+      // For tenants without units (single-family properties), check directly through property
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, payment: null, error: 'Unauthorized' };
+      }
     }
 
     // Update the payment
@@ -361,24 +373,39 @@ export async function deletePayment(paymentId: string) {
       return { success: false, error: 'Tenant not found' };
     }
 
-    const [unit] = await db
-      .select()
-      .from(unitSchema)
-      .where(eq(unitSchema.id, tenant.unitId))
-      .limit(1);
+    // For tenants with units, check through unit -> property
+    // For tenants without units, check directly through property
+    if (tenant.unitId) {
+      const [unit] = await db
+        .select()
+        .from(unitSchema)
+        .where(eq(unitSchema.id, tenant.unitId))
+        .limit(1);
 
-    if (!unit) {
-      return { success: false, error: 'Unit not found' };
-    }
+      if (!unit) {
+        return { success: false, error: 'Unit not found' };
+      }
 
-    const [property] = await db
-      .select()
-      .from(propertySchema)
-      .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
-      .limit(1);
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, unit.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
 
-    if (!property) {
-      return { success: false, error: 'Unauthorized' };
+      if (!property) {
+        return { success: false, error: 'Unauthorized' };
+      }
+    } else {
+      // For tenants without units (single-family properties), check directly through property
+      const [property] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, tenant.propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      if (!property) {
+        return { success: false, error: 'Unauthorized' };
+      }
     }
 
     // Delete the payment

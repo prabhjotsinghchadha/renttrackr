@@ -66,6 +66,7 @@ export default async function PropertyDetailPage(props: {
         <PropertyActions
           propertyId={id}
           propertyAddress={property.address}
+          propertyType={property.propertyType || undefined}
           propertyAcquiredOn={property.acquiredOn || undefined}
           propertyPrincipalAmount={property.principalAmount || undefined}
           propertyRateOfInterest={property.rateOfInterest || undefined}
@@ -109,53 +110,61 @@ export default async function PropertyDetailPage(props: {
                   <span className="ml-2 text-lg text-gray-600">{property.rateOfInterest}%</span>
                 </div>
               )}
-              <div>
-                <span className="text-lg font-semibold text-gray-700">{t('total_units')}:</span>
-                <span className="ml-2 text-lg text-gray-600">{units.length}</span>
-              </div>
+              {(property.propertyType === 'multiunit' ||
+                property.propertyType === 'apartment' ||
+                property.propertyType === 'duplex') && (
+                <div>
+                  <span className="text-lg font-semibold text-gray-700">{t('total_units')}:</span>
+                  <span className="ml-2 text-lg text-gray-600">{units.length}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Units section */}
-          <div className="rounded-xl bg-gray-50 p-8">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-800">{t('units')}</h2>
-            </div>
-
-            {units.length === 0 ? (
-              <div className="mb-6 rounded-lg bg-yellow-50 p-6 text-center">
-                <div className="mb-3 text-5xl">🏢</div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-800">{t('no_units')}</h3>
-                <p className="mb-4 text-gray-600">{t('no_units_description')}</p>
+          {/* Units section - only show for multi-unit properties */}
+          {(property.propertyType === 'multiunit' ||
+            property.propertyType === 'apartment' ||
+            property.propertyType === 'duplex') && (
+            <div className="rounded-xl bg-gray-50 p-8">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-gray-800">{t('units')}</h2>
               </div>
-            ) : (
-              <div className="mb-6 space-y-3">
-                {units.map((unit) => (
-                  <div
-                    key={unit.id}
-                    className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm"
-                  >
-                    <div>
-                      <span className="text-lg font-semibold text-gray-800">
-                        {t('unit')} {unit.unitNumber}
-                      </span>
-                      <span className="ml-4 text-gray-600">
-                        {t('rent')}: ${unit.rentAmount.toFixed(2)}
-                      </span>
+
+              {units.length === 0 ? (
+                <div className="mb-6 rounded-lg bg-yellow-50 p-6 text-center">
+                  <div className="mb-3 text-5xl">🏢</div>
+                  <h3 className="mb-2 text-xl font-semibold text-gray-800">{t('no_units')}</h3>
+                  <p className="mb-4 text-gray-600">{t('no_units_description')}</p>
+                </div>
+              ) : (
+                <div className="mb-6 space-y-3">
+                  {units.map((unit) => (
+                    <div
+                      key={unit.id}
+                      className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm"
+                    >
+                      <div>
+                        <span className="text-lg font-semibold text-gray-800">
+                          {t('unit')} {unit.unitNumber}
+                        </span>
+                        <span className="ml-4 text-gray-600">
+                          {t('rent')}: ${unit.rentAmount.toFixed(2)}
+                        </span>
+                      </div>
+                      <UnitActions
+                        unitId={unit.id}
+                        unitNumber={unit.unitNumber}
+                        propertyAddress={property.address}
+                        locale={locale}
+                      />
                     </div>
-                    <UnitActions
-                      unitId={unit.id}
-                      unitNumber={unit.unitNumber}
-                      propertyAddress={property.address}
-                      locale={locale}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            <AddUnitForm propertyId={id} />
-          </div>
+              <AddUnitForm propertyId={id} />
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -163,16 +172,35 @@ export default async function PropertyDetailPage(props: {
           <div className="rounded-xl bg-gray-50 p-8">
             <h3 className="mb-6 text-xl font-semibold text-gray-800">{t('quick_stats')}</h3>
             <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600">{t('total_units')}</p>
-                <p className="text-3xl font-bold text-gray-800">{units.length}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">{t('total_rent')}</p>
-                <p className="text-3xl font-bold text-gray-800">
-                  ${units.reduce((sum, unit) => sum + unit.rentAmount, 0).toFixed(2)}
-                </p>
-              </div>
+              {property.propertyType === 'multiunit' ||
+              property.propertyType === 'apartment' ||
+              property.propertyType === 'duplex' ? (
+                <>
+                  <div>
+                    <p className="text-sm text-gray-600">{t('total_units')}</p>
+                    <p className="text-3xl font-bold text-gray-800">{units.length}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{t('total_rent')}</p>
+                    <p className="text-3xl font-bold text-gray-800">
+                      ${units.reduce((sum, unit) => sum + unit.rentAmount, 0).toFixed(2)}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <p className="text-sm text-gray-600">Property Type</p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    {property.propertyType === 'single_family'
+                      ? 'Single Family Home'
+                      : property.propertyType === 'condo'
+                        ? 'Condo'
+                        : property.propertyType === 'townhouse'
+                          ? 'Townhouse'
+                          : property.propertyType || 'Not specified'}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

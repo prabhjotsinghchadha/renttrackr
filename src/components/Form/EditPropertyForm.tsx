@@ -8,6 +8,7 @@ import { updateProperty } from '@/actions/PropertyActions';
 type EditPropertyFormProps = {
   propertyId: string;
   currentAddress: string;
+  currentPropertyType?: string;
   currentAcquiredOn?: Date;
   currentPrincipalAmount?: number;
   currentRateOfInterest?: number;
@@ -19,6 +20,7 @@ type EditPropertyFormProps = {
 export function EditPropertyForm({
   propertyId,
   currentAddress,
+  currentPropertyType,
   currentAcquiredOn,
   currentPrincipalAmount,
   currentRateOfInterest,
@@ -29,6 +31,7 @@ export function EditPropertyForm({
   const router = useRouter();
   const t = useTranslations('PropertyDetail');
   const [address, setAddress] = useState(currentAddress);
+  const [propertyType, setPropertyType] = useState(currentPropertyType || '');
   const [acquiredOn, setAcquiredOn] = useState(
     currentAcquiredOn ? currentAcquiredOn.toISOString().split('T')[0] : '',
   );
@@ -36,6 +39,15 @@ export function EditPropertyForm({
   const [rateOfInterest, setRateOfInterest] = useState(currentRateOfInterest?.toString() || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  const propertyTypes = [
+    { value: 'single_family', label: t('property_types.single_family') },
+    { value: 'condo', label: t('property_types.condo') },
+    { value: 'townhouse', label: t('property_types.townhouse') },
+    { value: 'multiunit', label: t('property_types.multiunit') },
+    { value: 'apartment', label: t('property_types.apartment') },
+    { value: 'duplex', label: t('property_types.duplex') },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +63,7 @@ export function EditPropertyForm({
 
       const result = await updateProperty(propertyId, {
         address: address.trim(),
+        propertyType: propertyType || undefined,
         acquiredOn: acquiredOn ? new Date(acquiredOn) : undefined,
         principalAmount: principalAmount ? Number.parseFloat(principalAmount) : undefined,
         rateOfInterest: rateOfInterest ? Number.parseFloat(rateOfInterest) : undefined,
@@ -95,6 +108,31 @@ export function EditPropertyForm({
               required
             />
             <p className="mt-2 text-sm text-gray-600">{t('address_help')}</p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="propertyType"
+              className="mb-2 block text-lg font-semibold text-gray-800"
+            >
+              {t('property_type')} <span className="text-red-600">*</span>
+            </label>
+            <select
+              id="propertyType"
+              value={propertyType}
+              onChange={(e) => setPropertyType(e.target.value)}
+              disabled={isSubmitting}
+              className="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg text-gray-800 transition-all duration-300 hover:border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              required
+            >
+              <option value="">{t('select_property_type')}</option>
+              {propertyTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-sm text-gray-600">{t('property_type_help')}</p>
           </div>
 
           <div>

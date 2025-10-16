@@ -260,7 +260,9 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                     >
                       <td className="px-4 py-4 text-lg text-gray-800">{payment.tenantName}</td>
                       <td className="px-4 py-4 text-lg text-gray-600">
-                        {t('unit_number')} {payment.unitNumber}
+                        {payment.unitNumber
+                          ? `${t('unit_number')} ${payment.unitNumber}`
+                          : t('single_family_property')}
                       </td>
                       <td className="px-4 py-4 text-lg font-semibold text-green-600">
                         {`$${payment.amount.toLocaleString()}`}

@@ -8,6 +8,7 @@ import { EditPropertyForm } from './Form/EditPropertyForm';
 type PropertyActionsProps = {
   propertyId: string;
   propertyAddress: string;
+  propertyType?: string;
   propertyAcquiredOn?: Date;
   propertyPrincipalAmount?: number;
   propertyRateOfInterest?: number;
@@ -17,6 +18,7 @@ type PropertyActionsProps = {
 export function PropertyActions({
   propertyId,
   propertyAddress,
+  propertyType,
   propertyAcquiredOn,
   propertyPrincipalAmount,
   propertyRateOfInterest,
@@ -55,6 +57,7 @@ export function PropertyActions({
         <EditPropertyForm
           propertyId={propertyId}
           currentAddress={propertyAddress}
+          currentPropertyType={propertyType}
           currentAcquiredOn={propertyAcquiredOn}
           currentPrincipalAmount={propertyPrincipalAmount}
           currentRateOfInterest={propertyRateOfInterest}

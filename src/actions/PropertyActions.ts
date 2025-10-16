@@ -56,6 +56,7 @@ export async function getPropertyById(propertyId: string) {
  */
 export async function createProperty(data: {
   address: string;
+  propertyType?: string;
   acquiredOn?: Date;
   principalAmount?: number;
   rateOfInterest?: number;
@@ -68,6 +69,7 @@ export async function createProperty(data: {
       .values({
         userId: user.id,
         address: data.address,
+        propertyType: data.propertyType,
         acquiredOn: data.acquiredOn,
         principalAmount: data.principalAmount,
         rateOfInterest: data.rateOfInterest,
@@ -88,6 +90,7 @@ export async function updateProperty(
   propertyId: string,
   data: {
     address?: string;
+    propertyType?: string;
     acquiredOn?: Date;
     principalAmount?: number;
     rateOfInterest?: number;
@@ -100,6 +103,7 @@ export async function updateProperty(
       .update(propertySchema)
       .set({
         address: data.address,
+        propertyType: data.propertyType,
         acquiredOn: data.acquiredOn,
         principalAmount: data.principalAmount,
         rateOfInterest: data.rateOfInterest,
