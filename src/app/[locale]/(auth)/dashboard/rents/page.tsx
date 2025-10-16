@@ -8,7 +8,7 @@ import {
   getPendingAndOverdueDetails,
   updatePayment,
 } from '@/actions/PaymentActions';
-import { CurrencyDisplay } from '@/components/CurrencyDisplay';
+// import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeletePaymentDialog } from '@/components/DeletePaymentDialog';
 import { EditPaymentForm } from '@/components/Form/EditPaymentForm';
 
@@ -65,28 +65,28 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
           <div className="mb-4 text-4xl">💰</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_collected')}</div>
           <div className="text-4xl font-bold text-green-600">
-            <CurrencyDisplay amount={metrics.totalCollected} />
+            {`$${metrics.totalCollected.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">⏳</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('pending_this_month')}</div>
           <div className="text-4xl font-bold text-yellow-600">
-            <CurrencyDisplay amount={metrics.pending} />
+            {`$${metrics.pending.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">⚠️</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('overdue')}</div>
           <div className="text-4xl font-bold text-red-600">
-            <CurrencyDisplay amount={metrics.overdue} />
+            {`$${metrics.overdue.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">📋</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('late_fees')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            <CurrencyDisplay amount={metrics.lateFees} />
+            {`$${metrics.lateFees.toLocaleString()}`}
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-yellow-600">
-                      <CurrencyDisplay amount={payment.amount} />
+                      {`$${payment.amount.toLocaleString()}`}
                     </p>
                     <p className="text-xs text-gray-500">
                       {payment.daysUntilDue === 0
@@ -183,7 +183,7 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-red-600">
-                      <CurrencyDisplay amount={payment.amount} />
+                      {`$${payment.amount.toLocaleString()}`}
                     </p>
                     <p className="text-xs text-red-500">
                       {payment.daysOverdue === 1
@@ -263,10 +263,10 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
                         {t('unit_number')} {payment.unitNumber}
                       </td>
                       <td className="px-4 py-4 text-lg font-semibold text-green-600">
-                        <CurrencyDisplay amount={payment.amount} />
+                        {`$${payment.amount.toLocaleString()}`}
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
-                        {payment.lateFee ? <CurrencyDisplay amount={payment.lateFee} /> : '-'}
+                        {payment.lateFee ? `$${payment.lateFee.toLocaleString()}` : '-'}
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
                         {new Date(payment.date).toLocaleDateString(locale, {

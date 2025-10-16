@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useCurrency } from '@/contexts/CurrencyContext';
+// import { useCurrency } from '@/contexts/CurrencyContext';
 
 type ParkingPermit = {
   id: string;
@@ -43,7 +43,7 @@ export function DeleteParkingDialog({
   onDelete,
 }: DeleteParkingDialogProps) {
   const t = useTranslations('Parking');
-  const { formatCurrency: _formatCurrency } = useCurrency();
+  // const { formatCurrency: _formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

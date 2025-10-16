@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useCurrency } from '@/contexts/CurrencyContext';
+// import { useCurrency } from '@/contexts/CurrencyContext';
 
 type ParkingPermit = {
   id: string;
@@ -61,7 +61,7 @@ type EditParkingFormProps = {
 
 export function EditParkingForm({ permit, locale: _locale, onUpdate }: EditParkingFormProps) {
   const t = useTranslations('Parking');
-  const { formatCurrency: _formatCurrency } = useCurrency();
+  // const { formatCurrency: _formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -157,7 +157,7 @@
     "cancel": "Cancel",
     "property_acquired_on": "Property Acquired On",
     "acquired_on_help": "Enter the date when you acquired this property",
-    "principal_amount": "Principal Amount",
+    "principal_amount": "Purchase Amount",
     "principal_amount_placeholder": "250000.00",
     "principal_amount_help": "Enter the principal amount of your mortgage or loan",
     "rate_of_interest": "Rate of Interest (%)",
@@ -589,12 +589,6 @@
     "delete_error": "Failed to delete parking permit. Please try again.",
     "permit_updated": "Parking permit updated successfully",
     "permit_deleted": "Parking permit deleted successfully"
-  },
-  "Currency": {
-    "currency": "Currency",
-    "usd": "US Dollar",
-    "inr": "Indian Rupee",
-    "aud": "Australian Dollar"
   },
   "Financials": {
     "meta_title": "Financial Reports",

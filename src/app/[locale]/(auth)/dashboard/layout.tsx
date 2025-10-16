@@ -1,9 +1,9 @@
 import { SignOutButton } from '@clerk/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { CurrencySelector } from '@/components/CurrencySelector';
+// import { CurrencySelector } from '@/components/CurrencySelector';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { CurrencyProvider } from '@/contexts/CurrencyContext';
+// import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 
 export default async function DashboardLayout(props: {
@@ -18,7 +18,7 @@ export default async function DashboardLayout(props: {
   });
 
   return (
-    <CurrencyProvider>
+    // <CurrencyProvider>
       <BaseTemplate
         leftNav={
           <>
@@ -109,9 +109,9 @@ export default async function DashboardLayout(props: {
               </SignOutButton>
             </li>
 
-            <li className="flex items-center">
+            {/* <li className="flex items-center">
               <CurrencySelector />
-            </li>
+            </li> */}
             <li className="flex items-center">
               <LocaleSwitcher />
             </li>
@@ -120,6 +120,6 @@ export default async function DashboardLayout(props: {
       >
         {props.children}
       </BaseTemplate>
-    </CurrencyProvider>
+    // </CurrencyProvider>
   );
 }

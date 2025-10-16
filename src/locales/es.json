@@ -577,12 +577,6 @@
     "permit_updated": "Permiso de estacionamiento actualizado exitosamente",
     "permit_deleted": "Permiso de estacionamiento eliminado exitosamente"
   },
-  "Currency": {
-    "currency": "Moneda",
-    "usd": "Dólar Estadounidense",
-    "inr": "Rupia India",
-    "aud": "Dólar Australiano"
-  },
   "Financials": {
     "meta_title": "Informes Financieros",
     "meta_description": "Ver informes financieros y cálculos de ROI",

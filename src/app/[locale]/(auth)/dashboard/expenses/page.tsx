@@ -7,7 +7,7 @@ import {
   getExpensesWithPropertyInfo,
   updateExpense,
 } from '@/actions/ExpenseActions';
-import { CurrencyDisplay } from '@/components/CurrencyDisplay';
+// import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteExpenseDialog } from '@/components/DeleteExpenseDialog';
 import { EditExpenseForm } from '@/components/Form/EditExpenseForm';
 
@@ -61,28 +61,28 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
           <div className="mb-4 text-4xl">📅</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_this_month')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            <CurrencyDisplay amount={metrics.totalThisMonth} />
+            {`$${metrics.totalThisMonth.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">📆</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('total_this_year')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            <CurrencyDisplay amount={metrics.totalThisYear} />
+            {`$${metrics.totalThisYear.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">🔧</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('maintenance')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            <CurrencyDisplay amount={metrics.maintenance} />
+            {`$${metrics.maintenance.toLocaleString()}`}
           </div>
         </div>
         <div className="group rounded-xl bg-gray-50 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="mb-4 text-4xl">🏢</div>
           <div className="mb-2 text-lg font-semibold text-gray-600">{t('association')}</div>
           <div className="text-4xl font-bold text-gray-800">
-            <CurrencyDisplay amount={metrics.association} />
+            {`$${metrics.association.toLocaleString()}`}
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default async function ExpensesPage(props: { params: Promise<{ locale: st
                       <td className="px-4 py-4 text-lg text-gray-800">{expense.propertyAddress}</td>
                       <td className="px-4 py-4 text-lg text-gray-600">{expense.type}</td>
                       <td className="px-4 py-4 text-lg font-semibold text-red-600">
-                        <CurrencyDisplay amount={expense.amount} />
+                        {`$${expense.amount.toLocaleString()}`}
                       </td>
                       <td className="px-4 py-4 text-lg text-gray-600">
                         {new Date(expense.date).toLocaleDateString(locale, {

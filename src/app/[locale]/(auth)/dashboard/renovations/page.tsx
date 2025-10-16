@@ -7,7 +7,7 @@ import {
   getRenovationsWithDetails,
   updateRenovation,
 } from '@/actions/RenovationActions';
-import { CurrencyDisplay } from '@/components/CurrencyDisplay';
+// import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { DeleteRenovationDialog } from '@/components/DeleteRenovationDialog';
 import { EditRenovationForm } from '@/components/Form/EditRenovationForm';
 import { ViewRenovationDetails } from '@/components/ViewRenovationDetails';
@@ -163,7 +163,7 @@ export default async function RenovationsPage(props: { params: Promise<{ locale:
                           <p className="mb-1 text-sm text-gray-500">
                             <span className="font-medium">{t('total_cost')}:</span>{' '}
                             <span className="font-semibold text-green-600">
-                              <CurrencyDisplay amount={renovation.totalCost} />
+                              {`$${renovation.totalCost.toLocaleString()}`}
                             </span>
                           </p>
                         )}

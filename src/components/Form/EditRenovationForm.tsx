@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useCurrency } from '@/contexts/CurrencyContext';
+// import { useCurrency } from '@/contexts/CurrencyContext';
 
 type Renovation = {
   id: string;
@@ -46,7 +46,7 @@ export function EditRenovationForm({
   onUpdate,
 }: EditRenovationFormProps) {
   const t = useTranslations('Renovations');
-  const { formatCurrency } = useCurrency();
+  // const { formatCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,7 +147,7 @@ export function EditRenovationForm({
             {renovation.totalCost && renovation.totalCost > 0 && (
               <>
                 <br />
-                Current Cost: {formatCurrency(renovation.totalCost)}
+                Current Cost: ${renovation.totalCost.toLocaleString()}
               </>
             )}
           </DialogDescription>

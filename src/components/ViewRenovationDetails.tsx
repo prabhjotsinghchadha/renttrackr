@@ -3,7 +3,7 @@
 import { EyeIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { CurrencyDisplay } from '@/components/CurrencyDisplay';
+// import { CurrencyDisplay } from '@/components/CurrencyDisplay';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -120,7 +120,7 @@ export function ViewRenovationDetails({ renovation, locale }: ViewRenovationDeta
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600">{t('total_cost')}:</span>
                     <span className="font-semibold text-green-600">
-                      <CurrencyDisplay amount={renovation.totalCost} />
+                      {`$${renovation.totalCost.toLocaleString()}`}
                     </span>
                   </div>
                 )}
