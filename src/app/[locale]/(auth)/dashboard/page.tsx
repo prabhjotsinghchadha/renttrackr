@@ -233,10 +233,12 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
           {dashboardActivity.upcomingTasks.length > 0 ? (
             <div className="space-y-4">
               {dashboardActivity.upcomingTasks.map((task: any) => {
-                const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
+                const now = new Date();
+                const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                const isOverdue = task.dueDate && new Date(task.dueDate) < now;
                 const isDueSoon =
                   task.dueDate &&
-                  new Date(task.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+                  new Date(task.dueDate) <= sevenDaysFromNow;
 
                 return (
                   <div

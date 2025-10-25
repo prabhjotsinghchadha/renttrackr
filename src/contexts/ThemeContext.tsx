@@ -12,32 +12,23 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Initialize theme from localStorage or system preference
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+      return savedTheme || systemTheme;
+    }
+    return 'light';
+  });
 
   useEffect(() => {
-    setMounted(true);
-
-    // Check for saved theme preference or default to system preference
-    const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
-
-    const initialTheme = savedTheme || systemTheme;
-    setTheme(initialTheme);
-
-    // Apply theme to document
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark');
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    // Apply theme to document
+    // Apply theme to document on mount and when theme changes
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('renttrackr-theme', theme);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -50,11 +41,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }),
     [theme],
   );
-
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
 };
