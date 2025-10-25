@@ -41,12 +41,14 @@ export default async function Index(props: IIndexProps) {
       />
 
       {/* Features Section */}
-      <section className="w-full bg-white px-6 py-16 md:px-12 md:py-20 lg:px-16 xl:px-24">
+      <section className="w-full bg-white px-6 py-16 md:px-12 md:py-20 lg:px-16 xl:px-24 dark:bg-gray-900">
         <div className="mx-auto">
-          <h2 className="mb-4 text-center text-4xl font-bold text-gray-800 md:text-5xl">
+          <h2 className="mb-4 text-center text-4xl font-bold text-gray-800 md:text-5xl dark:text-white">
             {t('features_title')}
           </h2>
-          <p className="mb-12 text-center text-2xl text-gray-600">{t('features_subtitle')}</p>
+          <p className="mb-12 text-center text-2xl text-gray-600 dark:text-gray-200">
+            {t('features_subtitle')}
+          </p>
 
           <div className="mt-8 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
             <FeatureCard

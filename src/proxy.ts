@@ -31,7 +31,7 @@ const aj = arcjet.withRule(
   }),
 );
 
-export default async function middleware(request: NextRequest, event: NextFetchEvent) {
+export default async function proxy(request: NextRequest, event: NextFetchEvent) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
   if (process.env.ARCJET_KEY) {
@@ -67,5 +67,4 @@ export const config = {
   // - … if they start with `/_next`, `/_vercel` or `monitoring`
   // - … the ones containing a dot (e.g. `favicon.ico`)
   matcher: '/((?!_next|_vercel|monitoring|.*\\..*).*)',
-  runtime: 'nodejs',
 };

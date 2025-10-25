@@ -212,6 +212,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* Smooth theme transitions */
+  * {
+    transition:
+      background-color 300ms ease,
+      color 300ms ease,
+      border-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none;
+    }
+  }
+
   body {
     @apply bg-background text-foreground;
   }

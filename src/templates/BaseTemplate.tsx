@@ -12,9 +12,9 @@ export const BaseTemplate = (props: {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700 antialiased">
+    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700 antialiased dark:bg-gray-900 dark:text-gray-200">
       {/* Header */}
-      <header className="relative sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
+      <header className="relative sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div className="mx-auto max-w-[1920px]">
           <div className="flex items-center justify-between gap-6 px-6 py-4 md:px-8 lg:px-12">
             {/* Logo */}
@@ -22,7 +22,9 @@ export const BaseTemplate = (props: {
               <span className="text-3xl" aria-hidden="true">
                 🏠
               </span>
-              <h1 className="text-2xl font-bold text-gray-800 lg:text-3xl">{AppConfig.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-800 lg:text-3xl dark:text-white">
+                {AppConfig.name}
+              </h1>
             </div>
 
             {/* Navigation Container */}
@@ -44,7 +46,7 @@ export const BaseTemplate = (props: {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800 lg:hidden"
+              className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800 lg:hidden dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
               aria-label="Toggle menu"
               aria-expanded={isMobileMenuOpen}
             >
@@ -80,7 +82,7 @@ export const BaseTemplate = (props: {
 
           {/* Mobile Navigation */}
           <div
-            className={`relative z-40 border-t border-gray-200 bg-white px-6 py-4 shadow-sm transition-all duration-300 ease-in-out lg:hidden ${
+            className={`relative z-40 border-t border-gray-200 bg-white px-6 py-4 shadow-sm transition-all duration-300 ease-in-out lg:hidden dark:border-gray-700 dark:bg-gray-800 ${
               isMobileMenuOpen ? 'max-h-[37.5rem] opacity-100' : 'max-h-0 overflow-hidden opacity-0'
             }`}
           >
@@ -90,7 +92,7 @@ export const BaseTemplate = (props: {
             {props.rightNav && (
               <nav
                 aria-label="Mobile secondary navigation"
-                className="border-t border-gray-200 pt-4"
+                className="border-t border-gray-200 pt-4 dark:border-gray-700"
               >
                 <ul className="space-y-2">{props.rightNav}</ul>
               </nav>
@@ -105,7 +107,7 @@ export const BaseTemplate = (props: {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-800 px-6 py-8 text-center md:px-8 lg:px-12">
+      <footer className="border-t border-gray-200 bg-gray-800 px-6 py-8 text-center md:px-8 lg:px-12 dark:border-gray-700 dark:bg-gray-900">
         <div className="mx-auto max-w-[1920px]">
           <p className="text-lg leading-relaxed text-blue-200">
             {`© Copyright ${new Date().getFullYear()} ${AppConfig.name}. `}

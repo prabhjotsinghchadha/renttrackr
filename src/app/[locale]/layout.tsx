@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { routing } from '@/libs/I18nRouting';
 import { ClerkLocalizations } from '@/utils/AppConfig';
 import '@/styles/global.css';
@@ -79,7 +80,9 @@ export default async function RootLayout(props: {
           afterSignOutUrl={afterSignOutUrl}
         >
           <NextIntlClientProvider>
-            <PostHogProvider>{props.children}</PostHogProvider>
+            <ThemeProvider>
+              <PostHogProvider>{props.children}</PostHogProvider>
+            </ThemeProvider>
           </NextIntlClientProvider>
         </ClerkProvider>
       </body>

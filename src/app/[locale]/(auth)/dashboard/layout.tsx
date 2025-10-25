@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 // import { CurrencySelector } from '@/components/CurrencySelector';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { ThemeToggle } from '@/components/ThemeToggle';
 // import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 
@@ -25,7 +26,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base dark:text-gray-200 dark:hover:bg-blue-900 dark:hover:text-blue-400"
             >
               {t('dashboard_link')}
             </Link>
@@ -33,7 +34,7 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/properties/"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base dark:text-gray-200 dark:hover:bg-blue-900 dark:hover:text-blue-400"
             >
               {t('properties_link')}
             </Link>
@@ -101,7 +102,7 @@ export default async function DashboardLayout(props: {
           <li>
             <SignOutButton>
               <button
-                className="block rounded-lg px-4 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="block rounded-lg px-4 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-200 dark:hover:bg-red-900 dark:hover:text-red-400"
                 type="button"
               >
                 {t('sign_out')}
@@ -112,6 +113,9 @@ export default async function DashboardLayout(props: {
           {/* <li className="flex items-center">
               <CurrencySelector />
             </li> */}
+          <li className="flex items-center">
+            <ThemeToggle />
+          </li>
           <li className="flex items-center">
             <LocaleSwitcher />
           </li>
