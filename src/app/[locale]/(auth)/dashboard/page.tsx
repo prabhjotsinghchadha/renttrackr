@@ -236,9 +236,7 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
                 const now = new Date();
                 const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
                 const isOverdue = task.dueDate && new Date(task.dueDate) < now;
-                const isDueSoon =
-                  task.dueDate &&
-                  new Date(task.dueDate) <= sevenDaysFromNow;
+                const isDueSoon = task.dueDate && new Date(task.dueDate) <= sevenDaysFromNow;
 
                 return (
                   <div
