@@ -20,6 +20,11 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
     console.warn('ThemeProvider not available, using default theme');
   }
 
+  // Always show light mode icon initially to prevent hydration mismatch
+  // This will update after client-side hydration completes
+  const icon = theme === 'light' ? '🌙' : '☀️';
+  const ariaLabel = `Switch to ${theme === 'light' ? 'dark' : 'light'} mode`;
+
   return (
     <button
       type="button"
@@ -33,10 +38,13 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
         focus:outline-none dark:border-gray-600 dark:hover:bg-gray-700
         ${className}
       `}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={ariaLabel}
+      title={ariaLabel}
+      suppressHydrationWarning
     >
-      <span className="text-lg">{theme === 'light' ? '🌙' : '☀️'}</span>
+      <span className="text-lg" suppressHydrationWarning>
+        {icon}
+      </span>
     </button>
   );
 };

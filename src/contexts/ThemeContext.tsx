@@ -12,23 +12,30 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Initialize theme from localStorage or system preference
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-      return savedTheme || systemTheme;
-    }
-    return 'light';
-  });
+  // Always start with 'light' to match SSR and prevent hydration mismatch
+  const [theme, setTheme] = useState<Theme>('light');
+  const [mounted, setMounted] = useState(false);
 
+  // Initialize theme from localStorage/system preference after mount
   useEffect(() => {
-    // Apply theme to document on mount and when theme changes
+    const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+    const initialTheme = savedTheme || systemTheme;
+    setTheme(initialTheme);
+    document.documentElement.classList.toggle('dark', initialTheme === 'dark');
+    // Mark as mounted after initial theme is set
+    setMounted(true);
+     
+  }, []);
+
+  // Update document and localStorage when theme changes (after mount)
+  useEffect(() => {
+    if (!mounted) return;
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('renttrackr-theme', theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
