@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 
 test.describe('Renovations', () => {
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should create a new renovation', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -13,7 +12,6 @@ test.describe('Renovations', () => {
     // 6. Verify renovation appears in list
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should add items to renovation', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -24,7 +22,6 @@ test.describe('Renovations', () => {
     // 5. Verify total cost updates
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display renovation list', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -33,7 +30,6 @@ test.describe('Renovations', () => {
     // 3. Verify renovations are displayed
     // 4. Verify renovation details (title, property, dates, cost) are visible
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should view renovation details', async ({ page: _page }) => {
@@ -45,7 +41,6 @@ test.describe('Renovations', () => {
     // 5. Verify renovation information and items are displayed
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should edit renovation', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -56,7 +51,6 @@ test.describe('Renovations', () => {
     // 5. Save changes
     // 6. Verify changes are reflected
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should update renovation status based on dates', async ({ page: _page }) => {

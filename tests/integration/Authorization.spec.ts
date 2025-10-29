@@ -1,4 +1,4 @@
-import { describe, it } from '@playwright/test';
+import { describe, it } from 'vitest';
 
 /**
  * Integration tests for authorization

@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 
 test.describe('Expenses', () => {
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should create a new expense', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -13,7 +12,6 @@ test.describe('Expenses', () => {
     // 6. Verify expense appears in list
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display expense list', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -23,7 +21,6 @@ test.describe('Expenses', () => {
     // 4. Verify expense details (property, type, amount, date) are visible
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should filter expenses by property', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -32,7 +29,6 @@ test.describe('Expenses', () => {
     // 3. Select property filter
     // 4. Verify only expenses for that property are shown
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should edit expense', async ({ page: _page }) => {
@@ -45,7 +41,6 @@ test.describe('Expenses', () => {
     // 6. Verify changes are reflected
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should delete expense', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -55,7 +50,6 @@ test.describe('Expenses', () => {
     // 4. Confirm deletion
     // 5. Verify expense is removed from list
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display expense metrics on dashboard', async ({ page: _page }) => {

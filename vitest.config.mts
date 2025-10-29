@@ -28,9 +28,19 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
+            provider: 'playwright',
             screenshotDirectory: 'vitest-test-results',
             instances: [{ browser: 'chromium' }],
           },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'integration',
+          include: ['tests/integration/**/*.{test,spec}.{js,ts}'],
+          environment: 'node',
+          testTimeout: 10000, // Integration tests may take longer
         },
       },
     ],

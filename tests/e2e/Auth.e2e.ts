@@ -17,8 +17,6 @@ test.describe('Authentication', () => {
     await expect(signInButton.first()).toBeVisible();
   });
 
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should sign in successfully', async ({ page: _page }) => {
     // TODO: Set up Clerk test accounts or authentication helper
@@ -27,16 +25,12 @@ test.describe('Authentication', () => {
     // Verify redirect to dashboard
   });
 
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should sign out successfully', async ({ page: _page }) => {
     // TODO: Set up authentication helper
     // Sign in first, then sign out
     // Verify redirect to home page
   });
-
-   
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should maintain session after page refresh', async ({ page: _page }) => {

@@ -235,7 +235,15 @@ describe('PropertyActions', () => {
         limit: vi.fn().mockResolvedValue([]),
       };
 
+      const updateChain = {
+        update: vi.fn().mockReturnThis(),
+        set: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        returning: vi.fn().mockResolvedValue([]),
+      };
+
       vi.mocked(db.select).mockReturnValue(propertyChain as any);
+      vi.mocked(db.update).mockReturnValue(updateChain as any);
 
       const result = await updateProperty('nonexistent', { address: 'New Address' });
 

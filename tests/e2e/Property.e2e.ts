@@ -1,8 +1,6 @@
 import { test } from '@playwright/test';
 
 test.describe('Property CRUD', () => {
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should create a new property', async ({ page: _page }) => {
     // TODO: Set up authentication helper
@@ -14,8 +12,6 @@ test.describe('Property CRUD', () => {
     // 6. Verify property appears in list
   });
 
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display property list', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -24,8 +20,6 @@ test.describe('Property CRUD', () => {
     // 3. Verify properties are displayed
     // 4. Verify property details (address, type) are visible
   });
-
-   
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should view property details', async ({ page: _page }) => {
@@ -36,8 +30,6 @@ test.describe('Property CRUD', () => {
     // 4. Verify property details page loads
     // 5. Verify property information is displayed correctly
   });
-
-   
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should edit property', async ({ page: _page }) => {
@@ -50,8 +42,6 @@ test.describe('Property CRUD', () => {
     // 6. Verify changes are reflected
   });
 
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should delete property', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -62,8 +52,6 @@ test.describe('Property CRUD', () => {
     // 5. Verify property is removed from list
   });
 
-   
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should create unit for property', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -72,8 +60,6 @@ test.describe('Property CRUD', () => {
     // 3. Add a unit
     // 4. Verify unit appears in property units list
   });
-
-   
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should cascade delete units when property is deleted', async ({ page: _page }) => {

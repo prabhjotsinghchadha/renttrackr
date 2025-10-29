@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, it } from '@playwright/test';
+import { afterAll, beforeAll, describe, it } from 'vitest';
 
 /**
  * Integration tests for data relationships

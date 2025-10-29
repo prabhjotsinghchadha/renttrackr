@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 
 test.describe('Lease and Payment Flow', () => {
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should create lease for tenant', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -12,7 +11,6 @@ test.describe('Lease and Payment Flow', () => {
     // 5. Submit form
     // 6. Verify lease appears in tenant's lease history
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should record payment for lease', async ({ page: _page }) => {
@@ -26,7 +24,6 @@ test.describe('Lease and Payment Flow', () => {
     // 7. Verify payment appears in payment list
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display payment in dashboard', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -35,7 +32,6 @@ test.describe('Lease and Payment Flow', () => {
     // 3. Navigate to dashboard
     // 4. Verify payment appears in "Recent Payments" section
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should calculate payment metrics correctly', async ({ page: _page }) => {
@@ -48,7 +44,6 @@ test.describe('Lease and Payment Flow', () => {
     // 6. Verify pending/overdue calculations are correct
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should show pending payments for unpaid rent', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -58,7 +53,6 @@ test.describe('Lease and Payment Flow', () => {
     // 4. Verify pending payments amount is calculated correctly
     // 5. Verify it appears in dashboard metrics
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should show overdue payments for late rent', async ({ page: _page }) => {
@@ -71,7 +65,6 @@ test.describe('Lease and Payment Flow', () => {
     // 6. Verify it appears in dashboard metrics
   });
 
-
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should allow adding late fee to payment', async ({ page: _page }) => {
     // TODO: Set up authentication helper and seed data
@@ -81,7 +74,6 @@ test.describe('Lease and Payment Flow', () => {
     // 4. Verify late fee is included in payment total
     // 5. Verify late fee appears in dashboard metrics
   });
-
 
   // eslint-disable-next-line playwright/expect-expect, playwright/no-skipped-test
   test.skip('should display payment history for tenant', async ({ page: _page }) => {
