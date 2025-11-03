@@ -27,7 +27,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.classList.toggle('dark', initialTheme === 'dark');
     // Mark as mounted after initial theme is set
     setMounted(true);
-     
   }, []);
 
   // Update document and localStorage when theme changes (after mount)

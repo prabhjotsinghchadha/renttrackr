@@ -105,9 +105,9 @@ async function getPaymentsForLeases(leaseIds: string[]) { ... }
 
 // Then compose them:
 export async function getUserPayments() {
-  const properties = await getUserProperties();
-  const tenants = await getTenantsForProperties(properties.map(p => p.id));
-  // ... etc
+const properties = await getUserProperties();
+const tenants = await getTenantsForProperties(properties.map(p => p.id));
+// ... etc
 }
 \`\`\`
 
@@ -129,12 +129,12 @@ export async function getUserPayments() {
 \`\`\`typescript
 // Instead of:
 export async function getUserPayments() {
-  const properties = await db.select()...
+const properties = await db.select()...
 }
 
 // Do:
 export async function getUserPayments(dbInstance = db) {
-  const properties = await dbInstance.select()...
+const properties = await dbInstance.select()...
 }
 
 // In tests:
