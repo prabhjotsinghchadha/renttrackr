@@ -30,6 +30,7 @@
     "db-server:memory": "pglite-server",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "migrate:apply": "npx tsx scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "storybook": "storybook dev -p 6006",
     "storybook:test": "vitest run --config .storybook/vitest.config.mts",
