@@ -172,10 +172,19 @@
       "townhouse": "Townhouse",
       "multiunit": "Multi-Unit Building",
       "apartment": "Apartment Building",
-      "duplex": "Duplex"
+      "duplex": "Duplex",
+      "residential": "Residential",
+      "retail": "Retail",
+      "commercial": "Commercial",
+      "warehouse": "Warehouse"
     },
     "add_unit": "Add Unit",
+    "add_units": "Add Units",
+    "add_another_unit": "+ Add Unit",
     "add_unit_description": "Add units to your multi-unit property",
+    "at_least_one_unit_required": "At least one unit is required for this property type",
+    "property_created_units_partial": "Property created, but some units failed to create",
+    "remove": "Remove",
     "unit_number": "Unit Number",
     "unit_number_placeholder": "1A, 2B, etc.",
     "unit_number_help": "Enter the unit number or identifier",
@@ -243,7 +252,11 @@
       "townhouse": "Townhouse",
       "multiunit": "Multi-Unit Building",
       "apartment": "Apartment Building",
-      "duplex": "Duplex"
+      "duplex": "Duplex",
+      "residential": "Residential",
+      "retail": "Retail",
+      "commercial": "Commercial",
+      "warehouse": "Warehouse"
     },
     "select_property_type": "Select Property Type",
     "update_property": "Update Property",

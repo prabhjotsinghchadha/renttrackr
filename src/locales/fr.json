@@ -172,10 +172,19 @@
       "townhouse": "Maison de Ville",
       "multiunit": "Immeuble Multi-unités",
       "apartment": "Immeuble d'Appartements",
-      "duplex": "Duplex"
+      "duplex": "Duplex",
+      "residential": "Résidentiel",
+      "retail": "Commerce de Détail",
+      "commercial": "Commercial",
+      "warehouse": "Entrepôt"
     },
     "add_unit": "Ajouter Unité",
+    "add_units": "Ajouter des Unités",
+    "add_another_unit": "+ Ajouter Unité",
     "add_unit_description": "Ajoutez des unités à votre propriété multi-unités",
+    "at_least_one_unit_required": "Au moins une unité est requise pour ce type de propriété",
+    "property_created_units_partial": "Propriété créée, mais certaines unités n'ont pas pu être créées",
+    "remove": "Supprimer",
     "unit_number": "Numéro d'Unité",
     "unit_number_placeholder": "1A, 2B, etc.",
     "unit_number_help": "Entrez le numéro ou identifiant de l'unité",
@@ -243,7 +252,11 @@
       "townhouse": "Maison de Ville",
       "multiunit": "Immeuble Multi-unités",
       "apartment": "Immeuble d'Appartements",
-      "duplex": "Duplex"
+      "duplex": "Duplex",
+      "residential": "Résidentiel",
+      "retail": "Commerce de Détail",
+      "commercial": "Commercial",
+      "warehouse": "Entrepôt"
     },
     "select_property_type": "Sélectionner le Type de Propriété",
     "update_property": "Mettre à Jour la Propriété",

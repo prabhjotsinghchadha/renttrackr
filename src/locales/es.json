@@ -172,10 +172,19 @@
       "townhouse": "Casa Adosada",
       "multiunit": "Edificio Multiunidad",
       "apartment": "Edificio de Apartamentos",
-      "duplex": "Dúplex"
+      "duplex": "Dúplex",
+      "residential": "Residencial",
+      "retail": "Comercial (Retail)",
+      "commercial": "Comercial",
+      "warehouse": "Almacén"
     },
     "add_unit": "Agregar Unidad",
+    "add_units": "Agregar Unidades",
+    "add_another_unit": "+ Agregar Unidad",
     "add_unit_description": "Agrega unidades a tu propiedad multiunidad",
+    "at_least_one_unit_required": "Se requiere al menos una unidad para este tipo de propiedad",
+    "property_created_units_partial": "Propiedad creada, pero algunas unidades no se pudieron crear",
+    "remove": "Eliminar",
     "unit_number": "Número de Unidad",
     "unit_number_placeholder": "1A, 2B, etc.",
     "unit_number_help": "Ingresa el número o identificador de la unidad",
@@ -243,7 +252,11 @@
       "townhouse": "Casa Adosada",
       "multiunit": "Edificio Multiunidad",
       "apartment": "Edificio de Apartamentos",
-      "duplex": "Dúplex"
+      "duplex": "Dúplex",
+      "residential": "Residencial",
+      "retail": "Comercial (Retail)",
+      "commercial": "Comercial",
+      "warehouse": "Almacén"
     },
     "select_property_type": "Seleccionar Tipo de Propiedad",
     "update_property": "Actualizar Propiedad",

@@ -2,9 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { createProperty } from '@/actions/PropertyActions';
-import { AddUnitForm } from './AddUnitForm';
+import { useEffect, useState } from 'react';
+import { createProperty, createUnit } from '@/actions/PropertyActions';
 
 type PropertyFormProps = {
   locale: string;
@@ -20,7 +19,9 @@ export function PropertyForm({ locale }: PropertyFormProps) {
   const [rateOfInterest, setRateOfInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [createdPropertyId, setCreatedPropertyId] = useState<string | null>(null);
+  const [units, setUnits] = useState<Array<{ id: string; unitNumber: string; rentAmount: string }>>([
+    { id: crypto.randomUUID(), unitNumber: '', rentAmount: '' },
+  ]);
 
   const propertyTypes = [
     { value: 'single_family', label: t('property_types.single_family') },
@@ -29,6 +30,10 @@ export function PropertyForm({ locale }: PropertyFormProps) {
     { value: 'multiunit', label: t('property_types.multiunit') },
     { value: 'apartment', label: t('property_types.apartment') },
     { value: 'duplex', label: t('property_types.duplex') },
+    { value: 'residential', label: t('property_types.residential') },
+    { value: 'retail', label: t('property_types.retail') },
+    { value: 'commercial', label: t('property_types.commercial') },
+    { value: 'warehouse', label: t('property_types.warehouse') },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,6 +54,23 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         return;
       }
 
+      const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+
+      // Validate units if property can have units
+      if (canHaveUnits) {
+        const validUnits = units.filter(
+          (unit) =>
+            unit.unitNumber.trim() && unit.rentAmount && Number.parseFloat(unit.rentAmount) > 0,
+        );
+
+        if (validUnits.length === 0) {
+          setError(t('at_least_one_unit_required'));
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      // Create the property first
       const result = await createProperty({
         address: address.trim(),
         propertyType,
@@ -58,13 +80,37 @@ export function PropertyForm({ locale }: PropertyFormProps) {
       });
 
       if (result.success && result.property) {
-        setCreatedPropertyId(result.property.id);
+        const propertyId = result.property.id;
 
-        // If it's not a multi-unit property, redirect immediately
-        if (propertyType !== 'multiunit') {
-          router.push(`/${locale}/dashboard/properties`);
-          router.refresh();
+        // If property can have units, create them
+        if (canHaveUnits) {
+          const validUnits = units.filter(
+            (unit) =>
+              unit.unitNumber.trim() && unit.rentAmount && Number.parseFloat(unit.rentAmount) > 0,
+          );
+
+          // Create all units
+          const unitPromises = validUnits.map((unit) =>
+            createUnit({
+              propertyId,
+              unitNumber: unit.unitNumber.trim(),
+              rentAmount: Number.parseFloat(unit.rentAmount),
+            }),
+          );
+
+          const unitResults = await Promise.all(unitPromises);
+          const failedUnits = unitResults.filter((r) => !r.success);
+
+          if (failedUnits.length > 0) {
+            console.error('Some units failed to create:', failedUnits);
+            // Property was created but some units failed - still show success but warn user
+            setError(t('property_created_units_partial'));
+          }
         }
+
+        // Redirect to properties list
+        router.push(`/${locale}/dashboard/properties`);
+        router.refresh();
       } else {
         console.error('❌ Form error:', result.error);
         setError(result.error || t('create_error'));
@@ -77,33 +123,48 @@ export function PropertyForm({ locale }: PropertyFormProps) {
     }
   };
 
-  const handleUnitAdded = () => {
-    // Redirect to properties list after unit is added
-    router.push(`/${locale}/dashboard/properties`);
-    router.refresh();
+  const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+  const unitT = useTranslations('PropertyDetail');
+
+  // Reset units when property type changes
+  useEffect(() => {
+    const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+    if (canHaveUnits) {
+      // If switching to a property type that can have units, ensure at least one unit field exists
+      setUnits((prevUnits) => {
+        if (prevUnits.length === 0 || prevUnits.every((u) => !u.unitNumber && !u.rentAmount)) {
+          return [{ id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }];
+        }
+        return prevUnits;
+      });
+    } else {
+      // If switching away from a property type that can have units, clear units
+      setUnits([{ id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }]);
+    }
+  }, [propertyType]);
+
+  const addUnit = () => {
+    setUnits([...units, { id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }]);
   };
 
-  // If property is created and it's multi-unit, show the unit form
-  if (createdPropertyId && propertyType === 'multiunit') {
-    return (
-      <div className="space-y-6">
-        <div className="rounded-xl bg-green-50 p-4 text-green-600">
-          <p className="text-lg font-semibold">{t('property_created')}</p>
-          <p className="text-sm">{t('add_unit_description')}</p>
-        </div>
+  const removeUnit = (id: string) => {
+    if (units.length > 1) {
+      setUnits(units.filter((unit) => unit.id !== id));
+    }
+  };
 
-        <AddUnitForm propertyId={createdPropertyId} onSuccess={handleUnitAdded} />
-
-        <button
-          type="button"
-          onClick={() => router.push(`/${locale}/dashboard/properties`)}
-          className="rounded-xl border-2 border-gray-300 bg-white px-8 py-4 text-xl font-semibold text-gray-700 transition-all duration-300 hover:border-gray-400 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 focus:outline-none"
-        >
-          {t('skip_adding_units')}
-        </button>
-      </div>
-    );
-  }
+  const updateUnit = (index: number, field: 'unitNumber' | 'rentAmount', value: string) => {
+    const updatedUnits = [...units];
+    const currentUnit = updatedUnits[index];
+    if (currentUnit) {
+      updatedUnits[index] = {
+        id: currentUnit.id,
+        unitNumber: field === 'unitNumber' ? value : currentUnit.unitNumber,
+        rentAmount: field === 'rentAmount' ? value : currentUnit.rentAmount,
+      };
+      setUnits(updatedUnits);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -197,6 +258,80 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         />
         <p className="mt-2 text-sm text-gray-600">{t('rate_of_interest_help')}</p>
       </div>
+
+      {canHaveUnits && (
+        <div className="space-y-4 rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">{t('add_units')}</h3>
+            <button
+              type="button"
+              onClick={addUnit}
+              disabled={isSubmitting}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t('add_another_unit')}
+            </button>
+          </div>
+          <p className="text-sm text-gray-600">{t('add_unit_description')}</p>
+
+          {units.map((unit, index) => (
+            <div key={unit.id} className="grid gap-4 rounded-lg bg-white p-4 md:grid-cols-3">
+              <div>
+                <label
+                  htmlFor={`unitNumber-${index}`}
+                  className="mb-2 block text-sm font-semibold text-gray-700"
+                >
+                  {unitT('unit_number')} <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  id={`unitNumber-${index}`}
+                  value={unit.unitNumber}
+                  onChange={(e) => updateUnit(index, 'unitNumber', e.target.value)}
+                  placeholder={unitT('unit_number_placeholder')}
+                  disabled={isSubmitting}
+                  className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  required={canHaveUnits}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor={`rentAmount-${index}`}
+                  className="mb-2 block text-sm font-semibold text-gray-700"
+                >
+                  {unitT('rent_amount')} <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="number"
+                  id={`rentAmount-${index}`}
+                  value={unit.rentAmount}
+                  onChange={(e) => updateUnit(index, 'rentAmount', e.target.value)}
+                  placeholder={unitT('rent_amount_placeholder')}
+                  disabled={isSubmitting}
+                  step="0.01"
+                  min="0"
+                  className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  required={canHaveUnits}
+                />
+              </div>
+
+              <div className="flex items-end">
+                {units.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeUnit(unit.id)}
+                    disabled={isSubmitting}
+                    className="w-full rounded-lg border-2 border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-300 hover:border-red-400 hover:bg-red-50 focus:ring-4 focus:ring-red-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {t('remove')}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {error && (
         <div className="rounded-xl bg-red-50 p-4 text-red-600">

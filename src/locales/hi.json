@@ -172,10 +172,19 @@
       "townhouse": "टाउनहाउस",
       "multiunit": "बहु-यूनिट भवन",
       "apartment": "अपार्टमेंट भवन",
-      "duplex": "डुप्लेक्स"
+      "duplex": "डुप्लेक्स",
+      "residential": "आवासीय",
+      "retail": "खुदरा",
+      "commercial": "व्यावसायिक",
+      "warehouse": "गोदाम"
     },
     "add_unit": "यूनिट जोड़ें",
+    "add_units": "यूनिट्स जोड़ें",
+    "add_another_unit": "+ यूनिट जोड़ें",
     "add_unit_description": "अपनी बहु-यूनिट प्रॉपर्टी में यूनिट्स जोड़ें",
+    "at_least_one_unit_required": "इस प्रॉपर्टी प्रकार के लिए कम से कम एक यूनिट आवश्यक है",
+    "property_created_units_partial": "प्रॉपर्टी बनाई गई, लेकिन कुछ यूनिट्स बनाने में विफल रहे",
+    "remove": "हटाएं",
     "unit_number": "यूनिट नंबर",
     "unit_number_placeholder": "1A, 2B, आदि",
     "unit_number_help": "यूनिट नंबर या पहचानकर्ता दर्ज करें",
@@ -243,7 +252,11 @@
       "townhouse": "टाउनहाउस",
       "multiunit": "बहु-यूनिट भवन",
       "apartment": "अपार्टमेंट भवन",
-      "duplex": "डुप्लेक्स"
+      "duplex": "डुप्लेक्स",
+      "residential": "आवासीय",
+      "retail": "खुदरा",
+      "commercial": "व्यावसायिक",
+      "warehouse": "गोदाम"
     },
     "select_property_type": "प्रॉपर्टी प्रकार चुनें",
     "update_property": "प्रॉपर्टी अपडेट करें",
