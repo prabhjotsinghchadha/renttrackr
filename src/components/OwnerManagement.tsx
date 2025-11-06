@@ -2,8 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { getUserOwners } from '@/actions/OwnerActions';
+import { getOwnerProperties, getUnlinkedProperties, getUserOwners } from '@/actions/OwnerActions';
 import { OwnerForm } from './Form/OwnerForm';
+import { LinkPropertyToOwner } from './LinkPropertyToOwner';
 import { OwnerUserManagement } from './OwnerUserManagement';
 
 type Owner = {
@@ -16,6 +17,13 @@ type Owner = {
   createdAt: Date;
 };
 
+type Property = {
+  id: string;
+  address: string;
+  propertyType?: string | null;
+  ownershipPercentage?: number;
+};
+
 export function OwnerManagement({ locale }: { locale: string }) {
   const t = useTranslations('Owners');
   const [owners, setOwners] = useState<Owner[]>([]);
@@ -26,13 +34,27 @@ export function OwnerManagement({ locale }: { locale: string }) {
     name: string;
     role: string;
   } | null>(null);
+  const [showLinkProperty, setShowLinkProperty] = useState(false);
+  const [unlinkedPropertiesCount, setUnlinkedPropertiesCount] = useState(0);
+  const [ownerPropertiesMap, setOwnerPropertiesMap] = useState<Record<string, Property[]>>({});
 
   const fetchOwners = async () => {
     setIsLoading(true);
     try {
       const result = await getUserOwners();
       if (result.success && result.owners) {
-        setOwners(result.owners as Owner[]);
+        const ownersList = result.owners as Owner[];
+        setOwners(ownersList);
+
+        // Fetch properties for each owner
+        const propertiesMap: Record<string, Property[]> = {};
+        for (const owner of ownersList) {
+          const propertiesResult = await getOwnerProperties(owner.id);
+          if (propertiesResult.success && propertiesResult.properties) {
+            propertiesMap[owner.id] = propertiesResult.properties as Property[];
+          }
+        }
+        setOwnerPropertiesMap(propertiesMap);
       }
     } catch (error) {
       console.error('Error fetching owners:', error);
@@ -41,9 +63,27 @@ export function OwnerManagement({ locale }: { locale: string }) {
     }
   };
 
+  const fetchUnlinkedCount = async () => {
+    try {
+      const result = await getUnlinkedProperties();
+      if (result.success && result.properties) {
+        setUnlinkedPropertiesCount(result.properties.length);
+      }
+    } catch (error) {
+      console.error('Error fetching unlinked properties:', error);
+    }
+  };
+
   useEffect(() => {
     fetchOwners();
+    fetchUnlinkedCount();
+     
   }, []);
+
+  const handleLinkSuccess = () => {
+    fetchOwners();
+    fetchUnlinkedCount();
+  };
 
   const handleFormSuccess = () => {
     setShowForm(false);
@@ -57,13 +97,24 @@ export function OwnerManagement({ locale }: { locale: string }) {
           <h2 className="text-3xl font-bold text-gray-800">{t('management_title')}</h2>
           <p className="mt-2 text-gray-600">{t('management_description')}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
-        >
-          {t('add_owner')}
-        </button>
+        <div className="flex gap-3">
+          {unlinkedPropertiesCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowLinkProperty(true)}
+              className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-700 focus:ring-4 focus:ring-green-300 focus:outline-none"
+            >
+              {t('link_properties')} ({unlinkedPropertiesCount})
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
+          >
+            {t('add_owner')}
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -130,9 +181,36 @@ export function OwnerManagement({ locale }: { locale: string }) {
                     {new Date(owner.createdAt).toLocaleDateString()}
                   </span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">{t('properties_count')}</span>
+                  <span className="text-gray-700">
+                    {ownerPropertiesMap[owner.id]?.length || 0}
+                  </span>
+                </div>
               </div>
 
-              <div className="mt-4">
+              {(() => {
+                const properties = ownerPropertiesMap[owner.id];
+                return properties && properties.length > 0 ? (
+                  <div className="mt-4 rounded-lg bg-gray-50 p-3">
+                    <p className="mb-2 text-xs font-semibold text-gray-600">{t('linked_properties')}:</p>
+                    <ul className="space-y-1">
+                      {properties.map((property) => (
+                        <li key={property.id} className="text-xs text-gray-700">
+                          • {property.address}
+                          {property.ownershipPercentage !== undefined && (
+                            <span className="ml-2 text-gray-500">
+                              ({property.ownershipPercentage}%)
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null;
+              })()}
+
+              <div className="mt-4 flex gap-2">
                 <button
                   type="button"
                   onClick={() =>
@@ -142,7 +220,7 @@ export function OwnerManagement({ locale }: { locale: string }) {
                       role: owner.role,
                     })
                   }
-                  className="w-full rounded-lg border-2 border-purple-300 bg-white px-4 py-2 text-sm font-semibold text-purple-700 transition-all duration-300 hover:border-purple-400 hover:bg-purple-50 focus:outline-none"
+                  className="flex-1 rounded-lg border-2 border-purple-300 bg-white px-4 py-2 text-sm font-semibold text-purple-700 transition-all duration-300 hover:border-purple-400 hover:bg-purple-50 focus:outline-none"
                 >
                   {t('manage_users')}
                 </button>
@@ -154,6 +232,13 @@ export function OwnerManagement({ locale }: { locale: string }) {
 
       {showForm && (
         <OwnerForm locale={locale} onSuccess={handleFormSuccess} onCancel={() => setShowForm(false)} />
+      )}
+
+      {showLinkProperty && (
+        <LinkPropertyToOwner
+          onSuccess={handleLinkSuccess}
+          onCancel={() => setShowLinkProperty(false)}
+        />
       )}
 
       {selectedOwnerForUsers && (

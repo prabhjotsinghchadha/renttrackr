@@ -6,9 +6,34 @@ import { userSchema } from '@/models/Schema';
 
 /**
  * Create a new user in the database
+ * Handles cases where user already exists (by ID or email)
  */
 export async function createUser(data: { id: string; email: string; name?: string | null }) {
   try {
+    // First, check if user exists by ID
+    const existingUserById = await getUserById(data.id);
+    if (existingUserById) {
+      // User already exists with this ID, return it
+      return { success: true, user: existingUserById };
+    }
+
+    // Check if user exists by email (might have different ID)
+    const existingUserByEmail = await getUserByEmail(data.email);
+    if (existingUserByEmail) {
+      // User exists with this email
+      // If the ID matches, return it
+      if (existingUserByEmail.id === data.id) {
+        return { success: true, user: existingUserByEmail };
+      }
+      // If ID doesn't match, this is an edge case (shouldn't happen with Clerk)
+      // Log a warning and return the existing user
+      console.warn(
+        `User with email ${data.email} exists with different ID: ${existingUserByEmail.id} vs ${data.id}. Returning existing user.`,
+      );
+      return { success: true, user: existingUserByEmail };
+    }
+
+    // User doesn't exist, create new one
     const [user] = await db
       .insert(userSchema)
       .values({
@@ -20,6 +45,20 @@ export async function createUser(data: { id: string; email: string; name?: strin
 
     return { success: true, user };
   } catch (error) {
+    // Handle duplicate key error gracefully
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('duplicate key') || errorMessage.includes('23505')) {
+      // User already exists, try to fetch it
+      const existingUser = await getUserByEmail(data.email);
+      if (existingUser) {
+        return { success: true, user: existingUser };
+      }
+      // Fallback: try by ID
+      const existingUserById = await getUserById(data.id);
+      if (existingUserById) {
+        return { success: true, user: existingUserById };
+      }
+    }
     console.error('Error creating user:', error);
     return { success: false, error: 'Failed to create user' };
   }

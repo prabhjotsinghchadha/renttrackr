@@ -7,6 +7,7 @@ import {
   invitationSchema,
   ownerSchema,
   propertyOwnerSchema,
+  propertySchema,
   userOwnerSchema,
   userSchema,
 } from '@/models/Schema';
@@ -555,6 +556,125 @@ export async function removeUserFromOwner(ownerId: string, userId: string) {
   } catch (error) {
     console.error('Error removing user from owner:', error);
     return { success: false, error: 'Failed to remove user from owner' };
+  }
+}
+
+/**
+ * Get properties that are not linked to any owners
+ * These are legacy properties that need to be linked
+ */
+export async function getUnlinkedProperties() {
+  try {
+    const user = await requireAuth();
+
+    // Get all properties for this user (via legacy userId or ownership)
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
+
+    let allPropertyIds: string[] = [];
+
+    if (userOwners.length > 0) {
+      const ownerIds = userOwners.map((uo) => uo.ownerId);
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(inArray(propertyOwnerSchema.ownerId, ownerIds));
+      allPropertyIds = propertyOwners.map((po) => po.propertyId);
+    }
+
+    // Also get legacy properties (direct userId relationship)
+    const legacyProperties = await db
+      .select({ id: propertySchema.id })
+      .from(propertySchema)
+      .where(eq(propertySchema.userId, user.id));
+
+    const legacyPropertyIds = legacyProperties.map((p) => p.id);
+    const allUserPropertyIds = [...new Set([...allPropertyIds, ...legacyPropertyIds])];
+
+    if (allUserPropertyIds.length === 0) {
+      return { success: true, properties: [] };
+    }
+
+    // Get all properties that have owner links
+    const linkedPropertyOwners = await db
+      .select({ propertyId: propertyOwnerSchema.propertyId })
+      .from(propertyOwnerSchema)
+      .where(inArray(propertyOwnerSchema.propertyId, allUserPropertyIds));
+
+    const linkedPropertyIds = new Set(linkedPropertyOwners.map((po) => po.propertyId));
+
+    // Find properties that are not linked
+    const unlinkedPropertyIds = allUserPropertyIds.filter((id) => !linkedPropertyIds.has(id));
+
+    if (unlinkedPropertyIds.length === 0) {
+      return { success: true, properties: [] };
+    }
+
+    // Get full property details
+    const unlinkedProperties = await db
+      .select()
+      .from(propertySchema)
+      .where(inArray(propertySchema.id, unlinkedPropertyIds));
+
+    return { success: true, properties: unlinkedProperties };
+  } catch (error) {
+    console.error('Error fetching unlinked properties:', error);
+    return { success: false, properties: [], error: 'Failed to fetch unlinked properties' };
+  }
+}
+
+/**
+ * Get all properties linked to a specific owner
+ */
+export async function getOwnerProperties(ownerId: string) {
+  try {
+    const user = await requireAuth();
+
+    // Check if user has access to this owner
+    const [userOwner] = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(and(eq(userOwnerSchema.userId, user.id), eq(userOwnerSchema.ownerId, ownerId)))
+      .limit(1);
+
+    if (!userOwner) {
+      return { success: false, properties: [], error: 'Unauthorized' };
+    }
+
+    // Get property-owner relationships for this owner
+    const propertyOwners = await db
+      .select()
+      .from(propertyOwnerSchema)
+      .where(eq(propertyOwnerSchema.ownerId, ownerId));
+
+    if (propertyOwners.length === 0) {
+      return { success: true, properties: [] };
+    }
+
+    const propertyIds = propertyOwners.map((po) => po.propertyId);
+
+    // Get property details
+    const properties = await db
+      .select()
+      .from(propertySchema)
+      .where(inArray(propertySchema.id, propertyIds));
+
+    // Combine with ownership percentage
+    const propertiesWithPercentage = properties.map((property) => {
+      const propertyOwner = propertyOwners.find((po) => po.propertyId === property.id);
+      return {
+        ...property,
+        ownershipPercentage: propertyOwner?.ownershipPercentage || 0,
+        propertyOwnerId: propertyOwner?.id,
+      };
+    });
+
+    return { success: true, properties: propertiesWithPercentage };
+  } catch (error) {
+    console.error('Error fetching owner properties:', error);
+    return { success: false, properties: [], error: 'Failed to fetch owner properties' };
   }
 }
 
