@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getUserOwners } from '@/actions/OwnerActions';
 import { OwnerForm } from './Form/OwnerForm';
@@ -16,6 +17,7 @@ type Owner = {
 };
 
 export function OwnerManagement({ locale }: { locale: string }) {
+  const t = useTranslations('Owners');
   const [owners, setOwners] = useState<Owner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -52,30 +54,35 @@ export function OwnerManagement({ locale }: { locale: string }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">Owner Management</h2>
-          <p className="mt-2 text-gray-600">
-            Manage property owners and ownership entities. Owners can be individuals or LLCs.
-          </p>
+          <h2 className="text-3xl font-bold text-gray-800">{t('management_title')}</h2>
+          <p className="mt-2 text-gray-600">{t('management_description')}</p>
         </div>
         <button
           type="button"
           onClick={() => setShowForm(true)}
           className="rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
         >
-          Add Owner
+          {t('add_owner')}
         </button>
       </div>
 
       {isLoading ? (
         <div className="rounded-xl bg-white p-8 text-center shadow-md">
-          <p className="text-gray-600">Loading owners...</p>
+          <p className="text-gray-600">{t('loading_owners')}</p>
         </div>
       ) : owners.length === 0 ? (
-        <div className="rounded-xl bg-white p-8 text-center shadow-md">
-          <p className="mb-4 text-lg text-gray-600">No owners found</p>
-          <p className="text-sm text-gray-500">
-            Create your first owner entity to start managing property ownership
-          </p>
+        <div className="rounded-xl bg-gradient-to-br from-purple-50 to-blue-50 p-12 text-center shadow-md md:p-20">
+          <div className="mb-6 text-8xl">👤</div>
+          <h3 className="mb-4 text-2xl font-semibold text-gray-800">{t('no_owners')}</h3>
+          <p className="mb-2 text-xl leading-relaxed text-gray-700">{t('owners_represent')}</p>
+          <p className="mb-8 text-lg text-gray-600">{t('create_first_owner')}</p>
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="inline-block rounded-xl bg-purple-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-purple-700 hover:shadow-xl focus:ring-4 focus:ring-purple-300 focus:outline-none"
+          >
+            {t('create_first_owner_button')}
+          </button>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -107,18 +114,18 @@ export function OwnerManagement({ locale }: { locale: string }) {
               <div className="space-y-2 text-sm">
                 {owner.email && (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Email:</span>
+                    <span className="text-gray-500">{t('email_label')}</span>
                     <span className="text-gray-700">{owner.email}</span>
                   </div>
                 )}
                 {owner.phone && (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Phone:</span>
+                    <span className="text-gray-500">{t('phone_label')}</span>
                     <span className="text-gray-700">{owner.phone}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Created:</span>
+                  <span className="text-gray-500">{t('created_label')}</span>
                   <span className="text-gray-700">
                     {new Date(owner.createdAt).toLocaleDateString()}
                   </span>
@@ -137,7 +144,7 @@ export function OwnerManagement({ locale }: { locale: string }) {
                   }
                   className="w-full rounded-lg border-2 border-purple-300 bg-white px-4 py-2 text-sm font-semibold text-purple-700 transition-all duration-300 hover:border-purple-400 hover:bg-purple-50 focus:outline-none"
                 >
-                  Manage Users
+                  {t('manage_users')}
                 </button>
               </div>
             </div>

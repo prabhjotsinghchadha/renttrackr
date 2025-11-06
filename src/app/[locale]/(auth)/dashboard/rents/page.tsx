@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { getUserLeases } from '@/actions/LeaseActions';
 import {
   deletePayment,
   getPaymentMetrics,
@@ -46,18 +47,41 @@ export default async function RentsPage(props: { params: Promise<{ locale: strin
   const pendingOverdueResult = await getPendingAndOverdueDetails();
   const pendingPayments = pendingOverdueResult.success ? pendingOverdueResult.pending : [];
   const overduePayments = pendingOverdueResult.success ? pendingOverdueResult.overdue : [];
+  const leasesResult = await getUserLeases();
+  const hasLeases = leasesResult.success && leasesResult.leases && leasesResult.leases.length > 0;
 
   return (
     <div className="py-8 md:py-12">
       <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">{t('page_title')}</h1>
-        <Link
-          href={`/${locale}/dashboard/rents/new`}
-          className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
-        >
-          {t('record_payment')}
-        </Link>
+        {hasLeases && (
+          <Link
+            href={`/${locale}/dashboard/rents/new`}
+            className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+          >
+            {t('record_payment')}
+          </Link>
+        )}
       </div>
+
+      {!hasLeases && (
+        <div className="mb-10 rounded-xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-purple-50 p-12 text-center md:p-20">
+          <div className="mb-6 text-8xl">📋</div>
+          <h3 className="mb-4 text-2xl font-semibold text-gray-800">No Leases Yet</h3>
+          <p className="mb-4 text-xl leading-relaxed text-gray-700">
+            You'll need to create a lease for your tenant before you can track rent payments.
+          </p>
+          <p className="mb-8 text-lg text-gray-600">
+            Leases define the rental terms and enable the rent tracker to calculate payments.
+          </p>
+          <Link
+            href={`/${locale}/dashboard/tenants`}
+            className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+          >
+            Go to Tenants to Add Lease
+          </Link>
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

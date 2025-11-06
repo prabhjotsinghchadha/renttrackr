@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { getPropertyCount } from '@/actions/PropertyActions';
 import { getUserTenants } from '@/actions/TenantActions';
 
 // Force dynamic rendering for this page
@@ -29,35 +30,58 @@ export default async function TenantsPage(props: { params: Promise<{ locale: str
     namespace: 'Tenants',
   });
 
-  // Fetch tenants from database
+  // Fetch tenants and property count from database
   const result = await getUserTenants();
   const tenants = result.tenants || [];
+  const propertyCount = await getPropertyCount();
+  const hasProperties = propertyCount > 0;
 
   return (
     <div className="py-8 md:py-12">
       <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">{t('page_title')}</h1>
-        <Link
-          href="/dashboard/tenants/new"
-          className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-center text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
-        >
-          {t('add_tenant')}
-        </Link>
+        {hasProperties && (
+          <Link
+            href="/dashboard/tenants/new"
+            className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-center text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+          >
+            {t('add_tenant')}
+          </Link>
+        )}
       </div>
 
       {tenants.length === 0 ? (
         <div className="rounded-xl bg-gray-50 p-12 text-center md:p-20">
           <div className="mb-6 text-8xl">👥</div>
           <h3 className="mb-4 text-2xl font-semibold text-gray-800">{t('no_tenants')}</h3>
-          <p className="mb-8 text-xl leading-relaxed text-gray-600">
-            {t('no_tenants_description')}
-          </p>
-          <Link
-            href="/dashboard/tenants/new"
-            className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
-          >
-            {t('add_first_tenant')}
-          </Link>
+          {!hasProperties ? (
+            <>
+              <p className="mb-4 text-xl leading-relaxed text-gray-600">
+                You'll need to add a property first before adding tenants.
+              </p>
+              <p className="mb-8 text-lg text-gray-500">
+                Tenants are assigned to specific properties (and units if applicable).
+              </p>
+              <Link
+                href={`/${locale}/dashboard/properties/new`}
+                className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+              >
+                Add Property First
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="mb-8 text-xl leading-relaxed text-gray-600">
+                {t('no_tenants_description')}
+              </p>
+              <Link
+                href="/dashboard/tenants/new"
+                className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+              >
+                {t('add_first_tenant')}
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

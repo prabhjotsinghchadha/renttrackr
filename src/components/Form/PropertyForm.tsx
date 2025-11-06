@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getUserOwners } from '@/actions/OwnerActions';
@@ -353,10 +354,35 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         <p className="mt-2 text-sm text-gray-600">{t('rate_of_interest_help')}</p>
       </div>
 
+      {!isLoadingOwners && availableOwners.length === 0 && (
+        <div className="space-y-4 rounded-xl border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+          <div className="flex items-start gap-4">
+            <div className="text-4xl">ℹ️</div>
+            <div className="flex-1">
+              <h3 className="mb-2 text-lg font-semibold text-gray-800">No Owners Available</h3>
+              <p className="mb-4 text-gray-700">
+                You need to create an owner before adding properties. Owners represent you or your LLCs that own properties.
+              </p>
+              <Link
+                href={`/${locale}/dashboard/owners`}
+                className="inline-block rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
+              >
+                Create Owner First
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!isLoadingOwners && availableOwners.length > 0 && (
         <div className="space-y-4 rounded-xl border-2 border-purple-200 bg-purple-50 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Property Owners</h3>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">Property Owners</h3>
+              <p className="mt-1 text-xs text-gray-500">
+                Owners are individuals or LLCs that own this property. Total ownership must equal 100%.
+              </p>
+            </div>
             <button
               type="button"
               onClick={addOwner}

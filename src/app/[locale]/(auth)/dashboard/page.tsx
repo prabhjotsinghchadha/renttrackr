@@ -2,9 +2,12 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { getDashboardActivity } from '@/actions/DashboardActions';
+import { getOnboardingStatus } from '@/actions/OnboardingActions';
 import { getPaymentMetrics } from '@/actions/PaymentActions';
 import { getPropertyCount } from '@/actions/PropertyActions';
 import { getTenantCount } from '@/actions/TenantActions';
+import { OnboardingChecklist } from '@/components/OnboardingChecklist';
+import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper';
 import { getCurrentUser } from '@/helpers/AuthHelper';
 
 // Force dynamic rendering for this page
@@ -41,15 +44,27 @@ export default async function Dashboard(props: { params: Promise<{ locale: strin
   const tenantCount = await getTenantCount();
   const paymentMetrics = await getPaymentMetrics();
   const dashboardActivity = await getDashboardActivity();
+  const onboardingStatus = await getOnboardingStatus();
 
   return (
     <div className="py-8 md:py-12">
+      <WelcomeModalWrapper
+        showWelcome={onboardingStatus.showWelcome}
+        steps={onboardingStatus.steps}
+        locale={locale}
+      />
+
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">{t('page_title')}</h1>
         <p className="mt-4 text-xl leading-relaxed text-gray-600">
           {user?.name ? `${t('welcome_back')}, ${user.name}!` : t('welcome_message')}
         </p>
       </div>
+
+      {/* Onboarding Checklist */}
+      {!onboardingStatus.isComplete && (
+        <OnboardingChecklist steps={onboardingStatus.steps} locale={locale} />
+      )}
 
       {/* Key Metrics */}
       <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">

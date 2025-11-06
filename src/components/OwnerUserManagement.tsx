@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import {
   getOwnerUsers,
@@ -29,6 +30,7 @@ export function OwnerUserManagement({
   currentUserRole,
   onClose,
 }: OwnerUserManagementProps) {
+  const t = useTranslations('Owners');
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -70,7 +72,7 @@ export function OwnerUserManagement({
       });
 
       if (result.success) {
-        setSuccess(`Invitation sent to ${inviteEmail}`);
+        setSuccess(t('invitation_sent', { email: inviteEmail }));
         setInviteEmail('');
         setInviteRole('viewer');
         setShowInviteForm(false);
@@ -100,7 +102,7 @@ export function OwnerUserManagement({
     try {
       const result = await updateUserRole(ownerId, userId, newRole);
       if (result.success) {
-        setSuccess('Role updated successfully');
+        setSuccess(t('role_updated'));
         fetchUsers();
       } else {
         setError(result.error || 'Failed to update role');
@@ -113,7 +115,13 @@ export function OwnerUserManagement({
 
   const handleRemoveUser = async (userId: string, userName: string) => {
     // eslint-disable-next-line no-alert
-    if (!window.confirm(`Are you sure you want to remove ${userName || 'this user'} from ${ownerName}?`)) {
+    const confirmed = window.confirm(
+      t('remove_user_confirm', {
+        userName: userName || t('no_name'),
+        ownerName,
+      }),
+    );
+    if (!confirmed) {
       return;
     }
 
@@ -123,7 +131,7 @@ export function OwnerUserManagement({
     try {
       const result = await removeUserFromOwner(ownerId, userId);
       if (result.success) {
-        setSuccess('User removed successfully');
+        setSuccess(t('user_removed'));
         fetchUsers();
       } else {
         setError(result.error || 'Failed to remove user');
@@ -142,10 +150,10 @@ export function OwnerUserManagement({
         <div className="border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">Manage Users - {ownerName}</h2>
-              <p className="mt-1 text-sm text-gray-600">
-                Manage who has access to this owner and their roles
-              </p>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {t('manage_users_title', { ownerName })}
+              </h2>
+              <p className="mt-1 text-sm text-gray-600">{t('manage_users_description')}</p>
             </div>
             <button
               type="button"
@@ -173,15 +181,15 @@ export function OwnerUserManagement({
                   onClick={() => setShowInviteForm(true)}
                   className="rounded-lg bg-purple-600 px-4 py-2 font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none"
                 >
-                  + Invite User
+                  {t('invite_user_button')}
                 </button>
               ) : (
                 <form onSubmit={handleInvite} className="rounded-lg border-2 border-purple-200 bg-purple-50 p-4">
-                  <h3 className="mb-4 font-semibold text-gray-800">Invite User</h3>
+                  <h3 className="mb-4 font-semibold text-gray-800">{t('invite_user')}</h3>
                   <div className="space-y-4">
                     <div>
                       <label htmlFor="invite-email" className="mb-2 block text-sm font-semibold text-gray-700">
-                        Email Address
+                        {t('invite_email_label')}
                       </label>
                       <input
                         type="email"
@@ -195,7 +203,7 @@ export function OwnerUserManagement({
                     </div>
                     <div>
                       <label htmlFor="invite-role" className="mb-2 block text-sm font-semibold text-gray-700">
-                        Role
+                        {t('invite_role_label')}
                       </label>
                       <select
                         id="invite-role"
@@ -203,9 +211,9 @@ export function OwnerUserManagement({
                         onChange={(e) => setInviteRole(e.target.value as 'admin' | 'editor' | 'viewer')}
                         className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 focus:border-purple-600 focus:outline-none"
                       >
-                        <option value="viewer">Viewer (Read-only)</option>
-                        <option value="editor">Editor (Can edit properties)</option>
-                        <option value="admin">Admin (Full access)</option>
+                        <option value="viewer">{t('role_viewer_description')}</option>
+                        <option value="editor">{t('role_editor_description')}</option>
+                        <option value="admin">{t('role_admin_description')}</option>
                       </select>
                     </div>
                     <div className="flex gap-2">
@@ -214,7 +222,7 @@ export function OwnerUserManagement({
                         disabled={isInviting}
                         className="rounded-lg bg-purple-600 px-4 py-2 font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none disabled:opacity-50"
                       >
-                        {isInviting ? 'Sending...' : 'Send Invitation'}
+                        {isInviting ? t('sending') : t('send_invitation')}
                       </button>
                       <button
                         type="button"
@@ -226,7 +234,7 @@ export function OwnerUserManagement({
                         }}
                         className="rounded-lg border-2 border-gray-300 bg-white px-4 py-2 font-semibold text-gray-700 transition-all duration-300 hover:bg-gray-50 focus:outline-none"
                       >
-                        Cancel
+                        {t('cancel')}
                       </button>
                     </div>
                   </div>
@@ -236,13 +244,11 @@ export function OwnerUserManagement({
           )}
 
           {isLoading ? (
-            <div className="text-center text-gray-600">Loading users...</div>
+            <div className="text-center text-gray-600">{t('loading_users')}</div>
           ) : users.length === 0 ? (
             <div className="rounded-lg bg-gray-50 p-8 text-center">
-              <p className="text-gray-600">No users found</p>
-              {isAdmin && (
-                <p className="mt-2 text-sm text-gray-500">Invite users to grant them access</p>
-              )}
+              <p className="text-gray-600">{t('no_users_found')}</p>
+              {isAdmin && <p className="mt-2 text-sm text-gray-500">{t('invite_users_hint')}</p>}
             </div>
           ) : (
             <div className="space-y-3">
@@ -252,7 +258,7 @@ export function OwnerUserManagement({
                   className="flex items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-4"
                 >
                   <div className="flex-1">
-                    <div className="font-semibold text-gray-800">{user.name || 'No name'}</div>
+                    <div className="font-semibold text-gray-800">{user.name || t('no_name')}</div>
                     <div className="text-sm text-gray-600">{user.email}</div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -264,9 +270,9 @@ export function OwnerUserManagement({
                         }
                         className="rounded-lg border-2 border-gray-200 bg-white px-3 py-1 text-sm font-semibold text-gray-800 focus:border-purple-600 focus:outline-none"
                       >
-                        <option value="viewer">Viewer</option>
-                        <option value="editor">Editor</option>
-                        <option value="admin">Admin</option>
+                        <option value="viewer">{t('role_viewer')}</option>
+                        <option value="editor">{t('role_editor')}</option>
+                        <option value="admin">{t('role_admin')}</option>
                       </select>
                     ) : (
                       <span
@@ -278,7 +284,7 @@ export function OwnerUserManagement({
                               : 'bg-gray-100 text-gray-700'
                         }`}
                       >
-                        {user.role}
+                        {t(`role_${user.role}`)}
                       </span>
                     )}
                     {isAdmin && (
@@ -287,7 +293,7 @@ export function OwnerUserManagement({
                         onClick={() => handleRemoveUser(user.id, user.name || user.email)}
                         className="rounded-lg border-2 border-red-300 bg-white px-3 py-1 text-sm font-semibold text-red-600 transition-all duration-300 hover:border-red-400 hover:bg-red-50 focus:outline-none"
                       >
-                        Remove
+                        {t('remove_user')}
                       </button>
                     )}
                   </div>
@@ -303,7 +309,7 @@ export function OwnerUserManagement({
             onClick={onClose}
             className="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-gray-700 transition-all duration-300 hover:bg-gray-300 focus:outline-none"
           >
-            Close
+            {t('close')}
           </button>
         </div>
       </div>

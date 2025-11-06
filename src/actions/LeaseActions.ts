@@ -3,26 +3,53 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { requireAuth } from '@/helpers/AuthHelper';
 import { db } from '@/libs/DB';
-import { leaseSchema, propertySchema, tenantSchema, unitSchema } from '@/models/Schema';
+import {
+  leaseSchema,
+  propertyOwnerSchema,
+  propertySchema,
+  tenantSchema,
+  unitSchema,
+  userOwnerSchema,
+} from '@/models/Schema';
 
 /**
- * Get all leases for the current user's properties
+ * Get all leases for the current user's properties (via ownership)
  */
 export async function getUserLeases() {
   try {
     const user = await requireAuth();
 
-    // Get all user's property IDs
-    const properties = await db
-      .select({ id: propertySchema.id })
-      .from(propertySchema)
-      .where(eq(propertySchema.userId, user.id));
+    // Get all owners linked to this user
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
 
-    if (properties.length === 0) {
-      return { success: true, leases: [] };
+    let propertyIds: string[] = [];
+
+    if (userOwners.length > 0) {
+      const ownerIds = userOwners.map((uo) => uo.ownerId);
+
+      // Get all property-owner relationships for these owners
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(inArray(propertyOwnerSchema.ownerId, ownerIds));
+
+      propertyIds = propertyOwners.map((po) => po.propertyId);
+    } else {
+      // Fallback to legacy direct userId relationship
+      const legacyProperties = await db
+        .select({ id: propertySchema.id })
+        .from(propertySchema)
+        .where(eq(propertySchema.userId, user.id));
+
+      propertyIds = legacyProperties.map((p) => p.id);
     }
 
-    const propertyIds = properties.map((p) => p.id);
+    if (propertyIds.length === 0) {
+      return { success: true, leases: [] };
+    }
 
     // Get all tenants for these properties (both with and without units)
     const tenants = await db
