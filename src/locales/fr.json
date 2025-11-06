@@ -1110,5 +1110,18 @@
     "collapse_checklist": "Réduire la liste de vérification",
     "close_modal": "Fermer le modal",
     "close": "Fermer"
+  },
+  "Search": {
+    "placeholder": "Rechercher propriétés, locataires, propriétaires, actions...",
+    "no_results": "Aucun résultat trouvé",
+    "more_results": "Affichage des 12 meilleurs résultats",
+    "type_property": "Propriété",
+    "type_tenant": "Locataire",
+    "type_owner": "Propriétaire",
+    "type_expense": "Dépense",
+    "type_unit": "Unité",
+    "type_renovation": "Rénovation",
+    "type_action": "Action",
+    "type_page": "Page"
   }
 }

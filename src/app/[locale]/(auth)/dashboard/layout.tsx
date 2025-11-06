@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 // import { CurrencySelector } from '@/components/CurrencySelector';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { SearchBar } from '@/components/SearchBar';
 import { ThemeToggle } from '@/components/ThemeToggle';
 // import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { BaseTemplate } from '@/templates/BaseTemplate';
@@ -107,6 +108,9 @@ export default async function DashboardLayout(props: {
       }
       rightNav={
         <>
+          <li className="flex items-center">
+            <SearchBar locale={locale} />
+          </li>
           <li>
             <SignOutButton>
               <button

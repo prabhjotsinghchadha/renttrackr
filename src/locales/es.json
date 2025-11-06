@@ -1110,5 +1110,18 @@
     "collapse_checklist": "Contraer lista de verificación",
     "close_modal": "Cerrar modal",
     "close": "Cerrar"
+  },
+  "Search": {
+    "placeholder": "Buscar propiedades, inquilinos, propietarios, acciones...",
+    "no_results": "No se encontraron resultados",
+    "more_results": "Mostrando los 12 mejores resultados",
+    "type_property": "Propiedad",
+    "type_tenant": "Inquilino",
+    "type_owner": "Propietario",
+    "type_expense": "Gasto",
+    "type_unit": "Unidad",
+    "type_renovation": "Renovación",
+    "type_action": "Acción",
+    "type_page": "Página"
   }
 }

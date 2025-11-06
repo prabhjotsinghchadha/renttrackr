@@ -1110,5 +1110,18 @@
     "collapse_checklist": "Collapse checklist",
     "close_modal": "Close modal",
     "close": "Close"
+  },
+  "Search": {
+    "placeholder": "Search properties, tenants, owners, actions...",
+    "no_results": "No results found",
+    "more_results": "Showing top 12 results",
+    "type_property": "Property",
+    "type_tenant": "Tenant",
+    "type_owner": "Owner",
+    "type_expense": "Expense",
+    "type_unit": "Unit",
+    "type_renovation": "Renovation",
+    "type_action": "Action",
+    "type_page": "Page"
   }
 }

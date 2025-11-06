@@ -1110,5 +1110,18 @@
     "collapse_checklist": "चेकलिस्ट संकुचित करें",
     "close_modal": "मोडल बंद करें",
     "close": "बंद करें"
+  },
+  "Search": {
+    "placeholder": "प्रॉपर्टीज़, किरायेदार, मालिक, कार्य खोजें...",
+    "no_results": "कोई परिणाम नहीं मिला",
+    "more_results": "शीर्ष 12 परिणाम दिखाए जा रहे हैं",
+    "type_property": "प्रॉपर्टी",
+    "type_tenant": "किरायेदार",
+    "type_owner": "मालिक",
+    "type_expense": "खर्चा",
+    "type_unit": "यूनिट",
+    "type_renovation": "नवीनीकरण",
+    "type_action": "कार्य",
+    "type_page": "पृष्ठ"
   }
 }
