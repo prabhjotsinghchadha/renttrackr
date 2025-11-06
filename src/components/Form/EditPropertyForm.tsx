@@ -2,8 +2,14 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { updateProperty } from '@/actions/PropertyActions';
+import { useEffect, useRef, useState } from 'react';
+import {
+  createUnit,
+  deleteUnit,
+  getPropertyById,
+  updateProperty,
+  updateUnit,
+} from '@/actions/PropertyActions';
 
 type EditPropertyFormProps = {
   propertyId: string;
@@ -30,6 +36,8 @@ export function EditPropertyForm({
 }: EditPropertyFormProps) {
   const router = useRouter();
   const t = useTranslations('PropertyDetail');
+  const unitT = useTranslations('PropertyDetail');
+  const propertiesT = useTranslations('Properties');
   const [address, setAddress] = useState(currentAddress);
   const [propertyType, setPropertyType] = useState(currentPropertyType || '');
   const [acquiredOn, setAcquiredOn] = useState(
@@ -39,6 +47,15 @@ export function EditPropertyForm({
   const [rateOfInterest, setRateOfInterest] = useState(currentRateOfInterest?.toString() || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const unitIdCounter = useRef(0);
+  const generateUnitId = useRef(() => {
+    unitIdCounter.current += 1;
+    return `unit-${unitIdCounter.current}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }).current;
+  const [units, setUnits] = useState<
+    Array<{ id: string; unitId?: string; unitNumber: string; rentAmount: string }>
+  >([]);
+  const [isLoadingUnits, setIsLoadingUnits] = useState(true);
 
   const propertyTypes = [
     { value: 'single_family', label: t('property_types.single_family') },
@@ -47,7 +64,88 @@ export function EditPropertyForm({
     { value: 'multiunit', label: t('property_types.multiunit') },
     { value: 'apartment', label: t('property_types.apartment') },
     { value: 'duplex', label: t('property_types.duplex') },
+    { value: 'residential', label: t('property_types.residential') },
+    { value: 'retail', label: t('property_types.retail') },
+    { value: 'commercial', label: t('property_types.commercial') },
+    { value: 'warehouse', label: t('property_types.warehouse') },
   ];
+
+  // Fetch existing units when component mounts or property type changes
+  useEffect(() => {
+    const fetchUnits = async () => {
+      const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+      if (canHaveUnits) {
+        setIsLoadingUnits(true);
+        try {
+          const result = await getPropertyById(propertyId);
+          if (result.success && result.units) {
+            const formattedUnits = result.units.map((unit: any) => ({
+              id: generateUnitId(),
+              unitId: unit.id,
+              unitNumber: unit.unitNumber || '',
+              rentAmount: unit.rentAmount?.toString() || '',
+            }));
+            // If no units exist, add one empty unit
+            setUnits(
+              formattedUnits.length > 0
+                ? formattedUnits
+                : [{ id: generateUnitId(), unitNumber: '', rentAmount: '' }],
+            );
+          } else {
+            setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
+          }
+        } catch (err) {
+          console.error('Error fetching units:', err);
+          setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
+        } finally {
+          setIsLoadingUnits(false);
+        }
+      } else {
+        setUnits([]);
+        setIsLoadingUnits(false);
+      }
+    };
+
+    fetchUnits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [propertyType, propertyId]);
+
+  // Reset units when property type changes
+  useEffect(() => {
+    const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+    if (!canHaveUnits) {
+      setUnits([]);
+    } else if (units.length === 0) {
+      setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [propertyType]);
+
+  const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';
+
+  const addUnit = () => {
+    setUnits([...units, { id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
+  };
+
+  const removeUnit = (id: string) => {
+    if (units.length > 1) {
+      setUnits(units.filter((unit) => unit.id !== id));
+    }
+  };
+
+  const updateUnitField = (index: number, field: 'unitNumber' | 'rentAmount', value: string) => {
+    const updatedUnits = [...units];
+    const currentUnit = updatedUnits[index];
+    if (currentUnit) {
+      updatedUnits[index] = {
+        id: currentUnit.id,
+        unitId: currentUnit.unitId,
+        unitNumber: field === 'unitNumber' ? value : currentUnit.unitNumber,
+        rentAmount: field === 'rentAmount' ? value : currentUnit.rentAmount,
+      };
+      setUnits(updatedUnits);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +159,20 @@ export function EditPropertyForm({
         return;
       }
 
+      // Validate units if property can have units
+      if (canHaveUnits) {
+        const validUnits = units.filter(
+          (unit) =>
+            unit.unitNumber.trim() && unit.rentAmount && Number.parseFloat(unit.rentAmount) > 0,
+        );
+
+        if (validUnits.length === 0) {
+          setError(propertiesT('at_least_one_unit_required'));
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const result = await updateProperty(propertyId, {
         address: address.trim(),
         propertyType: propertyType || undefined,
@@ -70,6 +182,46 @@ export function EditPropertyForm({
       });
 
       if (result.success && result.property) {
+        // Handle units if property can have units
+        if (canHaveUnits) {
+          const validUnits = units.filter(
+            (unit) =>
+              unit.unitNumber.trim() && unit.rentAmount && Number.parseFloat(unit.rentAmount) > 0,
+          );
+
+          // Get existing units to compare
+          const existingUnitsResult = await getPropertyById(propertyId);
+          const existingUnits = existingUnitsResult.success ? existingUnitsResult.units || [] : [];
+
+          // Update or create units
+          for (const unit of validUnits) {
+            if (unit.unitId) {
+              // Update existing unit
+              await updateUnit(unit.unitId, {
+                unitNumber: unit.unitNumber.trim(),
+                rentAmount: Number.parseFloat(unit.rentAmount),
+              });
+            } else {
+              // Create new unit
+              await createUnit({
+                propertyId,
+                unitNumber: unit.unitNumber.trim(),
+                rentAmount: Number.parseFloat(unit.rentAmount),
+              });
+            }
+          }
+
+          // Delete units that were removed
+          const currentUnitIds = validUnits.map((u) => u.unitId).filter(Boolean) as string[];
+          const unitsToDelete = existingUnits
+            .map((u: any) => u.id)
+            .filter((id: string) => !currentUnitIds.includes(id));
+
+          for (const unitId of unitsToDelete) {
+            await deleteUnit(unitId);
+          }
+        }
+
         if (onSuccess) {
           onSuccess();
         } else {
@@ -192,6 +344,80 @@ export function EditPropertyForm({
             />
             <p className="mt-2 text-sm text-gray-600">{t('rate_of_interest_help')}</p>
           </div>
+
+          {canHaveUnits && !isLoadingUnits && (
+            <div className="space-y-4 rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-800">{propertiesT('add_units')}</h3>
+                <button
+                  type="button"
+                  onClick={addUnit}
+                  disabled={isSubmitting}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {propertiesT('add_another_unit')}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600">{propertiesT('add_unit_description')}</p>
+
+              {units.map((unit, index) => (
+                <div key={unit.id} className="grid gap-4 rounded-lg bg-white p-4 md:grid-cols-3">
+                  <div>
+                    <label
+                      htmlFor={`unitNumber-${index}`}
+                      className="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      {unitT('unit_number')} <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id={`unitNumber-${index}`}
+                      value={unit.unitNumber}
+                      onChange={(e) => updateUnitField(index, 'unitNumber', e.target.value)}
+                      placeholder={unitT('unit_number_placeholder')}
+                      disabled={isSubmitting}
+                      className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      required={canHaveUnits}
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor={`rentAmount-${index}`}
+                      className="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      {unitT('rent_amount')} <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      id={`rentAmount-${index}`}
+                      value={unit.rentAmount}
+                      onChange={(e) => updateUnitField(index, 'rentAmount', e.target.value)}
+                      placeholder={unitT('rent_amount_placeholder')}
+                      disabled={isSubmitting}
+                      step="0.01"
+                      min="0"
+                      className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      required={canHaveUnits}
+                    />
+                  </div>
+
+                  <div className="flex items-end">
+                    {units.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeUnit(unit.id)}
+                        disabled={isSubmitting}
+                        className="w-full rounded-lg border-2 border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-300 hover:border-red-400 hover:bg-red-50 focus:ring-4 focus:ring-red-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {propertiesT('remove')}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {error && (
             <div className="rounded-xl bg-red-50 p-4 text-red-600">

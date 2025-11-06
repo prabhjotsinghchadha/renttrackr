@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createProperty, createUnit } from '@/actions/PropertyActions';
 
 type PropertyFormProps = {
@@ -19,9 +19,14 @@ export function PropertyForm({ locale }: PropertyFormProps) {
   const [rateOfInterest, setRateOfInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [units, setUnits] = useState<Array<{ id: string; unitNumber: string; rentAmount: string }>>([
-    { id: crypto.randomUUID(), unitNumber: '', rentAmount: '' },
-  ]);
+  const unitIdCounter = useRef(0);
+  const generateUnitId = useRef(() => {
+    unitIdCounter.current += 1;
+    return `unit-${unitIdCounter.current}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }).current;
+  const [units, setUnits] = useState<Array<{ id: string; unitNumber: string; rentAmount: string }>>(
+    () => [{ id: generateUnitId(), unitNumber: '', rentAmount: '' }],
+  );
 
   const propertyTypes = [
     { value: 'single_family', label: t('property_types.single_family') },
@@ -133,18 +138,19 @@ export function PropertyForm({ locale }: PropertyFormProps) {
       // If switching to a property type that can have units, ensure at least one unit field exists
       setUnits((prevUnits) => {
         if (prevUnits.length === 0 || prevUnits.every((u) => !u.unitNumber && !u.rentAmount)) {
-          return [{ id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }];
+          return [{ id: generateUnitId(), unitNumber: '', rentAmount: '' }];
         }
         return prevUnits;
       });
     } else {
       // If switching away from a property type that can have units, clear units
-      setUnits([{ id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }]);
+      setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType]);
 
   const addUnit = () => {
-    setUnits([...units, { id: crypto.randomUUID(), unitNumber: '', rentAmount: '' }]);
+    setUnits([...units, { id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
   };
 
   const removeUnit = (id: string) => {
