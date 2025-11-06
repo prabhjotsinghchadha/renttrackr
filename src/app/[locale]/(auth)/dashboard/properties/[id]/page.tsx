@@ -44,6 +44,7 @@ export default async function PropertyDetailPage(props: {
 
   const property = result.property;
   const units = result.units || [];
+  const owners = result.owners || [];
 
   return (
     <div className="py-8 md:py-12">
@@ -120,6 +121,47 @@ export default async function PropertyDetailPage(props: {
               )}
             </div>
           </div>
+
+          {/* Ownership Information */}
+          {owners.length > 0 && (
+            <div className="mb-6 rounded-xl bg-purple-50 p-8">
+              <h2 className="mb-6 text-2xl font-semibold text-gray-800">Ownership</h2>
+              <div className="space-y-4">
+                {owners.map((owner: any) => (
+                  <div
+                    key={owner.id}
+                    className="rounded-lg border-2 border-purple-200 bg-white p-4"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-800">{owner.name}</h3>
+                        <p className="text-sm text-gray-600">
+                          {owner.type === 'llc' ? 'LLC' : 'Individual'}
+                        </p>
+                        {owner.email && (
+                          <p className="mt-1 text-sm text-gray-600">
+                            Email: {owner.email}
+                          </p>
+                        )}
+                        {owner.phone && (
+                          <p className="text-sm text-gray-600">
+                            Phone: {owner.phone}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="rounded-full bg-purple-100 px-4 py-2">
+                          <span className="text-xl font-bold text-purple-700">
+                            {owner.ownershipPercentage}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Units section - only show for multi-unit properties */}
           {(property.propertyType === 'multiunit' ||

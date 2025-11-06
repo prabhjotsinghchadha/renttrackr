@@ -41,6 +41,14 @@ export default async function DashboardLayout(props: {
           </li>
           <li>
             <Link
+              href="/dashboard/owners/"
+              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base dark:text-gray-200 dark:hover:bg-blue-900 dark:hover:text-blue-400"
+            >
+              {t('owners_link')}
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/dashboard/tenants/"
               className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 lg:text-sm xl:text-base"
             >

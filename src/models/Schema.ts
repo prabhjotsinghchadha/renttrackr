@@ -227,3 +227,86 @@ export const parkingActivitySchema = pgTable('parking_activity', {
   note: varchar('note', { length: 1000 }).notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 });
+
+// ============================================
+// PROPERTY OWNERSHIP SYSTEM
+// ============================================
+// This system allows for:
+// - Multiple owners per property (individuals or LLCs)
+// - Ownership percentages for each property-owner relationship
+// - User-owner links with roles (admin, editor, viewer)
+// - Users automatically see all properties owned by their linked owners
+
+// Owner model - Represents an individual or LLC that owns properties
+export const ownerSchema = pgTable('owners', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(), // Name of individual or LLC
+  type: varchar('type', { length: 50 }).notNull(), // 'individual' | 'llc'
+  email: varchar('email', { length: 255 }), // Optional contact email
+  phone: varchar('phone', { length: 50 }), // Optional contact phone
+  taxId: varchar('tax_id', { length: 100 }), // EIN for LLC or SSN placeholder for individual (encrypted in production)
+  address: varchar('address', { length: 500 }), // Owner's address
+  notes: varchar('notes', { length: 1000 }), // Additional notes
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Property-Owner relationship (many-to-many with ownership percentage)
+export const propertyOwnerSchema = pgTable('property_owners', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id')
+    .notNull()
+    .references(() => propertySchema.id, { onDelete: 'cascade' }),
+  ownerId: uuid('owner_id')
+    .notNull()
+    .references(() => ownerSchema.id, { onDelete: 'cascade' }),
+  ownershipPercentage: real('ownership_percentage').notNull().default(100), // Percentage of ownership (0-100)
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// User-Owner relationship (links app users to owners with roles)
+// This is the key table that determines which properties a user can see
+export const userOwnerSchema = pgTable('user_owners', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => userSchema.id, { onDelete: 'cascade' }), // Clerk user ID
+  ownerId: uuid('owner_id')
+    .notNull()
+    .references(() => ownerSchema.id, { onDelete: 'cascade' }),
+  role: varchar('role', { length: 50 }).notNull().default('viewer'), // 'admin' | 'editor' | 'viewer'
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// Invitation system for adding new users to owners
+export const invitationSchema = pgTable('invitations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  ownerId: uuid('owner_id')
+    .notNull()
+    .references(() => ownerSchema.id, { onDelete: 'cascade' }),
+  email: varchar('email', { length: 255 }).notNull(), // Email of person being invited
+  role: varchar('role', { length: 50 }).notNull().default('viewer'), // Role they'll have when they accept
+  invitedBy: varchar('invited_by', { length: 255 })
+    .notNull()
+    .references(() => userSchema.id, { onDelete: 'cascade' }), // User who sent the invitation
+  token: varchar('token', { length: 255 }).notNull().unique(), // Unique token for the invitation link
+  status: varchar('status', { length: 50 }).notNull().default('pending'), // 'pending' | 'accepted' | 'expired' | 'cancelled'
+  expiresAt: timestamp('expires_at', { mode: 'date' }).notNull(), // Invitation expiration date
+  acceptedAt: timestamp('accepted_at', { mode: 'date' }), // When invitation was accepted
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});

@@ -3,19 +3,57 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { requireAuth } from '@/helpers/AuthHelper';
 import { db } from '@/libs/DB';
-import { propertySchema, unitSchema } from '@/models/Schema';
+import {
+  ownerSchema,
+  propertyOwnerSchema,
+  propertySchema,
+  unitSchema,
+  userOwnerSchema,
+} from '@/models/Schema';
 
 /**
- * Get all properties for the current user
+ * Get all properties for the current user (via ownership relationships)
+ * This queries properties through the user_owners and property_owners relationships
  */
 export async function getUserProperties() {
   try {
     const user = await requireAuth();
 
+    // Get all owners linked to this user
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
+
+    if (userOwners.length === 0) {
+      // Fallback to legacy direct userId relationship for backward compatibility
+      const legacyProperties = await db
+        .select()
+        .from(propertySchema)
+        .where(eq(propertySchema.userId, user.id));
+
+      return { success: true, properties: legacyProperties };
+    }
+
+    const ownerIds = userOwners.map((uo) => uo.ownerId);
+
+    // Get all property-owner relationships for these owners
+    const propertyOwners = await db
+      .select()
+      .from(propertyOwnerSchema)
+      .where(inArray(propertyOwnerSchema.ownerId, ownerIds));
+
+    if (propertyOwners.length === 0) {
+      return { success: true, properties: [] };
+    }
+
+    const propertyIds = propertyOwners.map((po) => po.propertyId);
+
+    // Get property details
     const properties = await db
       .select()
       .from(propertySchema)
-      .where(eq(propertySchema.userId, user.id));
+      .where(inArray(propertySchema.id, propertyIds));
 
     return { success: true, properties };
   } catch (error) {
@@ -25,26 +63,86 @@ export async function getUserProperties() {
 }
 
 /**
- * Get a single property by ID (with units)
+ * Get a single property by ID (with units and ownership info)
+ * Checks access via user_owners and property_owners relationships
  */
 export async function getPropertyById(propertyId: string) {
   try {
     const user = await requireAuth();
 
+    // Get all owners linked to this user
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
+
+    const ownerIds = userOwners.map((uo) => uo.ownerId);
+
+    // Check if user has access to this property via ownership
+    let hasAccess = false;
+
+    if (ownerIds.length > 0) {
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(and(eq(propertyOwnerSchema.propertyId, propertyId), inArray(propertyOwnerSchema.ownerId, ownerIds)));
+
+      hasAccess = propertyOwners.length > 0;
+    }
+
+    // Fallback to legacy direct userId relationship
+    if (!hasAccess) {
+      const [legacyCheck] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      hasAccess = !!legacyCheck;
+    }
+
+    if (!hasAccess) {
+      return { success: false, property: null, units: [], error: 'Property not found or unauthorized' };
+    }
+
+    // Get property details
     const [property] = await db
       .select()
       .from(propertySchema)
-      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+      .where(eq(propertySchema.id, propertyId))
       .limit(1);
 
     if (!property) {
-      return { success: false, property: null, error: 'Property not found' };
+      return { success: false, property: null, units: [], error: 'Property not found' };
     }
 
     // Get units for this property
     const units = await db.select().from(unitSchema).where(eq(unitSchema.propertyId, propertyId));
 
-    return { success: true, property, units };
+    // Get ownership information
+    const propertyOwners = await db
+      .select()
+      .from(propertyOwnerSchema)
+      .where(eq(propertyOwnerSchema.propertyId, propertyId));
+
+    const owners = [];
+    if (propertyOwners.length > 0) {
+      const ownerDetails = await db
+        .select()
+        .from(ownerSchema)
+        .where(inArray(ownerSchema.id, propertyOwners.map((po) => po.ownerId)));
+
+      for (const owner of ownerDetails) {
+        const po = propertyOwners.find((p) => p.ownerId === owner.id);
+        owners.push({
+          ...owner,
+          ownershipPercentage: po?.ownershipPercentage || 0,
+          propertyOwnerId: po?.id,
+        });
+      }
+    }
+
+    return { success: true, property, units, owners };
   } catch (error) {
     console.error('Error fetching property:', error);
     return { success: false, property: null, units: [], error: 'Failed to fetch property' };
@@ -52,7 +150,8 @@ export async function getPropertyById(propertyId: string) {
 }
 
 /**
- * Create a new property
+ * Create a new property with multiple owners
+ * If no owners specified, creates with the user's default owner or legacy userId
  */
 export async function createProperty(data: {
   address: string;
@@ -60,10 +159,12 @@ export async function createProperty(data: {
   acquiredOn?: Date;
   principalAmount?: number;
   rateOfInterest?: number;
+  owners?: Array<{ ownerId: string; ownershipPercentage: number }>;
 }) {
   try {
     const user = await requireAuth();
 
+    // Create the property (keep userId for backward compatibility)
     const [property] = await db
       .insert(propertySchema)
       .values({
@@ -76,6 +177,39 @@ export async function createProperty(data: {
       })
       .returning();
 
+    if (!property) {
+      return { success: false, property: null, error: 'Failed to create property' };
+    }
+
+    // Handle ownership relationships
+    if (data.owners && data.owners.length > 0) {
+      // Add all specified owners
+      for (const owner of data.owners) {
+        await db.insert(propertyOwnerSchema).values({
+          propertyId: property.id,
+          ownerId: owner.ownerId,
+          ownershipPercentage: owner.ownershipPercentage,
+        });
+      }
+    } else {
+      // Get user's owners and create with first admin owner, or skip if none
+      const userOwners = await db
+        .select()
+        .from(userOwnerSchema)
+        .where(eq(userOwnerSchema.userId, user.id));
+
+      const adminOwner = userOwners.find((uo) => uo.role === 'admin');
+
+      if (adminOwner) {
+        await db.insert(propertyOwnerSchema).values({
+          propertyId: property.id,
+          ownerId: adminOwner.ownerId,
+          ownershipPercentage: 100,
+        });
+      }
+      // If no admin owner, property will rely on legacy userId field
+    }
+
     return { success: true, property };
   } catch (error) {
     console.error('Error creating property:', error);
@@ -84,7 +218,7 @@ export async function createProperty(data: {
 }
 
 /**
- * Update a property
+ * Update a property (checks access via ownership)
  */
 export async function updateProperty(
   propertyId: string,
@@ -99,6 +233,46 @@ export async function updateProperty(
   try {
     const user = await requireAuth();
 
+    // Check if user has access to this property via ownership
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
+
+    const ownerIds = userOwners.map((uo) => uo.ownerId);
+    let hasAccess = false;
+
+    if (ownerIds.length > 0) {
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(and(eq(propertyOwnerSchema.propertyId, propertyId), inArray(propertyOwnerSchema.ownerId, ownerIds)));
+
+      // Check if user has admin or editor role
+      for (const po of propertyOwners) {
+        const userOwner = userOwners.find((uo) => uo.ownerId === po.ownerId);
+        if (userOwner && (userOwner.role === 'admin' || userOwner.role === 'editor')) {
+          hasAccess = true;
+          break;
+        }
+      }
+    }
+
+    // Fallback to legacy direct userId relationship
+    if (!hasAccess) {
+      const [legacyCheck] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      hasAccess = !!legacyCheck;
+    }
+
+    if (!hasAccess) {
+      return { success: false, property: null, error: 'Unauthorized' };
+    }
+
     const [property] = await db
       .update(propertySchema)
       .set({
@@ -109,7 +283,7 @@ export async function updateProperty(
         rateOfInterest: data.rateOfInterest,
         updatedAt: new Date(),
       })
-      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+      .where(eq(propertySchema.id, propertyId))
       .returning();
 
     if (!property) {
@@ -124,15 +298,53 @@ export async function updateProperty(
 }
 
 /**
- * Delete a property
+ * Delete a property (checks admin access via ownership)
  */
 export async function deleteProperty(propertyId: string) {
   try {
     const user = await requireAuth();
 
-    await db
-      .delete(propertySchema)
-      .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)));
+    // Check if user has admin access to this property
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
+
+    const ownerIds = userOwners.map((uo) => uo.ownerId);
+    let hasAdminAccess = false;
+
+    if (ownerIds.length > 0) {
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(and(eq(propertyOwnerSchema.propertyId, propertyId), inArray(propertyOwnerSchema.ownerId, ownerIds)));
+
+      // Check if user has admin role
+      for (const po of propertyOwners) {
+        const userOwner = userOwners.find((uo) => uo.ownerId === po.ownerId);
+        if (userOwner && userOwner.role === 'admin') {
+          hasAdminAccess = true;
+          break;
+        }
+      }
+    }
+
+    // Fallback to legacy direct userId relationship
+    if (!hasAdminAccess) {
+      const [legacyCheck] = await db
+        .select()
+        .from(propertySchema)
+        .where(and(eq(propertySchema.id, propertyId), eq(propertySchema.userId, user.id)))
+        .limit(1);
+
+      hasAdminAccess = !!legacyCheck;
+    }
+
+    if (!hasAdminAccess) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await db.delete(propertySchema).where(eq(propertySchema.id, propertyId));
 
     return { success: true };
   } catch (error) {
@@ -142,18 +354,40 @@ export async function deleteProperty(propertyId: string) {
 }
 
 /**
- * Get property count for the current user
+ * Get property count for the current user (via ownership)
  */
 export async function getPropertyCount() {
   try {
     const user = await requireAuth();
 
-    const properties = await db
+    // Get all owners linked to this user
+    const userOwners = await db
       .select()
-      .from(propertySchema)
-      .where(eq(propertySchema.userId, user.id));
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
 
-    return properties.length;
+    if (userOwners.length === 0) {
+      // Fallback to legacy direct userId relationship
+      const properties = await db
+        .select()
+        .from(propertySchema)
+        .where(eq(propertySchema.userId, user.id));
+
+      return properties.length;
+    }
+
+    const ownerIds = userOwners.map((uo) => uo.ownerId);
+
+    // Get all property-owner relationships for these owners
+    const propertyOwners = await db
+      .select()
+      .from(propertyOwnerSchema)
+      .where(inArray(propertyOwnerSchema.ownerId, ownerIds));
+
+    // Get unique property IDs
+    const uniquePropertyIds = [...new Set(propertyOwners.map((po) => po.propertyId))];
+
+    return uniquePropertyIds.length;
   } catch (error) {
     console.error('Error counting properties:', error);
     return 0;
@@ -161,23 +395,49 @@ export async function getPropertyCount() {
 }
 
 /**
- * Get all units for the current user's properties
+ * Get all units for the current user's properties (via ownership)
  */
 export async function getUserUnits() {
   try {
     const user = await requireAuth();
 
-    // Get all user's property IDs
-    const properties = await db
-      .select({ id: propertySchema.id, address: propertySchema.address })
-      .from(propertySchema)
-      .where(eq(propertySchema.userId, user.id));
+    // Get all owners linked to this user
+    const userOwners = await db
+      .select()
+      .from(userOwnerSchema)
+      .where(eq(userOwnerSchema.userId, user.id));
 
-    if (properties.length === 0) {
+    let propertyIds: string[] = [];
+
+    if (userOwners.length === 0) {
+      // Fallback to legacy direct userId relationship
+      const legacyProperties = await db
+        .select({ id: propertySchema.id })
+        .from(propertySchema)
+        .where(eq(propertySchema.userId, user.id));
+
+      propertyIds = legacyProperties.map((p) => p.id);
+    } else {
+      const ownerIds = userOwners.map((uo) => uo.ownerId);
+
+      // Get all property-owner relationships for these owners
+      const propertyOwners = await db
+        .select()
+        .from(propertyOwnerSchema)
+        .where(inArray(propertyOwnerSchema.ownerId, ownerIds));
+
+      propertyIds = propertyOwners.map((po) => po.propertyId);
+    }
+
+    if (propertyIds.length === 0) {
       return { success: true, units: [] };
     }
 
-    const propertyIds = properties.map((p) => p.id);
+    // Get property details for enrichment
+    const properties = await db
+      .select({ id: propertySchema.id, address: propertySchema.address })
+      .from(propertySchema)
+      .where(inArray(propertySchema.id, propertyIds));
 
     // Get all units for these properties
     const allUnits = await db

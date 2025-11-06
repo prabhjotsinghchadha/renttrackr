@@ -3,7 +3,15 @@
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { getUserOwners } from '@/actions/OwnerActions';
 import { createProperty, createUnit } from '@/actions/PropertyActions';
+
+type Owner = {
+  id: string;
+  name: string;
+  type: string;
+  role: string;
+};
 
 type PropertyFormProps = {
   locale: string;
@@ -19,14 +27,47 @@ export function PropertyForm({ locale }: PropertyFormProps) {
   const [rateOfInterest, setRateOfInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [availableOwners, setAvailableOwners] = useState<Owner[]>([]);
+  const [selectedOwners, setSelectedOwners] = useState<Array<{ id: string; ownerId: string; percentage: string }>>([]);
+  const [isLoadingOwners, setIsLoadingOwners] = useState(true);
   const unitIdCounter = useRef(0);
+  const ownerIdCounter = useRef(0);
   const generateUnitId = useRef(() => {
     unitIdCounter.current += 1;
     return `unit-${unitIdCounter.current}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }).current;
+  const generateOwnerId = useRef(() => {
+    ownerIdCounter.current += 1;
+    return `owner-${ownerIdCounter.current}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }).current;
   const [units, setUnits] = useState<Array<{ id: string; unitNumber: string; rentAmount: string }>>(
     () => [{ id: generateUnitId(), unitNumber: '', rentAmount: '' }],
   );
+
+  // Fetch available owners on mount
+  useEffect(() => {
+     
+    const fetchOwners = async () => {
+      setIsLoadingOwners(true);
+      try {
+        const result = await getUserOwners();
+        if (result.success && result.owners && result.owners.length > 0) {
+          setAvailableOwners(result.owners as Owner[]);
+          // If user has at least one owner, pre-select the first one with 100%
+          const firstOwner = result.owners[0];
+          if (firstOwner?.id) {
+            setSelectedOwners([{ id: generateOwnerId(), ownerId: firstOwner.id, percentage: '100' }]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching owners:', error);
+      } finally {
+        setIsLoadingOwners(false);
+      }
+    };
+
+    fetchOwners();
+  }, []);
 
   const propertyTypes = [
     { value: 'single_family', label: t('property_types.single_family') },
@@ -75,6 +116,22 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         }
       }
 
+      // Validate owners if selected
+      const owners = selectedOwners
+        .filter((o) => o.ownerId && o.percentage)
+        .map((o) => ({
+          ownerId: o.ownerId,
+          ownershipPercentage: Number.parseFloat(o.percentage),
+        }));
+
+      // Calculate total ownership percentage
+      const totalPercentage = owners.reduce((sum, o) => sum + o.ownershipPercentage, 0);
+      if (owners.length > 0 && totalPercentage !== 100) {
+        setError('Total ownership percentage must equal 100%');
+        setIsSubmitting(false);
+        return;
+      }
+
       // Create the property first
       const result = await createProperty({
         address: address.trim(),
@@ -82,6 +139,7 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         acquiredOn: acquiredOn ? new Date(acquiredOn) : undefined,
         principalAmount: principalAmount ? Number.parseFloat(principalAmount) : undefined,
         rateOfInterest: rateOfInterest ? Number.parseFloat(rateOfInterest) : undefined,
+        owners: owners.length > 0 ? owners : undefined,
       });
 
       if (result.success && result.property) {
@@ -170,6 +228,36 @@ export function PropertyForm({ locale }: PropertyFormProps) {
       };
       setUnits(updatedUnits);
     }
+  };
+
+  const addOwner = () => {
+    setSelectedOwners([...selectedOwners, { id: generateOwnerId(), ownerId: '', percentage: '' }]);
+  };
+
+  const removeOwner = (index: number) => {
+    if (selectedOwners.length > 1) {
+      setSelectedOwners(selectedOwners.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateOwner = (index: number, field: 'ownerId' | 'percentage', value: string) => {
+    const updated = [...selectedOwners];
+    const current = updated[index];
+    if (current) {
+      updated[index] = {
+        id: current.id,
+        ownerId: field === 'ownerId' ? value : current.ownerId || '',
+        percentage: field === 'percentage' ? value : current.percentage || '',
+      };
+      setSelectedOwners(updated);
+    }
+  };
+
+  const calculateTotalPercentage = () => {
+    return selectedOwners.reduce((sum, o) => {
+      const percentage = Number.parseFloat(o.percentage) || 0;
+      return sum + percentage;
+    }, 0);
   };
 
   return (
@@ -264,6 +352,96 @@ export function PropertyForm({ locale }: PropertyFormProps) {
         />
         <p className="mt-2 text-sm text-gray-600">{t('rate_of_interest_help')}</p>
       </div>
+
+      {!isLoadingOwners && availableOwners.length > 0 && (
+        <div className="space-y-4 rounded-xl border-2 border-purple-200 bg-purple-50 p-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">Property Owners</h3>
+            <button
+              type="button"
+              onClick={addOwner}
+              disabled={isSubmitting || selectedOwners.length >= availableOwners.length}
+              className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Add Owner
+            </button>
+          </div>
+          <p className="text-sm text-gray-600">
+            Specify which owner(s) own this property and their ownership percentage. Total must equal 100%.
+          </p>
+
+          {selectedOwners.map((owner, index) => (
+            <div key={owner.id} className="grid gap-4 rounded-lg bg-white p-4 md:grid-cols-3">
+              <div className="md:col-span-2">
+                <label
+                  htmlFor={`owner-${index}`}
+                  className="mb-2 block text-sm font-semibold text-gray-700"
+                >
+                  Owner <span className="text-red-600">*</span>
+                </label>
+                <select
+                  id={`owner-${index}`}
+                  value={owner.ownerId}
+                  onChange={(e) => updateOwner(index, 'ownerId', e.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 hover:border-gray-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                >
+                  <option value="">Select owner</option>
+                  {availableOwners.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name} ({o.type === 'llc' ? 'LLC' : 'Individual'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label
+                    htmlFor={`percentage-${index}`}
+                    className="mb-2 block text-sm font-semibold text-gray-700"
+                  >
+                    Ownership % <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id={`percentage-${index}`}
+                    value={owner.percentage}
+                    onChange={(e) => updateOwner(index, 'percentage', e.target.value)}
+                    placeholder="100"
+                    disabled={isSubmitting}
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    required
+                  />
+                </div>
+                {selectedOwners.length > 1 && (
+                  <div className="flex items-end">
+                    <button
+                      type="button"
+                      onClick={() => removeOwner(index)}
+                      disabled={isSubmitting}
+                      className="rounded-lg border-2 border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-300 hover:border-red-400 hover:bg-red-50 focus:ring-4 focus:ring-red-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          <div
+            className={`rounded-lg p-3 text-sm font-semibold ${calculateTotalPercentage() === 100 ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}
+          >
+            Total Ownership: {calculateTotalPercentage().toFixed(2)}%
+            {calculateTotalPercentage() !== 100 && ' (Must equal 100%)'}
+          </div>
+        </div>
+      )}
 
       {canHaveUnits && (
         <div className="space-y-4 rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
