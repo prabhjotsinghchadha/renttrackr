@@ -205,8 +205,7 @@ export function PropertyForm({ locale }: PropertyFormProps) {
       // If switching away from a property type that can have units, clear units
       setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [propertyType]);
+  }, [propertyType, generateUnitId]);
 
   const addUnit = () => {
     setUnits([...units, { id: generateUnitId(), unitNumber: '', rentAmount: '' }]);

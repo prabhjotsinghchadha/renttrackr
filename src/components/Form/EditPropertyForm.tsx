@@ -107,7 +107,6 @@ export function EditPropertyForm({
     };
 
     fetchUnits();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType, propertyId]);
 
   // Reset units when property type changes
@@ -118,7 +117,6 @@ export function EditPropertyForm({
     } else if (units.length === 0) {
       setUnits([{ id: generateUnitId(), unitNumber: '', rentAmount: '' }]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType]);
 
   const canHaveUnits = propertyType === 'multiunit' || propertyType === 'apartment';

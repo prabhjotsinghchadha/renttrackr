@@ -28,7 +28,9 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            // Cast provider to any to satisfy current Vitest typings while
+            // continuing to use Playwright as the browser provider.
+            provider: 'playwright' as any,
             screenshotDirectory: 'vitest-test-results',
             instances: [{ browser: 'chromium' }],
           },
