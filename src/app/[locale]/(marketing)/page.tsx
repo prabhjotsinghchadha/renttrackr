@@ -176,10 +176,10 @@ export default async function Index(props: IIndexProps) {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="mailto:support@renttrackr.com"
+                  href="mailto:support@rentopilot.com"
                   className="text-lg text-blue-200 transition-colors hover:text-white"
                 >
-                  support@renttrackr.com
+                  support@rentopilot.com
                 </a>
               </li>
               <li>

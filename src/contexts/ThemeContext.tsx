@@ -18,7 +18,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Initialize theme from localStorage/system preference after mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
+    const savedTheme = localStorage.getItem('rentopilot-theme') as Theme;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
@@ -33,7 +33,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (!mounted) return;
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('renttrackr-theme', theme);
+    localStorage.setItem('rentopilot-theme', theme);
   }, [theme, mounted]);
 
   const toggleTheme = () => {

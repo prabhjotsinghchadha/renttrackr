@@ -2,7 +2,7 @@
 
 ## What's Been Added
 
-I've created a complete property creation flow for your RentTrackr app!
+I've created a complete property creation flow for your Rentopilot app!
 
 ### 📁 New Files Created:
 

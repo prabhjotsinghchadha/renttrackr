@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the implementation of the complete tenant management functionality for RentTrackr, following the same pattern as the property management feature.
+This document summarizes the implementation of the complete tenant management functionality for Rentopilot, following the same pattern as the property management feature.
 
 ## Implementation Date
 

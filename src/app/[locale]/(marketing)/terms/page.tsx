@@ -132,9 +132,9 @@ export default async function TermsPage(props: ITermsPageProps) {
             <p className="mb-4 leading-relaxed text-gray-600">{t('contact_text')}</p>
             <div className="rounded-lg bg-gray-50 p-6">
               <p className="text-gray-600">
-                <strong>{t('contact_email')}:</strong> legal@renttrackr.com
+                <strong>{t('contact_email')}:</strong> legal@rentopilot.com
                 <br />
-                <strong>{t('contact_address')}:</strong> RentTrackr Legal Department
+                <strong>{t('contact_address')}:</strong> Rentopilot Legal Department
                 <br />
                 123 Business Street, Suite 100
                 <br />

@@ -1,4 +1,4 @@
-# RentTrackr Homepage Wireframe & Layout Guide
+# Rentopilot Homepage Wireframe & Layout Guide
 
 **Version:** 2.0 (HTML-Inspired Redesign)
 **Last Updated:** October 8, 2025
@@ -7,7 +7,7 @@
 
 ## Design Philosophy
 
-RentTrackr's homepage is designed for property owners aged 50+ with varying levels of technical experience. The redesign prioritizes:
+Rentopilot's homepage is designed for property owners aged 50+ with varying levels of technical experience. The redesign prioritizes:
 
 - **Clarity:** Large, readable text (20-24px base size)
 - **Simplicity:** Minimal, uncluttered layout with generous spacing
@@ -27,7 +27,7 @@ RentTrackr's homepage is designed for property owners aged 50+ with varying leve
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│  🏠 RentTrackr                              [  Sign In  ]  │
+│  🏠 Rentopilot                              [  Sign In  ]  │
 │  (28px, blue-600, bold)                 (button, outlined) │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -174,7 +174,7 @@ RentTrackr's homepage is designed for property owners aged 50+ with varying leve
 │              Built With You in Mind                         │
 │              (36-48px, bold, gray-800)                     │
 │                                                             │
-│     RentTrackr was designed specifically for property       │
+│     Rentopilot was designed specifically for property       │
 │     owners who want simplicity without sacrificing          │
 │     functionality. No confusing menus, no technical         │
 │     jargon—just a straightforward way to manage your        │
@@ -204,11 +204,11 @@ RentTrackr's homepage is designed for property owners aged 50+ with varying leve
 ┌─────────────────────────────────────────────────────────────┐
 │                    [Dark Gray Background]                   │
 │                                                             │
-│  🏠 RentTrackr    Support        Company      Contact      │
+│  🏠 Rentopilot    Support        Company      Contact      │
 │                                                             │
 │  Simple property  Help Center    About Us     Email:       │
 │  management for   Contact Us     Privacy      support@     │
-│  peace of mind.   FAQ            Terms        renttrackr   │
+│  peace of mind.   FAQ            Terms        rentopilot   │
 │                                               .com          │
 │                                               Phone:        │
 │                                               1-800-555-    │
@@ -216,7 +216,7 @@ RentTrackr's homepage is designed for property owners aged 50+ with varying leve
 │                                                             │
 │  ─────────────────────────────────────────────────────────  │
 │                                                             │
-│         © 2025 RentTrackr. All rights reserved.            │
+│         © 2025 Rentopilot. All rights reserved.            │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -346,7 +346,7 @@ RentTrackr's homepage is designed for property owners aged 50+ with varying leve
 
 ```
 Header (white bg, shadow-sm)
-├── Logo (🏠 RentTrackr, 28px, blue-600, bold)
+├── Logo (🏠 Rentopilot, 28px, blue-600, bold)
 └── Navigation
     └── Sign In Button (outlined, blue-600)
 ```
@@ -516,7 +516,7 @@ All interactive elements have 4px blue-300 ring on focus
 
 A successful homepage should:
 
-1. Clearly communicate RentTrackr's purpose in < 5 seconds
+1. Clearly communicate Rentopilot's purpose in < 5 seconds
 2. Be fully keyboard navigable
 3. Load in < 2 seconds on 3G
 4. Have zero WCAG violations
@@ -638,5 +638,5 @@ src/app/[locale]/(marketing)/
 
 ---
 
-_Wireframe guide maintained by the RentTrackr team_
+_Wireframe guide maintained by the Rentopilot team_
 _Last updated: October 8, 2025_

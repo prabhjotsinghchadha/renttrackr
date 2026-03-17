@@ -1,4 +1,4 @@
-# RentTrackr - Multi-Language Support
+# Rentopilot - Multi-Language Support
 
 **Last Updated:** October 8, 2025
 **Supported Languages:** 3 (English, Spanish, French)
@@ -7,7 +7,7 @@
 
 ## 🌐 Supported Languages
 
-RentTrackr is available in three languages:
+Rentopilot is available in three languages:
 
 ### 1. English (Default)
 
@@ -52,7 +52,7 @@ All pages are fully translated:
 
 ```typescript
 export const AppConfig = {
-  name: 'RentTrackr',
+  name: 'Rentopilot',
   locales: ['en', 'es', 'fr'],
   defaultLocale: 'en',
   localePrefix: 'as-needed',
@@ -323,12 +323,12 @@ When deploying to production:
 
 For translation issues or suggestions:
 
-- **Email:** info@renttrackr.com
+- **Email:** info@rentopilot.com
 - **GitHub:** Open an issue with `[i18n]` tag
 
 ---
 
-**🎉 RentTrackr is now available in English, Spanish, and French!**
+**🎉 Rentopilot is now available in English, Spanish, and French!**
 
 _Document version: 1.0_
 _Last updated: October 8, 2025_

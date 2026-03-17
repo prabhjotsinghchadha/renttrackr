@@ -184,11 +184,11 @@ export default async function CancellationPage(props: ICancellationPageProps) {
             <p className="mb-4 leading-relaxed text-gray-600">{t('contact_text')}</p>
             <div className="rounded-lg bg-gray-50 p-6">
               <p className="text-gray-600">
-                <strong>{t('contact_email')}:</strong> billing@renttrackr.com
+                <strong>{t('contact_email')}:</strong> billing@rentopilot.com
                 <br />
                 <strong>{t('contact_phone')}:</strong> 1-800-555-0123
                 <br />
-                <strong>{t('contact_address')}:</strong> RentTrackr Billing Department
+                <strong>{t('contact_address')}:</strong> Rentopilot Billing Department
                 <br />
                 123 Business Street, Suite 100
                 <br />

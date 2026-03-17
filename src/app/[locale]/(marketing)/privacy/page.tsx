@@ -180,9 +180,9 @@ export default async function PrivacyPage(props: IPrivacyPageProps) {
             <p className="mb-4 leading-relaxed text-gray-600">{t('contact_text')}</p>
             <div className="rounded-lg bg-gray-50 p-6">
               <p className="text-gray-600">
-                <strong>{t('contact_email')}:</strong> privacy@renttrackr.com
+                <strong>{t('contact_email')}:</strong> privacy@rentopilot.com
                 <br />
-                <strong>{t('contact_address')}:</strong> RentTrackr Privacy Officer
+                <strong>{t('contact_address')}:</strong> Rentopilot Privacy Officer
                 <br />
                 123 Business Street, Suite 100
                 <br />

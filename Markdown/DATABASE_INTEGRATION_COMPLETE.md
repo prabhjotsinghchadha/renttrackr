@@ -199,7 +199,7 @@ export default async function ProtectedPage() {
 
 ## 🎊 What This Means
 
-Your RentTrackr app now has:
+Your Rentopilot app now has:
 
 - ✅ User authentication with Clerk
 - ✅ Database persistence with Neon/PostgreSQL

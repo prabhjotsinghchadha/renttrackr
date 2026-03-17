@@ -1,6 +1,6 @@
-# RentTrackr Design Guide
+# Rentopilot Design Guide
 
-A comprehensive design system for RentTrackr, focused on accessibility and usability for property owners aged 50+.
+A comprehensive design system for Rentopilot, focused on accessibility and usability for property owners aged 50+.
 
 **Last Updated:** October 8, 2025
 **Version:** 2.0 (HTML-Inspired Redesign)
@@ -270,7 +270,7 @@ shadow: Subtle (0 1px 3px rgba(0, 0, 0, 0.05));
 
 **Layout:**
 
-- Logo left (🏠 RentTrackr, 24px text, blue-600, bold)
+- Logo left (🏠 Rentopilot, 24px text, blue-600, bold)
 - Navigation right (Sign In button)
 
 **Sign In Button:**
@@ -559,7 +559,7 @@ Hover: Gray-700 background
 
 ```typescript
 // Theme preference storage
-const THEME_KEY = 'renttrackr-theme';
+const THEME_KEY = 'rentopilot-theme';
 
 // Get system preference
 const getSystemTheme = () => {
@@ -803,7 +803,7 @@ transition: color 300ms ease;
 **Usage:**
 
 ```tsx
-<TrustSection title="Built With You in Mind" description="RentTrackr was designed..." />
+<TrustSection title="Built With You in Mind" description="Rentopilot was designed..." />
 ```
 
 ### 4. ThemeToggle Component
@@ -880,7 +880,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Check for saved theme preference or default to system preference
-    const savedTheme = localStorage.getItem('renttrackr-theme') as Theme;
+    const savedTheme = localStorage.getItem('Rentopilot-theme') as Theme;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
@@ -891,7 +891,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('renttrackr-theme', theme);
+    localStorage.setItem('Rentopilot-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -1110,5 +1110,5 @@ Before launching any page, verify:
 
 ---
 
-_Design guide maintained by the RentTrackr team_
+_Design guide maintained by the Rentopilot team_
 _Last updated: October 8, 2025_

@@ -64,7 +64,7 @@ export default withSentryConfig(nextConfig, {
 
   org: 'prabhjot-techs',
 
-  project: 'renttrackr',
+  project: 'rentopilot',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

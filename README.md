@@ -1,12 +1,12 @@
-# RentTrackr - Simple Rental Property Management
+# Rentopilot - Simple Rental Property Management
 
 **A user-friendly rental property management application designed for property owners aged 50 and above.**
 
 ---
 
-## 🏠 About RentTrackr
+## 🏠 About Rentopilot
 
-RentTrackr helps property owners easily manage their rental properties with a focus on simplicity, clarity, and accessibility. No complicated menus, no confusing buttons—just straightforward tools to track rent, tenants, maintenance, and more.
+Rentopilot helps property owners easily manage their rental properties with a focus on simplicity, clarity, and accessibility. No complicated menus, no confusing buttons—just straightforward tools to track rent, tenants, maintenance, and more.
 
 ### Key Features (Planned)
 
@@ -19,7 +19,7 @@ RentTrackr helps property owners easily manage their rental properties with a fo
 
 ## 🎯 Design Philosophy
 
-RentTrackr is designed with older, non-technical users in mind:
+Rentopilot is designed with older, non-technical users in mind:
 
 - **Large, readable text** (minimum 18px)
 - **Clear, simple navigation**
@@ -49,8 +49,8 @@ RentTrackr is designed with older, non-technical users in mind:
 
 ```bash
 # Clone the repository
-git clone <repository-url> renttrackr
-cd renttrackr
+git clone <repository-url> rentopilot
+cd rentopilot
 
 # Install dependencies
 npm install
@@ -172,7 +172,7 @@ npm run check:types
 
 ## 🌐 Internationalization
 
-RentTrackr supports multiple languages using next-intl. All translations are stored in `src/locales/`.
+Rentopilot supports multiple languages using next-intl. All translations are stored in `src/locales/`.
 
 Currently supported:
 
@@ -185,7 +185,7 @@ To add a new translation, create a new JSON file in `src/locales/` (e.g., `es.js
 
 ## ♿ Accessibility
 
-RentTrackr is built with accessibility as a priority:
+Rentopilot is built with accessibility as a priority:
 
 - **WCAG 2.1 Level AAA** contrast ratios
 - **Keyboard navigation** support
@@ -198,7 +198,7 @@ RentTrackr is built with accessibility as a priority:
 
 ## 🤝 Contributing
 
-We welcome contributions that maintain the simplicity and accessibility focus of RentTrackr.
+We welcome contributions that maintain the simplicity and accessibility focus of Rentopilot.
 
 ### Guidelines
 
@@ -250,8 +250,8 @@ npm run storybook        # Start Storybook
 
 For questions or support:
 
-- **Email:** info@renttrackr.com
-- **Support:** support@renttrackr.com
+- **Email:** info@rentopilot.com
+- **Support:** support@rentopilot.com
 - **Phone:** 1-800-RENTTRACK
 
 ---

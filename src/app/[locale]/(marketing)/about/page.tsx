@@ -74,10 +74,10 @@ export default async function About(props: IAboutProps) {
             <p className="text-xl text-gray-600">
               {t('contact_email')}{' '}
               <a
-                href="mailto:info@renttrackr.com"
+                href="mailto:info@rentopilot.com"
                 className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
               >
-                info@renttrackr.com
+                info@rentopilot.com
               </a>
             </p>
           </div>

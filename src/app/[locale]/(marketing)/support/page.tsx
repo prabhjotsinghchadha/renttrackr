@@ -44,7 +44,7 @@ export default async function SupportPage(props: ISupportPageProps) {
             </h3>
             <p className="mb-4 text-gray-600">{t('email_support_description')}</p>
             <a
-              href="mailto:support@renttrackr.com"
+              href="mailto:support@rentopilot.com"
               className="inline-block rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
             >
               {t('email_support_button')}

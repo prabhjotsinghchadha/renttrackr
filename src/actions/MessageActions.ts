@@ -47,15 +47,15 @@ export async function sendWhatsAppMessage(input: SendMessageInput): Promise<Send
       switch (validatedInput.locale) {
         case 'es':
           greeting = 'Hola';
-          closing = 'Saludos cordiales,\nEquipo RentTrackr';
+          closing = 'Saludos cordiales,\nEquipo Rentopilot';
           break;
         case 'fr':
           greeting = 'Bonjour';
-          closing = 'Cordialement,\nÉquipe RentTrackr';
+          closing = 'Cordialement,\nÉquipe Rentopilot';
           break;
         default:
           greeting = 'Hello';
-          closing = 'Best regards,\nRentTrackr Team';
+          closing = 'Best regards,\nRentopilot Team';
       }
 
       messageContent = `${greeting} ${validatedInput.tenantName},\n\n${validatedInput.message}\n\n${closing}`;

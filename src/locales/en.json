@@ -10,10 +10,10 @@
   },
   "BaseTemplate": {
     "description": "Simple rental property management for property owners",
-    "made_with": "Made with <author></author> by the RentTrackr team."
+    "made_with": "Made with <author></author> by the Rentopilot team."
   },
   "Index": {
-    "meta_title": "RentTrackr - Simple Rental Property Management for Property Owners",
+    "meta_title": "Rentopilot - Simple Rental Property Management for Property Owners",
     "meta_description": "Manage your rental properties with ease. Track rent, maintenance, tenants, and payments all in one simple place. Built for property owners who value simplicity.",
     "hero_title": "Managing Your Rental Properties Made Simple",
     "hero_subtitle": "Keep track of rent payments, maintenance, and tenant information all in one easy-to-use place. No complicated software—just straightforward property management.",
@@ -33,8 +33,8 @@
     "feature_security_title": "Secure & Private",
     "feature_security_description": "Your information is protected with bank-level security. Only you can access your data.",
     "trust_title": "Built With You in Mind",
-    "trust_description": "RentTrackr was designed specifically for property owners who want simplicity without sacrificing functionality. No confusing menus, no technical jargon—just a straightforward way to manage your properties with confidence.",
-    "footer_brand": "RentTrackr",
+    "trust_description": "Rentopilot was designed specifically for property owners who want simplicity without sacrificing functionality. No confusing menus, no technical jargon—just a straightforward way to manage your properties with confidence.",
+    "footer_brand": "Rentopilot",
     "footer_tagline": "Simple property management for peace of mind.",
     "footer_support_title": "Support",
     "footer_help_center": "Help Center",
@@ -45,7 +45,7 @@
     "footer_privacy": "Privacy Policy",
     "footer_terms": "Terms of Service",
     "footer_contact_title": "Contact",
-    "footer_copyright": "© 2025 RentTrackr. All rights reserved.",
+    "footer_copyright": "© 2025 Rentopilot. All rights reserved.",
     "footer_cancellation": "Cancellation & Refunds"
   },
   "Counter": {
@@ -63,12 +63,12 @@
     "count": "Count: {count}"
   },
   "About": {
-    "meta_title": "About RentTrackr - Our Story and Mission",
-    "meta_description": "Learn about RentTrackr's mission to help property owners manage their rentals with simplicity, clarity, and confidence.",
-    "page_title": "About RentTrackr",
-    "about_paragraph_1": "RentTrackr was created with one simple goal: to help property owners manage their rental properties without the stress and confusion that often comes with complicated software.",
-    "about_paragraph_2": "We understand that not everyone wants to spend hours learning complex systems. That's why we built RentTrackr to be straightforward, easy to understand, and genuinely helpful for property owners of all ages and technical backgrounds.",
-    "about_paragraph_3": "Whether you own one property or several, RentTrackr gives you the tools you need to stay organized, track important information, and manage your rentals with confidence.",
+    "meta_title": "About Rentopilot - Our Story and Mission",
+    "meta_description": "Learn about Rentopilot's mission to help property owners manage their rentals with simplicity, clarity, and confidence.",
+    "page_title": "About Rentopilot",
+    "about_paragraph_1": "Rentopilot was created with one simple goal: to help property owners manage their rental properties without the stress and confusion that often comes with complicated software.",
+    "about_paragraph_2": "We understand that not everyone wants to spend hours learning complex systems. That's why we built Rentopilot to be straightforward, easy to understand, and genuinely helpful for property owners of all ages and technical backgrounds.",
+    "about_paragraph_3": "Whether you own one property or several, Rentopilot gives you the tools you need to stay organized, track important information, and manage your rentals with confidence.",
     "mission_title": "Our Mission",
     "mission_statement": "To provide property owners with a simple, accessible, and reliable platform that takes the complexity out of rental property management—so you can focus on what matters most.",
     "values_title": "What We Stand For",
@@ -773,8 +773,8 @@
     "meta_title": "User Profile"
   },
   "Support": {
-    "meta_title": "Customer Support - RentTrackr",
-    "meta_description": "Get help with RentTrackr. Contact our support team for assistance with your rental property management needs.",
+    "meta_title": "Customer Support - Rentopilot",
+    "meta_description": "Get help with Rentopilot. Contact our support team for assistance with your rental property management needs.",
     "title": "Customer Support",
     "subtitle": "We're here to help you manage your rental properties with confidence",
     "email_support_title": "Email Support",
@@ -803,16 +803,16 @@
     "urgent_response_description": "Urgent issue response time"
   },
   "Terms": {
-    "meta_title": "Terms of Service - RentTrackr",
-    "meta_description": "Read RentTrackr's terms of service and user agreement for our rental property management platform.",
+    "meta_title": "Terms of Service - Rentopilot",
+    "meta_description": "Read Rentopilot's terms of service and user agreement for our rental property management platform.",
     "title": "Terms of Service",
     "last_updated": "Last updated: January 2025",
     "introduction_title": "Introduction",
-    "introduction_text": "Welcome to RentTrackr. These Terms of Service ('Terms') govern your use of our rental property management platform and services.",
+    "introduction_text": "Welcome to Rentopilot. These Terms of Service ('Terms') govern your use of our rental property management platform and services.",
     "acceptance_title": "Acceptance of Terms",
-    "acceptance_text": "By accessing or using RentTrackr, you agree to be bound by these Terms. If you disagree with any part of these terms, you may not access the service.",
+    "acceptance_text": "By accessing or using Rentopilot, you agree to be bound by these Terms. If you disagree with any part of these terms, you may not access the service.",
     "service_description_title": "Service Description",
-    "service_description_text": "RentTrackr provides a comprehensive platform for managing rental properties, including:",
+    "service_description_text": "Rentopilot provides a comprehensive platform for managing rental properties, including:",
     "service_feature_1": "Property and tenant management",
     "service_feature_2": "Rent payment tracking and reminders",
     "service_feature_3": "Expense and maintenance logging",
@@ -837,7 +837,7 @@
     "privacy_title": "Privacy and Data Protection",
     "privacy_text": "Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the service.",
     "liability_title": "Limitation of Liability",
-    "liability_text": "In no event shall RentTrackr, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages.",
+    "liability_text": "In no event shall Rentopilot, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages.",
     "termination_title": "Termination",
     "termination_text": "We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.",
     "changes_title": "Changes to Terms",
@@ -848,12 +848,12 @@
     "contact_address": "Address"
   },
   "Privacy": {
-    "meta_title": "Privacy Policy - RentTrackr",
-    "meta_description": "Learn how RentTrackr protects your privacy and handles your personal information in our comprehensive privacy policy.",
+    "meta_title": "Privacy Policy - Rentopilot",
+    "meta_description": "Learn how Rentopilot protects your privacy and handles your personal information in our comprehensive privacy policy.",
     "title": "Privacy Policy",
     "last_updated": "Last updated: January 2025",
     "introduction_title": "Introduction",
-    "introduction_text": "This Privacy Policy describes how RentTrackr collects, uses, and protects your information when you use our rental property management platform.",
+    "introduction_text": "This Privacy Policy describes how Rentopilot collects, uses, and protects your information when you use our rental property management platform.",
     "information_collection_title": "Information We Collect",
     "information_collection_text": "We collect information you provide directly to us and information we obtain automatically when you use our service.",
     "personal_information_title": "Personal Information",
@@ -918,17 +918,17 @@
     "contact_address": "Address"
   },
   "Cancellation": {
-    "meta_title": "Cancellation & Refund Policy - RentTrackr",
-    "meta_description": "Learn about RentTrackr's cancellation and refund policy for subscription services.",
+    "meta_title": "Cancellation & Refund Policy - Rentopilot",
+    "meta_description": "Learn about Rentopilot's cancellation and refund policy for subscription services.",
     "title": "Cancellation & Refund Policy",
     "last_updated": "Last updated: January 2025",
     "introduction_title": "Introduction",
-    "introduction_text": "This policy outlines the terms and conditions for canceling your RentTrackr subscription and requesting refunds.",
+    "introduction_text": "This policy outlines the terms and conditions for canceling your Rentopilot subscription and requesting refunds.",
     "cancellation_title": "Subscription Cancellation",
     "cancellation_text": "You may cancel your subscription at any time. Cancellation will take effect at the end of your current billing period.",
     "how_to_cancel_title": "How to Cancel",
     "how_to_cancel_text": "To cancel your subscription:",
-    "cancel_step_1": "Log into your RentTrackr account",
+    "cancel_step_1": "Log into your Rentopilot account",
     "cancel_step_2": "Navigate to Account Settings",
     "cancel_step_3": "Click on 'Subscription' or 'Billing'",
     "cancel_step_4": "Follow the cancellation instructions",
@@ -1084,8 +1084,8 @@
     "linked_properties": "Linked Properties"
   },
   "Onboarding": {
-    "welcome_title": "Welcome to RentTrackr!",
-    "welcome_title_with_emoji": "Welcome to RentTrackr! 🎉",
+    "welcome_title": "Welcome to Rentopilot!",
+    "welcome_title_with_emoji": "Welcome to Rentopilot! 🎉",
     "welcome_description": "Let's get you started! Follow these 4 simple steps to set up your property management system:",
     "step_owner_title": "Add Owner",
     "step_owner_description": "Create an owner (you or your LLC) to organize your properties",

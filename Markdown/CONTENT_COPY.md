@@ -1,6 +1,6 @@
-# RentTrackr Homepage - Content Copy
+# Rentopilot Homepage - Content Copy
 
-This document contains all the copy/content for the RentTrackr homepage, organized by section.
+This document contains all the copy/content for the Rentopilot homepage, organized by section.
 
 ---
 
@@ -25,7 +25,7 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Section Title
 
-**"Why Property Owners Choose RentTrackr"**
+**"Why Property Owners Choose Rentopilot"**
 
 ### Benefit 1: Simple and Easy to Use
 
@@ -87,7 +87,7 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Description
 
-**"RentTrackr is designed specifically for property owners who want a straightforward solution without unnecessary complications."**
+**"Rentopilot is designed specifically for property owners who want a straightforward solution without unnecessary complications."**
 
 ### Trust Points
 
@@ -105,7 +105,7 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Description
 
-**"Join property owners who have made managing their rentals easier with RentTrackr. Get started today—it's free to try."**
+**"Join property owners who have made managing their rentals easier with Rentopilot. Get started today—it's free to try."**
 
 ### Call-to-Action Button
 
@@ -115,11 +115,11 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ## Footer Section
 
-### About RentTrackr
+### About Rentopilot
 
-**Title:** "About RentTrackr"
+**Title:** "About Rentopilot"
 
-**Description:** "RentTrackr helps property owners manage their rental properties with ease, clarity, and confidence."
+**Description:** "Rentopilot helps property owners manage their rental properties with ease, clarity, and confidence."
 
 ### Quick Links
 
@@ -129,12 +129,12 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Contact & Support
 
-**Email:** support@renttrackr.com
+**Email:** support@rentopilot.com
 **Phone:** 1-800-RENTTRACK
 
 ### Legal
 
-- © 2025 RentTrackr. All rights reserved.
+- © 2025 Rentopilot. All rights reserved.
 - Privacy Policy
 - Terms of Service
 
@@ -144,18 +144,18 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Page Title
 
-**"About RentTrackr"**
+**"About Rentopilot"**
 
 ### Introduction Paragraphs
 
 **Paragraph 1:**
-"RentTrackr was created with one simple goal: to help property owners manage their rental properties without the stress and confusion that often comes with complicated software."
+"Rentopilot was created with one simple goal: to help property owners manage their rental properties without the stress and confusion that often comes with complicated software."
 
 **Paragraph 2:**
-"We understand that not everyone wants to spend hours learning complex systems. That's why we built RentTrackr to be straightforward, easy to understand, and genuinely helpful for property owners of all ages and technical backgrounds."
+"We understand that not everyone wants to spend hours learning complex systems. That's why we built Rentopilot to be straightforward, easy to understand, and genuinely helpful for property owners of all ages and technical backgrounds."
 
 **Paragraph 3:**
-"Whether you own one property or several, RentTrackr gives you the tools you need to stay organized, track important information, and manage your rentals with confidence."
+"Whether you own one property or several, Rentopilot gives you the tools you need to stay organized, track important information, and manage your rentals with confidence."
 
 ### Mission Statement
 
@@ -182,7 +182,7 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 **Description:** "Have questions or need help? We're here for you."
 
-**Email:** info@renttrackr.com
+**Email:** info@rentopilot.com
 
 ---
 
@@ -190,15 +190,15 @@ This document contains all the copy/content for the RentTrackr homepage, organiz
 
 ### Homepage Meta Tags
 
-**Title:** "RentTrackr - Simple Rental Property Management for Property Owners"
+**Title:** "Rentopilot - Simple Rental Property Management for Property Owners"
 
 **Description:** "Manage your rental properties with ease. Track rent, maintenance, tenants, and payments all in one simple place. Built for property owners who value simplicity."
 
 ### About Page Meta Tags
 
-**Title:** "About RentTrackr - Our Story and Mission"
+**Title:** "About Rentopilot - Our Story and Mission"
 
-**Description:** "Learn about RentTrackr's mission to help property owners manage their rentals with simplicity, clarity, and confidence."
+**Description:** "Learn about Rentopilot's mission to help property owners manage their rentals with simplicity, clarity, and confidence."
 
 ---
 

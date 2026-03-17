@@ -76,7 +76,7 @@ export async function GET() {
 
 ### Run the migration
 
-1. Visit: `http://localhost:3000/api/migrate-ownership`
+1. Visit: `
 2. Review the output
 3. **Delete the migration endpoint** after successful migration
 
